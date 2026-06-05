@@ -6,7 +6,7 @@ Jasanika_2
 
 Modular WordPress Framework
 
-Current Version: 0.6
+Current Version: 0.7
 
 Status: Active Development
 
@@ -14,7 +14,7 @@ Status: Active Development
 
 # Current Milestone
 
-M6 - Asset Manager
+M7 - Settings Foundation
 
 Status: Completed
 
@@ -29,6 +29,7 @@ Status: Completed
 - M4 - Configuration System
 - M5 - Hook System
 - M6 - Asset Manager
+- M7 - Settings Foundation
 
 ---
 
@@ -62,6 +63,8 @@ Architecture documents:
 - HookableInterface
 - Asset
 - AssetManager
+- SettingInterface
+- SettingsManager
 
 ---
 
@@ -97,7 +100,7 @@ None
 
 # Next Planned Milestone
 
-M7 - Admin Foundation
+M8 - WooCommerce Foundation
 
 ---
 

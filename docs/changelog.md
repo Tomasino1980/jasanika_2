@@ -148,6 +148,30 @@ Date: 2026-06-05
 
 ---
 
+# M7 - Settings Foundation
+
+Version: 0.7
+
+Date: 2026-06-06
+
+## Added
+
+- SettingInterface with getKey() and getDefaultValue() contracts
+- SettingsManager with register(), get(), set() methods
+- SettingsManager registered in the Container
+- getSettingsManager() method on Application
+- config/settings.php with settings configuration
+
+## Changed
+
+- Version updated to 0.7
+
+## Fixed
+
+- N/A
+
+---
+
 # M6 - Asset Manager
 
 Version: 0.6

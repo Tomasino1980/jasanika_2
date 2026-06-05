@@ -5,7 +5,8 @@ jasanika_2/
 ├── config/
 │   ├── app.php
 │   ├── assets.php
-│   └── modules.php
+│   ├── modules.php
+│   └── settings.php
 ├── docs/
 ├── src/
 ├── templates/
@@ -22,7 +23,8 @@ src/
 
 ├── Contracts/
 │   ├── HookableInterface.php
-│   └── ModuleInterface.php
+│   ├── ModuleInterface.php
+│   └── SettingInterface.php
 ├── Core/
 │   ├── Bootstrap.php
 │   └── Application.php
@@ -39,6 +41,7 @@ src/
 ├── Hooks/
 │   └── HookManager.php
 ├── Admin/
+│   └── SettingsManager.php
 ├── WooCommerce/
 ├── Support/
 
