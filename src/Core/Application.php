@@ -6,6 +6,7 @@ namespace Jasanika\Core;
 
 use Jasanika\Config\ConfigRepository;
 use Jasanika\Container\Container;
+use Jasanika\Hooks\HookManager;
 use Jasanika\Modules\ModuleManager;
 
 final class Application
@@ -13,12 +14,14 @@ final class Application
     private Container $container;
     private ModuleManager $moduleManager;
     private ConfigRepository $configRepository;
+    private HookManager $hookManager;
 
     public function __construct()
     {
         $this->container = new Container();
         $this->moduleManager = new ModuleManager();
         $this->configRepository = new ConfigRepository();
+        $this->hookManager = new HookManager();
 
         $this->container->register(
             ModuleManager::class,
@@ -31,6 +34,13 @@ final class Application
             ConfigRepository::class,
             function (Container $container): ConfigRepository {
                 return $this->configRepository;
+            }
+        );
+
+        $this->container->register(
+            HookManager::class,
+            function (Container $container): HookManager {
+                return $this->hookManager;
             }
         );
     }
@@ -53,5 +63,10 @@ final class Application
     public function getConfigRepository(): ConfigRepository
     {
         return $this->configRepository;
+    }
+
+    public function getHookManager(): HookManager
+    {
+        return $this->hookManager;
     }
 }

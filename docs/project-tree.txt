@@ -20,6 +20,7 @@ jasanika_2/
 src/
 
 ├── Contracts/
+│   ├── HookableInterface.php
 │   └── ModuleInterface.php
 ├── Core/
 │   ├── Bootstrap.php
@@ -33,6 +34,7 @@ src/
 │   └── ConfigRepository.php
 ├── Assets/
 ├── Hooks/
+│   └── HookManager.php
 ├── Admin/
 ├── WooCommerce/
 ├── Support/

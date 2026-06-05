@@ -98,6 +98,29 @@ Date: 2026-06-05
 
 ---
 
+# M5 - Hook System
+
+Version: 0.5
+
+Date: 2026-06-05
+
+## Added
+
+- HookManager with addAction() and addFilter() methods
+- HookableInterface with register() contract
+- HookManager registered in the Container
+- getHookManager() method on Application
+
+## Changed
+
+- N/A
+
+## Fixed
+
+- N/A
+
+---
+
 # M4 - Configuration System
 
 Version: 0.4
