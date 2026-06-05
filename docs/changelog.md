@@ -268,3 +268,30 @@ Date: 2026-06-06
 ## Fixed
 
 - N/A
+
+---
+
+# M11 - Theme Options Registry
+
+Version: 0.11
+
+Date: 2026-06-06
+
+## Added
+
+- LogoSetting implementing SettingInterface
+- PrimaryColorSetting implementing SettingInterface
+- TypographySetting implementing SettingInterface
+- ContainerWidthSetting implementing SettingInterface
+- All four settings registered in SettingsRegistry during Application startup
+- Logo, Primary Color, Typography, Container Width fields on Settings page
+- Sanitization for primary_color, typography, container_width values
+
+## Changed
+
+- Version updated to 0.11
+- config/settings.php defaults extended with new setting defaults
+
+## Fixed
+
+- N/A

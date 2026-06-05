@@ -42,7 +42,11 @@ src/
 │   └── HookManager.php
 ├── Settings/
 │   ├── SettingsRegistry.php
-│   └── SiteLayoutSetting.php
+│   ├── SiteLayoutSetting.php
+│   ├── LogoSetting.php
+│   ├── PrimaryColorSetting.php
+│   ├── TypographySetting.php
+│   └── ContainerWidthSetting.php
 ├── Admin/
 │   ├── AdminMenu.php
 │   ├── AdminPage.php

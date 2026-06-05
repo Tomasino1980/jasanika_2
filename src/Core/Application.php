@@ -13,8 +13,12 @@ use Jasanika\Config\ConfigRepository;
 use Jasanika\Container\Container;
 use Jasanika\Hooks\HookManager;
 use Jasanika\Modules\ModuleManager;
+use Jasanika\Settings\ContainerWidthSetting;
+use Jasanika\Settings\LogoSetting;
+use Jasanika\Settings\PrimaryColorSetting;
 use Jasanika\Settings\SettingsRegistry;
 use Jasanika\Settings\SiteLayoutSetting;
+use Jasanika\Settings\TypographySetting;
 
 final class Application
 {
@@ -37,11 +41,15 @@ final class Application
 
         $this->settingsRegistry = new SettingsRegistry();
         $this->settingsRegistry->register(new SiteLayoutSetting());
+        $this->settingsRegistry->register(new LogoSetting());
+        $this->settingsRegistry->register(new PrimaryColorSetting());
+        $this->settingsRegistry->register(new TypographySetting());
+        $this->settingsRegistry->register(new ContainerWidthSetting());
 
         $this->settingsManager = new SettingsManager($this->settingsRegistry);
 
         $this->adminMenu = new AdminMenu(
-            $this->configRepository->get('app.version', '0.10')
+            $this->configRepository->get('app.version', '0.11')
         );
 
         $dashboardPage = new AdminPage(
@@ -54,7 +62,7 @@ final class Application
         $this->adminMenu->register($this->hookManager);
 
         $settingsPage = new SettingsPage(
-            $this->configRepository->get('app.version', '0.10'),
+            $this->configRepository->get('app.version', '0.11'),
             $this->settingsManager
         );
 
