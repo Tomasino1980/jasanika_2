@@ -325,3 +325,35 @@ Date: 2026-06-06
 ## Fixed
 
 - N/A
+
+---
+
+# M13 - Architecture Debt Refactoring & Repository Documentation
+
+Version: 0.13
+
+Date: 2026-06-06
+
+## Added
+
+- FrameworkInfo service as single source of truth for framework name and version
+- DashboardPage class for admin dashboard rendering
+- Admin/Pages/ directory for dedicated page classes
+- README.md with project description, architecture overview, and documentation links
+- getFrameworkInfo() method on Application
+
+## Changed
+
+- AdminMenu no longer accepts version string; rendering responsibility removed
+- AdminMenu::renderDashboard() removed (moved to DashboardPage)
+- SettingsPage now accepts FrameworkInfo instead of raw version string
+- Field classes (SelectField, ColorField, NumberField, TextField) support nullable defaults resolved from SettingsRegistry
+- Application.php creates FrameworkInfo and DashboardPage instances
+- Dashboard page callback now references DashboardPage instead of AdminMenu
+- Version updated to 0.13 in style.css and config/app.php
+- docs/architecture-rules.md added to project tree documentation
+
+## Fixed
+
+- Architecture debt: AdminMenu no longer violates Single Responsibility Principle
+- Architecture debt: Framework version no longer duplicated across classes

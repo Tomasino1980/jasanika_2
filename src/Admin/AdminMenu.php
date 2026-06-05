@@ -6,20 +6,19 @@ namespace Jasanika\Admin;
 
 use Jasanika\Hooks\HookManager;
 
+/**
+ * Admin menu registration service.
+ *
+ * Responsible only for registering WordPress admin menu pages and submenu pages.
+ * Page rendering is delegated to dedicated page classes (e.g. DashboardPage, SettingsPage).
+ */
 final class AdminMenu
 {
-    private string $version;
-
     /** @var AdminPage[] */
     private array $pages = [];
 
     /** @var AdminPage[] */
     private array $subPages = [];
-
-    public function __construct(string $version)
-    {
-        $this->version = $version;
-    }
 
     public function registerPage(AdminPage $page): void
     {
@@ -65,22 +64,5 @@ final class AdminMenu
                 $subPage->getCallback()
             );
         }
-    }
-
-    /**
-     * Default dashboard page callback.
-     *
-     * Renders the Jasanika Dashboard with framework name and version.
-     */
-    public function renderDashboard(): void
-    {
-        echo '<div class="wrap">';
-        echo '<h1>' . esc_html__('Jasanika Framework', 'jasanika') . '</h1>';
-        echo '<p>' . sprintf(
-            /* translators: %s: framework version number */
-            esc_html__('Version: %s', 'jasanika'),
-            esc_html($this->version)
-        ) . '</p>';
-        echo '</div>';
     }
 }

@@ -9,6 +9,7 @@ use Jasanika\Admin\AdminPage;
 use Jasanika\Admin\Fields\ColorField;
 use Jasanika\Admin\Fields\NumberField;
 use Jasanika\Admin\Fields\SelectField;
+use Jasanika\Admin\Pages\DashboardPage;
 use Jasanika\Admin\SettingsManager;
 use Jasanika\Admin\SettingsPage;
 use Jasanika\Assets\AssetManager;
@@ -33,9 +34,15 @@ final class Application
     private SettingsRegistry $settingsRegistry;
     private SettingsManager $settingsManager;
     private AdminMenu $adminMenu;
+    private FrameworkInfo $frameworkInfo;
 
     public function __construct()
     {
+        $this->frameworkInfo = new FrameworkInfo(
+            'Jasanika 2',
+            '0.13'
+        );
+
         $this->container = new Container();
         $this->moduleManager = new ModuleManager();
         $this->configRepository = new ConfigRepository();
@@ -51,34 +58,34 @@ final class Application
 
         $this->settingsManager = new SettingsManager($this->settingsRegistry);
 
-        $this->adminMenu = new AdminMenu(
-            $this->configRepository->get('app.version', '0.12')
-        );
+        $this->adminMenu = new AdminMenu();
 
-        $dashboardPage = new AdminPage(
+        $dashboardPage = new DashboardPage($this->frameworkInfo);
+
+        $dashboardAdminPage = new AdminPage(
             'Jasanika Framework',
             'jasanika',
-            [$this->adminMenu, 'renderDashboard']
+            [$dashboardPage, 'render']
         );
 
-        $this->adminMenu->registerPage($dashboardPage);
+        $this->adminMenu->registerPage($dashboardAdminPage);
         $this->adminMenu->register($this->hookManager);
 
         $settingsPage = new SettingsPage(
-            $this->configRepository->get('app.version', '0.12'),
+            $this->frameworkInfo,
             new SelectField(
                 'site_layout',
                 __('Site Layout', 'jasanika'),
                 $this->settingsManager,
                 ['full-width', 'boxed'],
-                'full-width',
+                null,
                 __('Select the layout style for your site.', 'jasanika')
             ),
             new ColorField(
                 'primary_color',
                 __('Primary Color', 'jasanika'),
                 $this->settingsManager,
-                '#2c3e50',
+                null,
                 __('Enter a hex color for the primary theme color (e.g. #2c3e50).', 'jasanika')
             ),
             new SelectField(
@@ -86,14 +93,14 @@ final class Application
                 __('Typography', 'jasanika'),
                 $this->settingsManager,
                 ['system', 'playfair', 'inter', 'monospace'],
-                'system',
+                null,
                 __('Choose the typography style for your site.', 'jasanika')
             ),
             new NumberField(
                 'container_width',
                 __('Container Width', 'jasanika'),
                 $this->settingsManager,
-                '1200',
+                null,
                 1,
                 9999,
                 __('Set the maximum container width in pixels (e.g. 1200).', 'jasanika')
@@ -158,6 +165,13 @@ final class Application
                 return $this->settingsRegistry;
             }
         );
+
+        $this->container->register(
+            FrameworkInfo::class,
+            function (Container $container): FrameworkInfo {
+                return $this->frameworkInfo;
+            }
+        );
     }
 
     public function boot(): void
@@ -203,5 +217,10 @@ final class Application
     public function getAdminMenu(): AdminMenu
     {
         return $this->adminMenu;
+    }
+
+    public function getFrameworkInfo(): FrameworkInfo
+    {
+        return $this->frameworkInfo;
     }
 }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 return [
     'name' => 'Jasanika 2',
-    'version' => '0.12',
+    'version' => '0.13',
     'debug' => false,
     'env' => 'production',
 ];

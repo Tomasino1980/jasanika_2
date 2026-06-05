@@ -11,19 +11,22 @@ final class NumberField implements FieldInterface
     private string $key;
     private string $label;
     private SettingsManager $settingsManager;
-    private string $default;
+    private ?string $default;
     private string $description;
     private int $min;
     private int $max;
 
+    /**
+     * @param string|null $default Default value. If null, resolved from SettingsRegistry.
+     */
     public function __construct(
         string $key,
         string $label,
         SettingsManager $settingsManager,
-        string $default,
-        int $min,
-        int $max,
-        string $description
+        ?string $default = null,
+        int $min = 1,
+        int $max = 9999,
+        string $description = ''
     ) {
         $this->key = $key;
         $this->label = $label;
@@ -46,7 +49,17 @@ final class NumberField implements FieldInterface
 
     public function getDefault(): string
     {
-        return $this->default;
+        if ($this->default !== null) {
+            return $this->default;
+        }
+
+        $resolved = $this->settingsManager->get($this->key);
+
+        if (is_string($resolved) && $resolved !== '') {
+            return $resolved;
+        }
+
+        return (string) $this->min;
     }
 
     public function render(): void
@@ -54,7 +67,7 @@ final class NumberField implements FieldInterface
         $current = $this->settingsManager->get($this->key);
 
         if (!is_string($current)) {
-            $current = $this->default;
+            $current = $this->getDefault();
         }
 
         printf(
@@ -74,7 +87,7 @@ final class NumberField implements FieldInterface
         $value = preg_replace('/[^0-9]/', '', $value);
 
         if ($value === '' || (int) $value < $this->min || (int) $value > $this->max) {
-            return $this->default;
+            return $this->getDefault();
         }
 
         return $value;

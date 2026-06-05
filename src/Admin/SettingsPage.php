@@ -5,20 +5,29 @@ declare(strict_types=1);
 namespace Jasanika\Admin;
 
 use Jasanika\Admin\Fields\FieldInterface;
+use Jasanika\Core\FrameworkInfo;
 
+/**
+ * Settings page coordinator.
+ *
+ * Coordinates rendering of the settings page using FieldInterface objects.
+ * Field rendering and sanitization are delegated to individual field classes.
+ * Framework metadata is provided via FrameworkInfo.
+ */
 final class SettingsPage
 {
-    private string $version;
+    private FrameworkInfo $frameworkInfo;
 
     /** @var FieldInterface[] */
     private array $fields;
 
     /**
-     * @param FieldInterface ...$fields Field objects for rendering and sanitization.
+     * @param FrameworkInfo     $frameworkInfo Framework metadata service.
+     * @param FieldInterface ...$fields        Field objects for rendering and sanitization.
      */
-    public function __construct(string $version, FieldInterface ...$fields)
+    public function __construct(FrameworkInfo $frameworkInfo, FieldInterface ...$fields)
     {
-        $this->version = $version;
+        $this->frameworkInfo = $frameworkInfo;
         $this->fields = $fields;
     }
 
@@ -76,7 +85,7 @@ final class SettingsPage
         echo '<p>' . sprintf(
             /* translators: %s: framework version number */
             esc_html__('Framework Version: %s', 'jasanika'),
-            esc_html($this->version)
+            esc_html($this->frameworkInfo->getVersion())
         ) . '</p>';
 
         echo '<form action="options.php" method="post">';

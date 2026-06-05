@@ -27,7 +27,8 @@ src/
 │   └── SettingInterface.php
 ├── Core/
 │   ├── Bootstrap.php
-│   └── Application.php
+│   ├── Application.php
+│   └── FrameworkInfo.php
 ├── Container/
 │   └── Container.php
 ├── Modules/
@@ -48,6 +49,8 @@ src/
 │   ├── TypographySetting.php
 │   └── ContainerWidthSetting.php
 ├── Admin/
+│   ├── Pages/
+│   │   └── DashboardPage.php
 │   ├── Fields/
 │   │   ├── FieldInterface.php
 │   │   ├── TextField.php
@@ -74,6 +77,7 @@ docs/
 ├── analyze.md
 ├── changelog.md
 ├── versioning.md
+├── architecture-rules.md
 ├── project-tree.txt
 ├── architecture/
 ├── milestones/

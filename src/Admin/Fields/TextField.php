@@ -11,15 +11,18 @@ final class TextField implements FieldInterface
     private string $key;
     private string $label;
     private SettingsManager $settingsManager;
-    private string $default;
+    private ?string $default;
     private string $description;
 
+    /**
+     * @param string|null $default Default value. If null, resolved from SettingsRegistry.
+     */
     public function __construct(
         string $key,
         string $label,
         SettingsManager $settingsManager,
-        string $default,
-        string $description
+        ?string $default = null,
+        string $description = ''
     ) {
         $this->key = $key;
         $this->label = $label;
@@ -40,7 +43,17 @@ final class TextField implements FieldInterface
 
     public function getDefault(): string
     {
-        return $this->default;
+        if ($this->default !== null) {
+            return $this->default;
+        }
+
+        $resolved = $this->settingsManager->get($this->key);
+
+        if (is_string($resolved)) {
+            return $resolved;
+        }
+
+        return '';
     }
 
     public function render(): void
@@ -48,7 +61,7 @@ final class TextField implements FieldInterface
         $current = $this->settingsManager->get($this->key);
 
         if (!is_string($current)) {
-            $current = $this->default;
+            $current = $this->getDefault();
         }
 
         printf(
@@ -64,7 +77,7 @@ final class TextField implements FieldInterface
     public function sanitize(mixed $value): string
     {
         if (!is_string($value)) {
-            return $this->default;
+            return $this->getDefault();
         }
 
         return sanitize_text_field($value);

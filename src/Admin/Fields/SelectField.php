@@ -16,18 +16,19 @@ final class SelectField implements FieldInterface
     /** @var string[] */
     private array $options;
 
-    private string $default;
+    private ?string $default;
 
     /**
-     * @param string[] $options Allowed option values.
+     * @param string[]    $options          Allowed option values.
+     * @param string|null $default          Default value. If null, resolved from SettingsRegistry.
      */
     public function __construct(
         string $key,
         string $label,
         SettingsManager $settingsManager,
         array $options,
-        string $default,
-        string $description
+        ?string $default = null,
+        string $description = ''
     ) {
         $this->key = $key;
         $this->label = $label;
@@ -49,7 +50,17 @@ final class SelectField implements FieldInterface
 
     public function getDefault(): string
     {
-        return $this->default;
+        if ($this->default !== null) {
+            return $this->default;
+        }
+
+        $resolved = $this->settingsManager->get($this->key);
+
+        if (is_string($resolved) && in_array($resolved, $this->options, true)) {
+            return $resolved;
+        }
+
+        return $this->options[0] ?? '';
     }
 
     public function render(): void
@@ -57,7 +68,7 @@ final class SelectField implements FieldInterface
         $current = $this->settingsManager->get($this->key);
 
         if (!is_string($current) || !in_array($current, $this->options, true)) {
-            $current = $this->default;
+            $current = $this->getDefault();
         }
 
         echo '<select id="' . esc_attr($this->key) . '" name="' . esc_attr($this->key) . '">';
@@ -80,7 +91,7 @@ final class SelectField implements FieldInterface
         $value = is_string($value) ? sanitize_text_field($value) : '';
 
         if (!in_array($value, $this->options, true)) {
-            return $this->default;
+            return $this->getDefault();
         }
 
         return $value;
