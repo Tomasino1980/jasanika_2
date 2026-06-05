@@ -295,3 +295,33 @@ Date: 2026-06-06
 ## Fixed
 
 - N/A
+
+---
+
+# M12 - Settings Field Architecture
+
+Version: 0.12
+
+Date: 2026-06-06
+
+## Added
+
+- FieldInterface with getKey(), getLabel(), getDefault(), render(), sanitize() contracts
+- SelectField implementing FieldInterface for select dropdown settings
+- ColorField implementing FieldInterface for hex color settings
+- NumberField implementing FieldInterface for numeric range settings
+- TextField implementing FieldInterface for generic text settings
+- Admin Fields architecture under src/Admin/Fields/
+
+## Changed
+
+- SettingsPage refactored from monolithic class to coordinator
+- SettingsPage now accepts FieldInterface instances via variadic constructor
+- All rendering logic moved from SettingsPage into dedicated field classes
+- All sanitization logic moved from SettingsPage into dedicated field classes
+- Application.php updated to create field instances and pass them to SettingsPage
+- Version updated to 0.12
+
+## Fixed
+
+- N/A

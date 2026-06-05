@@ -6,7 +6,7 @@ Jasanika_2
 
 Modular WordPress Framework
 
-Current Version: 0.11
+Current Version: 0.12
 
 Status: Active Development
 
@@ -14,7 +14,7 @@ Status: Active Development
 
 # Current Milestone
 
-M11 - Theme Options Registry
+M12 - Settings Field Architecture
 
 Status: Completed
 
@@ -34,6 +34,7 @@ Status: Completed
 - M9 - Settings Page Foundation
 - M10 - Settings Registry
 - M11 - Theme Options Registry
+- M12 - Settings Field Architecture
 
 ---
 
@@ -78,6 +79,11 @@ Architecture documents:
 - PrimaryColorSetting
 - TypographySetting
 - ContainerWidthSetting
+- FieldInterface
+- SelectField
+- ColorField
+- NumberField
+- TextField
 
 ---
 
@@ -113,7 +119,7 @@ None
 
 # Next Planned Milestone
 
-M11 - TBD
+M12 - TBD
 
 ---
 
