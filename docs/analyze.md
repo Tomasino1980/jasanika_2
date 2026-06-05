@@ -12,15 +12,16 @@ Status: Active Development
 
 # Current Milestone
 
-M0 - Initialize
+M1 - Core Foundation
 
-Status: In Progress
+Status: Completed
 
 ---
 
 # Completed Milestones
 
-None
+- M0 - Initialize
+- M1 - Core Foundation
 
 ---
 
@@ -43,7 +44,10 @@ No framework implementation exists yet.
 
 # Implemented Components
 
-None
+- Composer
+- PSR-4 Autoloading
+- Bootstrap
+- Application
 
 ---
 

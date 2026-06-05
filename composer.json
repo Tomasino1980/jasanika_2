@@ -1,0 +1,19 @@
+{
+"name": "tomas/jasanika_2",
+"description": "Modular WordPress Framework",
+"type": "wordpress-theme",
+"license": "proprietary",
+"authors": [
+{
+"name": "Tomáš Fehér"
+}
+],
+"autoload": {
+"psr-4": {
+"Jasanika\\": "src/"
+}
+},
+"minimum-stability": "stable",
+"require": {}
+}
+

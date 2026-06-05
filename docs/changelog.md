@@ -20,11 +20,11 @@ Date: YYYY-MM-DD
 
 ## Changed
 
-* N/A
+- N/A
 
 ## Fixed
 
-* N/A
+- N/A
 
 ---
 
@@ -34,14 +34,16 @@ Date: YYYY-MM-DD
 
 ## Added
 
-* Bootstrap system
-* Application lifecycle
-* Core initialization
+- Composer integration
+- PSR-4 autoloading
+- Bootstrap class
+- Application class
+- Framework initialization flow
 
 ## Changed
 
-* Analyze document updated
+- Theme startup now uses framework bootstrap
 
 ## Fixed
 
-* N/A
+- N/A
