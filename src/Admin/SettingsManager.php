@@ -5,20 +5,26 @@ declare(strict_types=1);
 namespace Jasanika\Admin;
 
 use Jasanika\Contracts\SettingInterface;
+use Jasanika\Settings\SettingsRegistry;
 
 final class SettingsManager
 {
-    /**
-     * @var array<string, SettingInterface>
-     */
-    private array $settings = [];
+    private SettingsRegistry $registry;
 
     /**
-     * Register a setting with its default value.
+     * @param SettingsRegistry $registry The settings registry to manage.
+     */
+    public function __construct(SettingsRegistry $registry)
+    {
+        $this->registry = $registry;
+    }
+
+    /**
+     * Register a setting via the registry.
      */
     public function register(SettingInterface $setting): void
     {
-        $this->settings[$setting->getKey()] = $setting;
+        $this->registry->register($setting);
     }
 
     /**
@@ -44,14 +50,24 @@ final class SettingsManager
     }
 
     /**
-     * Retrieve the default value for a registered setting.
+     * Retrieve the default value for a registered setting from the registry.
      */
     private function getDefaultValue(string $key): mixed
     {
-        if (isset($this->settings[$key])) {
-            return $this->settings[$key]->getDefaultValue();
+        $setting = $this->registry->get($key);
+
+        if ($setting instanceof SettingInterface) {
+            return $setting->getDefaultValue();
         }
 
         return null;
+    }
+
+    /**
+     * Get the underlying settings registry.
+     */
+    public function getRegistry(): SettingsRegistry
+    {
+        return $this->registry;
     }
 }

@@ -40,6 +40,9 @@ src/
 │   └── AssetManager.php
 ├── Hooks/
 │   └── HookManager.php
+├── Settings/
+│   ├── SettingsRegistry.php
+│   └── SiteLayoutSetting.php
 ├── Admin/
 │   ├── AdminMenu.php
 │   ├── AdminPage.php

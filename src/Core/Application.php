@@ -13,6 +13,8 @@ use Jasanika\Config\ConfigRepository;
 use Jasanika\Container\Container;
 use Jasanika\Hooks\HookManager;
 use Jasanika\Modules\ModuleManager;
+use Jasanika\Settings\SettingsRegistry;
+use Jasanika\Settings\SiteLayoutSetting;
 
 final class Application
 {
@@ -21,6 +23,7 @@ final class Application
     private ConfigRepository $configRepository;
     private HookManager $hookManager;
     private AssetManager $assetManager;
+    private SettingsRegistry $settingsRegistry;
     private SettingsManager $settingsManager;
     private AdminMenu $adminMenu;
 
@@ -31,10 +34,14 @@ final class Application
         $this->configRepository = new ConfigRepository();
         $this->hookManager = new HookManager();
         $this->assetManager = new AssetManager();
-        $this->settingsManager = new SettingsManager();
+
+        $this->settingsRegistry = new SettingsRegistry();
+        $this->settingsRegistry->register(new SiteLayoutSetting());
+
+        $this->settingsManager = new SettingsManager($this->settingsRegistry);
 
         $this->adminMenu = new AdminMenu(
-            $this->configRepository->get('app.version', '0.9')
+            $this->configRepository->get('app.version', '0.10')
         );
 
         $dashboardPage = new AdminPage(
@@ -47,7 +54,7 @@ final class Application
         $this->adminMenu->register($this->hookManager);
 
         $settingsPage = new SettingsPage(
-            $this->configRepository->get('app.version', '0.9'),
+            $this->configRepository->get('app.version', '0.10'),
             $this->settingsManager
         );
 
@@ -102,6 +109,13 @@ final class Application
                 return $this->adminMenu;
             }
         );
+
+        $this->container->register(
+            SettingsRegistry::class,
+            function (Container $container): SettingsRegistry {
+                return $this->settingsRegistry;
+            }
+        );
     }
 
     public function boot(): void
@@ -137,6 +151,11 @@ final class Application
     public function getSettingsManager(): SettingsManager
     {
         return $this->settingsManager;
+    }
+
+    public function getSettingsRegistry(): SettingsRegistry
+    {
+        return $this->settingsRegistry;
     }
 
     public function getAdminMenu(): AdminMenu

@@ -242,3 +242,29 @@ Date: 2026-06-06
 ## Fixed
 
 - N/A
+
+---
+
+# M10 - Settings Registry
+
+Version: 0.10
+
+Date: 2026-06-06
+
+## Added
+
+- SettingsRegistry class with register(), get(), all() methods
+- SiteLayoutSetting implementing SettingInterface
+- SiteLayoutSetting registered during Application startup
+- SettingsRegistry registered in the Container
+- getSettingsRegistry() method on Application
+
+## Changed
+
+- SettingsManager now accepts SettingsRegistry in constructor
+- SettingsManager delegates to SettingsRegistry for setting storage and default value resolution
+- Version updated to 0.10
+
+## Fixed
+
+- N/A
