@@ -95,3 +95,30 @@ Date: 2026-06-05
 ## Fixed
 
 - N/A
+
+---
+
+# M4 - Configuration System
+
+Version: 0.4
+
+Date: 2026-06-05
+
+## Added
+
+- Config class with dot-notation get(), has(), all() methods
+- ConfigRepository for loading PHP config files from config/*.php
+- ConfigRepository registered in the Container
+- Application now owns a ConfigRepository instance
+- getConfigRepository() method on Application
+- config/app.php with application metadata
+- config/modules.php with module list
+- Configuration system initialized during Application startup
+
+## Changed
+
+- N/A
+
+## Fixed
+
+- N/A
