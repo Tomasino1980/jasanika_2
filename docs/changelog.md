@@ -145,3 +145,27 @@ Date: 2026-06-05
 ## Fixed
 
 - N/A
+
+---
+
+# M6 - Asset Manager
+
+Version: 0.6
+
+Date: 2026-06-05
+
+## Added
+
+- Asset immutable value object with handle, source, version
+- AssetManager with registerStyle(), registerScript(), enqueueStyle(), enqueueScript()
+- AssetManager registered in the Container
+- getAssetManager() method on Application
+- config/assets.php with asset configuration
+
+## Changed
+
+- N/A
+
+## Fixed
+
+- N/A

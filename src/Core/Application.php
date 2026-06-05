@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Jasanika\Core;
 
+use Jasanika\Assets\AssetManager;
 use Jasanika\Config\ConfigRepository;
 use Jasanika\Container\Container;
 use Jasanika\Hooks\HookManager;
@@ -15,6 +16,7 @@ final class Application
     private ModuleManager $moduleManager;
     private ConfigRepository $configRepository;
     private HookManager $hookManager;
+    private AssetManager $assetManager;
 
     public function __construct()
     {
@@ -22,6 +24,7 @@ final class Application
         $this->moduleManager = new ModuleManager();
         $this->configRepository = new ConfigRepository();
         $this->hookManager = new HookManager();
+        $this->assetManager = new AssetManager();
 
         $this->container->register(
             ModuleManager::class,
@@ -41,6 +44,13 @@ final class Application
             HookManager::class,
             function (Container $container): HookManager {
                 return $this->hookManager;
+            }
+        );
+
+        $this->container->register(
+            AssetManager::class,
+            function (Container $container): AssetManager {
+                return $this->assetManager;
             }
         );
     }
@@ -68,5 +78,10 @@ final class Application
     public function getHookManager(): HookManager
     {
         return $this->hookManager;
+    }
+
+    public function getAssetManager(): AssetManager
+    {
+        return $this->assetManager;
     }
 }
