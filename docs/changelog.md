@@ -217,3 +217,28 @@ Date: 2026-06-06
 ## Fixed
 
 - N/A
+
+---
+
+# M9 - Settings Page Foundation
+
+Version: 0.9
+
+Date: 2026-06-06
+
+## Added
+
+- SettingsPage class with Settings API integration
+- AdminMenu::registerSubPage() for submenu registration
+- Settings submenu under Jasanika in WordPress Admin
+- site_layout setting with full-width/boxed options
+- config/settings.php defaults configuration
+
+## Changed
+
+- Version updated to 0.9
+- AdminMenu::registerPages() now handles submenu pages
+
+## Fixed
+
+- N/A

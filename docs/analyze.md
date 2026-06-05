@@ -6,7 +6,7 @@ Jasanika_2
 
 Modular WordPress Framework
 
-Current Version: 0.8
+Current Version: 0.9
 
 Status: Active Development
 
@@ -14,7 +14,7 @@ Status: Active Development
 
 # Current Milestone
 
-M8 - Admin Menu Foundation
+M9 - Settings Page Foundation
 
 Status: Completed
 
@@ -31,6 +31,7 @@ Status: Completed
 - M6 - Asset Manager
 - M7 - Settings Foundation
 - M8 - Admin Menu Foundation
+- M9 - Settings Page Foundation
 
 ---
 
@@ -68,6 +69,7 @@ Architecture documents:
 - SettingsManager
 - AdminPage
 - AdminMenu
+- SettingsPage
 
 ---
 
@@ -103,7 +105,7 @@ None
 
 # Next Planned Milestone
 
-M9 - TBD
+M10 - TBD
 
 ---
 

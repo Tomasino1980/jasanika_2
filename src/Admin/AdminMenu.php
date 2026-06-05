@@ -13,6 +13,9 @@ final class AdminMenu
     /** @var AdminPage[] */
     private array $pages = [];
 
+    /** @var AdminPage[] */
+    private array $subPages = [];
+
     public function __construct(string $version)
     {
         $this->version = $version;
@@ -23,6 +26,11 @@ final class AdminMenu
         $this->pages[] = $page;
     }
 
+    public function registerSubPage(AdminPage $page): void
+    {
+        $this->subPages[] = $page;
+    }
+
     public function register(HookManager $hooks): void
     {
         $hooks->addAction('admin_menu', [$this, 'registerPages']);
@@ -31,7 +39,7 @@ final class AdminMenu
     /**
      * WordPress admin_menu hook callback.
      *
-     * Registers all stored pages using the native WordPress Admin Menu API.
+     * Registers all stored pages and subpages using the native WordPress Admin Menu API.
      */
     public function registerPages(): void
     {
@@ -44,6 +52,17 @@ final class AdminMenu
                 $page->getCallback(),
                 '',
                 3
+            );
+        }
+
+        foreach ($this->subPages as $subPage) {
+            add_submenu_page(
+                'jasanika',
+                $subPage->getPageTitle(),
+                $subPage->getPageTitle(),
+                'manage_options',
+                $subPage->getSlug(),
+                $subPage->getCallback()
             );
         }
     }

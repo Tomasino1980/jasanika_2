@@ -43,7 +43,8 @@ src/
 ├── Admin/
 │   ├── AdminMenu.php
 │   ├── AdminPage.php
-│   └── SettingsManager.php
+│   ├── SettingsManager.php
+│   └── SettingsPage.php
 ├── WooCommerce/
 ├── Support/
 

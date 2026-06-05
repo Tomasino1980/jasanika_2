@@ -3,5 +3,7 @@
 declare(strict_types=1);
 
 return [
-    'defaults' => [],
+    'defaults' => [
+        'site_layout' => 'full-width',
+    ],
 ];

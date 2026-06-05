@@ -7,6 +7,7 @@ namespace Jasanika\Core;
 use Jasanika\Admin\AdminMenu;
 use Jasanika\Admin\AdminPage;
 use Jasanika\Admin\SettingsManager;
+use Jasanika\Admin\SettingsPage;
 use Jasanika\Assets\AssetManager;
 use Jasanika\Config\ConfigRepository;
 use Jasanika\Container\Container;
@@ -33,7 +34,7 @@ final class Application
         $this->settingsManager = new SettingsManager();
 
         $this->adminMenu = new AdminMenu(
-            $this->configRepository->get('app.version', '0.8')
+            $this->configRepository->get('app.version', '0.9')
         );
 
         $dashboardPage = new AdminPage(
@@ -44,6 +45,21 @@ final class Application
 
         $this->adminMenu->registerPage($dashboardPage);
         $this->adminMenu->register($this->hookManager);
+
+        $settingsPage = new SettingsPage(
+            $this->configRepository->get('app.version', '0.9'),
+            $this->settingsManager
+        );
+
+        $this->hookManager->addAction('admin_init', [$settingsPage, 'registerSettings']);
+
+        $settingsSubPage = new AdminPage(
+            'Jasanika Settings',
+            'jasanika-settings',
+            [$settingsPage, 'render']
+        );
+
+        $this->adminMenu->registerSubPage($settingsSubPage);
 
         $this->container->register(
             ModuleManager::class,
