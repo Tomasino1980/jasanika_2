@@ -41,6 +41,8 @@ src/
 ├── Hooks/
 │   └── HookManager.php
 ├── Admin/
+│   ├── AdminMenu.php
+│   ├── AdminPage.php
 │   └── SettingsManager.php
 ├── WooCommerce/
 ├── Support/

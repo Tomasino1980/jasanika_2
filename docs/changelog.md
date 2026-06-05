@@ -193,3 +193,27 @@ Date: 2026-06-05
 ## Fixed
 
 - N/A
+
+---
+
+# M8 - Admin Menu Foundation
+
+Version: 0.8
+
+Date: 2026-06-06
+
+## Added
+
+- AdminPage value object with page title, slug, callback
+- AdminMenu with registerPage() and register() methods
+- AdminMenu registered in the Container
+- getAdminMenu() method on Application
+- Jasanika Dashboard page in WordPress Admin
+
+## Changed
+
+- Version updated to 0.8
+
+## Fixed
+
+- N/A

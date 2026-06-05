@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Jasanika\Core;
 
+use Jasanika\Admin\AdminMenu;
+use Jasanika\Admin\AdminPage;
 use Jasanika\Admin\SettingsManager;
 use Jasanika\Assets\AssetManager;
 use Jasanika\Config\ConfigRepository;
@@ -19,6 +21,7 @@ final class Application
     private HookManager $hookManager;
     private AssetManager $assetManager;
     private SettingsManager $settingsManager;
+    private AdminMenu $adminMenu;
 
     public function __construct()
     {
@@ -28,6 +31,19 @@ final class Application
         $this->hookManager = new HookManager();
         $this->assetManager = new AssetManager();
         $this->settingsManager = new SettingsManager();
+
+        $this->adminMenu = new AdminMenu(
+            $this->configRepository->get('app.version', '0.8')
+        );
+
+        $dashboardPage = new AdminPage(
+            'Jasanika Framework',
+            'jasanika',
+            [$this->adminMenu, 'renderDashboard']
+        );
+
+        $this->adminMenu->registerPage($dashboardPage);
+        $this->adminMenu->register($this->hookManager);
 
         $this->container->register(
             ModuleManager::class,
@@ -61,6 +77,13 @@ final class Application
             SettingsManager::class,
             function (Container $container): SettingsManager {
                 return $this->settingsManager;
+            }
+        );
+
+        $this->container->register(
+            AdminMenu::class,
+            function (Container $container): AdminMenu {
+                return $this->adminMenu;
             }
         );
     }
@@ -98,5 +121,10 @@ final class Application
     public function getSettingsManager(): SettingsManager
     {
         return $this->settingsManager;
+    }
+
+    public function getAdminMenu(): AdminMenu
+    {
+        return $this->adminMenu;
     }
 }
