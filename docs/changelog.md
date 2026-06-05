@@ -47,3 +47,27 @@ Date: YYYY-MM-DD
 ## Fixed
 
 - N/A
+
+---
+
+# M2 - Service Container
+
+Version: 0.2
+
+Date: 2026-06-05
+
+## Added
+
+- Container class with service registration
+- Container service resolution (singleton behavior)
+- Container service existence check
+- Application now owns a Container instance
+- getContainer() method on Application
+
+## Changed
+
+- N/A
+
+## Fixed
+
+- N/A

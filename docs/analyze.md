@@ -6,13 +6,15 @@ Jasanika_2
 
 Modular WordPress Framework
 
+Current Version: 0.2
+
 Status: Active Development
 
 ---
 
 # Current Milestone
 
-M1 - Core Foundation
+M2 - Service Container
 
 Status: Completed
 
@@ -22,6 +24,7 @@ Status: Completed
 
 - M0 - Initialize
 - M1 - Core Foundation
+- M2 - Service Container
 
 ---
 
@@ -38,8 +41,6 @@ Architecture documents:
 * design-system.md
 * typography.md
 
-No framework implementation exists yet.
-
 ---
 
 # Implemented Components
@@ -48,6 +49,7 @@ No framework implementation exists yet.
 - PSR-4 Autoloading
 - Bootstrap
 - Application
+- Container
 
 ---
 
@@ -83,7 +85,7 @@ None
 
 # Next Planned Milestone
 
-M1 - Core Foundation
+M3 - Module System
 
 ---
 

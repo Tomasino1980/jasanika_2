@@ -1,0 +1,50 @@
+```
+jasanika_2/
+
+├── assets/
+├── config/
+├── docs/
+├── src/
+├── templates/
+├── tests/
+
+├── functions.php
+├── style.css
+├── screenshot.png
+├── README.md
+
+---
+
+src/
+
+├── Core/
+│   ├── Bootstrap.php
+│   └── Application.php
+├── Container/
+│   └── Container.php
+├── Modules/
+├── Config/
+├── Assets/
+├── Hooks/
+├── Admin/
+├── WooCommerce/
+├── Support/
+
+---
+
+docs/
+
+├── project-rules.md
+├── folder-structure.md
+├── roadmap.md
+├── design-system.md
+├── typography.md
+├── ai-workflow.md
+├── analyze.md
+├── changelog.md
+├── versioning.md
+├── project-tree.txt
+├── architecture/
+├── milestones/
+├── adr/
+```
