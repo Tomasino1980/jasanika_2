@@ -71,3 +71,27 @@ Date: 2026-06-05
 ## Fixed
 
 - N/A
+
+---
+
+# M3 - Module System
+
+Version: 0.3
+
+Date: 2026-06-05
+
+## Added
+
+- ModuleInterface with register() and boot() contracts
+- ModuleManager for module registration and lifecycle
+- ModuleManager registered in the Container
+- Application now owns a ModuleManager instance
+- getModuleManager() method on Application
+
+## Changed
+
+- N/A
+
+## Fixed
+
+- N/A

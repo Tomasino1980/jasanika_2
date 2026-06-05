@@ -17,12 +17,15 @@ jasanika_2/
 
 src/
 
+├── Contracts/
+│   └── ModuleInterface.php
 ├── Core/
 │   ├── Bootstrap.php
 │   └── Application.php
 ├── Container/
 │   └── Container.php
 ├── Modules/
+│   └── ModuleManager.php
 ├── Config/
 ├── Assets/
 ├── Hooks/
