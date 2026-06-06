@@ -255,9 +255,7 @@ Rules:
 
 * ConfigRepository provides read access only.
 * Do not introduce runtime configuration mutation.
-* Avoid methods such as:
-
-$config->set(...)
+* Avoid methods such as: $config->set(...)
 
 Preferred flow:
 
@@ -454,3 +452,14 @@ These would follow the existing registry-driven pattern:
 5. AssetManager serves media-field.js
 
 This pattern eliminates special-case implementations for each media setting.
+
+Při diagnostice frameworku nejprve ověřit:
+
+1. functions.php executes
+2. vendor/autoload.php loads
+3. Bootstrap::init() completes
+4. Admin menu renders
+
+Teprve potom hledat chyby v Application, Settings nebo Modules.
+
+---

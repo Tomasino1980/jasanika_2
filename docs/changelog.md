@@ -465,3 +465,17 @@ Date: 2026-06-06
 ## Fixed
 
 - N/A
+
+---
+
+# M17 - Hotfix
+
+Version: 0.17
+
+Date: 2026-06-06
+
+## Fixed
+
+- Added missing SettingsManager import in MediaField
+- Verified M16 and M17 framework initialization
+- Confirmed admin integration and theme activation
