@@ -15,12 +15,19 @@ use Jasanika\Hooks\HookManager;
  * - Render complete page layout
  * - Render header
  * - Render footer
- * - Render content area
+ * - Resolve content template based on WordPress hierarchy
+ * - Render content area (page, single, archive, search, 404)
  * - Integrate frontend settings (container width, typography)
  * - Register frontend asset enqueuing
  *
  * No direct template includes outside this class.
  * No frontend rendering logic in Application.
+ *
+ * @todo Template Context Refactor: Current template resolution uses
+ *       WordPress conditional tags inside ThemeRenderer. Extract into
+ *       a dedicated TemplateResolver service when frontend architecture
+ *       stabilizes. Do NOT remove static instance pattern yet —
+ *       frontend is still evolving.
  */
 final class ThemeRenderer
 {
@@ -158,8 +165,15 @@ final class ThemeRenderer
     /**
      * Render the content area.
      *
-     * Uses the standard WordPress Loop.
+     * Resolves the correct content template based on WordPress conditional tags
+     * (page, single, archive, search, 404) and includes it.
+     *
      * Called from templates/layout.php.
+     *
+     * @todo Template Context Refactor: Extract template resolution into a
+     *       dedicated TemplateResolver service when frontend architecture stabilizes.
+     *       The current static access pattern is intentional to prevent
+     *       architectural churn while frontend is still evolving.
      */
     public static function renderContent(): void
     {
@@ -169,9 +183,46 @@ final class ThemeRenderer
             return;
         }
 
-        $frameworkInfo = $instance->frameworkInfo;
+        $template = $instance->resolveContentTemplate();
 
-        include get_template_directory() . '/templates/content.php';
+        include $template;
+    }
+
+    /**
+     * Resolve the content template path based on WordPress conditional tags.
+     *
+     * Maps WordPress template hierarchy to framework template files.
+     * Falls back to content.php for uncategorized or future template types.
+     *
+     * @todo Template Context Refactor: Move to dedicated TemplateResolver
+     *       when implementing ThemeRenderer refactor milestone.
+     */
+    private function resolveContentTemplate(): string
+    {
+        $dir = get_template_directory() . '/templates/';
+
+        if (is_404()) {
+            return $dir . '404.php';
+        }
+
+        if (is_search()) {
+            return $dir . 'search.php';
+        }
+
+        if (is_page()) {
+            return $dir . 'page.php';
+        }
+
+        if (is_single()) {
+            return $dir . 'single.php';
+        }
+
+        if (is_archive()) {
+            return $dir . 'archive.php';
+        }
+
+        // Fallback to the original content template
+        return $dir . 'content.php';
     }
 
     /**

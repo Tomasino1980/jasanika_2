@@ -539,3 +539,33 @@ Date: 2026-06-07
 ## Fixed
 
 - N/A
+
+---
+
+# M19 - Content Rendering & Template Architecture
+
+Version: 0.19
+
+Date: 2026-06-07
+
+## Added
+
+- ContentRenderer with centralized title, content, excerpt, meta, pagination, empty state rendering
+- Template hierarchy (page.php, single.php, archive.php, search.php, 404.php)
+- Content components (page-header, content-card, content-meta, empty-state)
+- Archive rendering pipeline with unified card layout (blog, category, tag, author, date)
+- Search results template with query display, result count, and empty search state
+- 404 error page with user-friendly message and homepage navigation
+- Content styling: typography, archive grid, card layout, pagination, empty state, error page
+- Template resolution in ThemeRenderer via resolveContentTemplate()
+- TODO markers for future Template Context Refactor
+
+## Changed
+
+- ThemeRenderer::renderContent() now resolves template based on WordPress conditional tags
+- Version updated to 0.19 in style.css, config/app.php, FrameworkInfo, docs/analyze.md
+
+## Fixed
+
+- No duplicated WordPress Loop logic across templates
+- No PHP warnings or WordPress notices in content rendering

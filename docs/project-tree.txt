@@ -18,10 +18,20 @@ jasanika_2/
 ├── docs/
 ├── src/
 ├── templates/
+│   ├── components/
+│   │   ├── content-card.php
+│   │   ├── content-meta.php
+│   │   ├── empty-state.php
+│   │   └── page-header.php
+│   ├── 404.php
+│   ├── archive.php
 │   ├── content.php
 │   ├── footer.php
 │   ├── header.php
-│   └── layout.php
+│   ├── layout.php
+│   ├── page.php
+│   ├── search.php
+│   └── single.php
 ├── tests/
 
 ├── functions.php
@@ -41,6 +51,7 @@ src/
 │   ├── Bootstrap.php
 │   ├── Application.php
 │   ├── FrameworkInfo.php
+│   ├── ContentRenderer.php
 │   └── ThemeRenderer.php
 ├── Container/
 │   └── Container.php
