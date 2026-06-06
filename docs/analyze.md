@@ -6,7 +6,7 @@ Jasanika_2
 
 Modular WordPress Framework
 
-Current Version: 0.19
+Current Version: 0.20
 
 Status: Active Development
 
@@ -14,7 +14,7 @@ Status: Active Development
 
 # Current Milestone
 
-M19 - Content Rendering & Template Architecture
+M20 - Navigation & Site Identity Architecture
 
 Status: Completed
 
@@ -43,6 +43,7 @@ Status: Completed
 - M17.1 - Asset Registration Lifecycle Fix
 - M18 - Frontend Foundation & Theme Rendering
 - M19 - Content Rendering & Template Architecture
+- M20 - Navigation & Site Identity Architecture
 
 ---
 
@@ -107,6 +108,13 @@ Architecture documents:
 - 404 error page
 - Content styling (typography, archive grid, cards, pagination, empty state, error page)
 - Template resolution in ThemeRenderer
+- NavigationManager with menu registration and rendering
+- SiteIdentityRenderer with logo/title/tagline rendering
+- Navigation components (site-branding, navigation, footer-navigation)
+- Header composition with branding and primary nav
+- Footer composition with nav, copyright, version
+- Navigation styling (header, dropdowns, mobile toggle, footer)
+- Responsive navigation layout (768px, 1024px breakpoints)
 
 ---
 
@@ -142,7 +150,7 @@ None
 
 # Next Planned Milestone
 
-M20 - TBD
+M21 - TBD
 
 ---
 

@@ -22,7 +22,10 @@ jasanika_2/
 │   │   ├── content-card.php
 │   │   ├── content-meta.php
 │   │   ├── empty-state.php
-│   │   └── page-header.php
+│   │   ├── footer-navigation.php
+│   │   ├── navigation.php
+│   │   ├── page-header.php
+│   │   └── site-branding.php
 │   ├── 404.php
 │   ├── archive.php
 │   ├── content.php
@@ -52,6 +55,7 @@ src/
 │   ├── Application.php
 │   ├── FrameworkInfo.php
 │   ├── ContentRenderer.php
+│   ├── SiteIdentityRenderer.php
 │   └── ThemeRenderer.php
 ├── Container/
 │   └── Container.php
@@ -91,6 +95,8 @@ src/
 ├── WooCommerce/
 ├── Media/
 │   └── MediaManager.php
+├── Navigation/
+│   └── NavigationManager.php
 ├── Support/
 
 ---

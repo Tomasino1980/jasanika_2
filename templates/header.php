@@ -8,3 +8,12 @@
 <body <?php body_class(); ?>>
 <?php
 wp_body_open();
+?>
+<header id="jas-header" class="jas-header">
+    <div class="jas-container">
+        <div class="jas-header__inner">
+            <?php get_template_part('templates/components/site-branding'); ?>
+            <?php get_template_part('templates/components/navigation'); ?>
+        </div>
+    </div>
+</header>

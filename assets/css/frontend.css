@@ -2,7 +2,7 @@
  * Jasanika 2 Frontend Styles
  *
  * Modular WordPress Framework
- * Version 0.19
+ * Version 0.20
  */
 
 /* ========================================
@@ -561,4 +561,359 @@ body {
 
 .jas-single .jas-content__meta {
     margin-bottom: 2rem;
+}
+
+/* ========================================
+   Header Layout
+   ======================================== */
+
+.jas-header {
+    background: rgba(255,255,255,0.03);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    position: relative;
+    z-index: 100;
+}
+
+.jas-header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+}
+
+/* ========================================
+   Site Branding
+   ======================================== */
+
+.jas-site-branding {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    flex-shrink: 0;
+}
+
+.jas-branding__title {
+    margin: 0;
+    font-family: "Playfair Display", serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    line-height: 1.2;
+}
+
+.jas-branding__title a {
+    color: #f5f2f7;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.jas-branding__title a:hover {
+    color: #b78acb;
+}
+
+.jas-branding__logo {
+    display: block;
+    max-height: 3rem;
+    width: auto;
+    height: auto;
+}
+
+.jas-branding__link {
+    display: inline-block;
+    text-decoration: none;
+}
+
+.jas-branding__tagline {
+    margin: 0;
+    font-size: 0.8125rem;
+    color: #b9b1c4;
+    line-height: 1.4;
+}
+
+/* ========================================
+   Primary Navigation
+   ======================================== */
+
+.jas-primary-nav {
+    display: flex;
+    align-items: center;
+}
+
+.jas-nav__menu {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.jas-nav__menu li {
+    position: relative;
+    margin: 0;
+}
+
+.jas-nav__menu a {
+    display: block;
+    padding: 0.5rem 0.875rem;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: #b9b1c4;
+    text-decoration: none;
+    border-radius: 0.375rem;
+    transition: color 0.2s ease, background 0.2s ease;
+    white-space: nowrap;
+}
+
+.jas-nav__menu a:hover,
+.jas-nav__menu a:focus {
+    color: #f5f2f7;
+    background: rgba(255,255,255,0.05);
+}
+
+.jas-nav__menu .current-menu-item > a,
+.jas-nav__menu .current_page_item > a,
+.jas-nav__menu .current-menu-ancestor > a {
+    color: #b78acb;
+}
+
+.jas-nav__menu .current-menu-item > a:hover,
+.jas-nav__menu .current_page_item > a:hover {
+    color: #c79cda;
+}
+
+/* Sub-menu */
+.jas-nav__menu .sub-menu,
+.jas-nav__menu .children {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 12rem;
+    background: #24212b;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    list-style: none;
+    margin: 0;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(0.25rem);
+    transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+    z-index: 200;
+}
+
+.jas-nav__menu li:hover > .sub-menu,
+.jas-nav__menu li:hover > .children,
+.jas-nav__menu li:focus-within > .sub-menu,
+.jas-nav__menu li:focus-within > .children {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.jas-nav__menu .sub-menu li,
+.jas-nav__menu .children li {
+    width: 100%;
+}
+
+.jas-nav__menu .sub-menu a,
+.jas-nav__menu .children a {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+}
+
+/* Nested sub-menus */
+.jas-nav__menu .sub-menu .sub-menu,
+.jas-nav__menu .children .children {
+    top: 0;
+    left: 100%;
+    margin-left: 0.25rem;
+}
+
+/* Mobile navigation toggle placeholder */
+.jas-mobile-nav-toggle {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    color: #f5f2f7;
+}
+
+.jas-mobile-nav-toggle__icon {
+    display: block;
+    width: 1.5rem;
+    height: 2px;
+    background: #f5f2f7;
+    position: relative;
+    transition: background 0.2s ease;
+}
+
+.jas-mobile-nav-toggle__icon::before,
+.jas-mobile-nav-toggle__icon::after {
+    content: '';
+    display: block;
+    width: 1.5rem;
+    height: 2px;
+    background: #f5f2f7;
+    position: absolute;
+    left: 0;
+    transition: transform 0.2s ease;
+}
+
+.jas-mobile-nav-toggle__icon::before {
+    top: -0.4375rem;
+}
+
+.jas-mobile-nav-toggle__icon::after {
+    top: 0.4375rem;
+}
+
+/* ========================================
+   Footer Layout
+   ======================================== */
+
+.jas-footer {
+    background: rgba(255,255,255,0.02);
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding-top: 2.5rem;
+    padding-bottom: 2.5rem;
+    margin-top: auto;
+}
+
+.jas-footer-content__inner {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.jas-footer-nav .jas-nav__menu {
+    flex-wrap: wrap;
+    gap: 0.125rem;
+}
+
+.jas-footer-nav .jas-nav__menu a {
+    font-size: 0.875rem;
+    padding: 0.375rem 0.75rem;
+    color: #b9b1c4;
+}
+
+.jas-footer-nav .jas-nav__menu a:hover {
+    color: #b78acb;
+    background: transparent;
+}
+
+/* Footer info */
+.jas-footer-info {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255,255,255,0.06);
+}
+
+.jas-footer-info__copyright {
+    margin: 0;
+    font-size: 0.8125rem;
+    color: #b9b1c4;
+}
+
+.jas-footer-info__copyright a {
+    color: #b9b1c4;
+    text-decoration: none;
+}
+
+.jas-footer-info__copyright a:hover {
+    color: #b78acb;
+}
+
+.jas-footer-info__version {
+    margin: 0;
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.25);
+}
+
+/* ========================================
+   Responsive Breakpoints
+   ======================================== */
+
+@media (max-width: 767px) {
+    .jas-header__inner {
+        flex-wrap: wrap;
+    }
+
+    .jas-primary-nav {
+        width: 100%;
+        order: 3;
+    }
+
+    .jas-nav__menu {
+        flex-direction: column;
+        width: 100%;
+        gap: 0;
+    }
+
+    .jas-nav__menu li {
+        width: 100%;
+    }
+
+    .jas-nav__menu a {
+        padding: 0.75rem 0;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+        white-space: normal;
+    }
+
+    .jas-nav__menu .sub-menu,
+    .jas-nav__menu .children {
+        position: static;
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+        background: transparent;
+        border: none;
+        padding-left: 1rem;
+        box-shadow: none;
+    }
+
+    .jas-nav__menu .sub-menu .sub-menu,
+    .jas-nav__menu .children .children {
+        margin-left: 0;
+    }
+
+    .jas-footer-info {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+    .jas-header__inner {
+        gap: 1rem;
+    }
+
+    .jas-nav__menu a {
+        padding: 0.5rem 0.625rem;
+        font-size: 0.875rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .jas-header__inner {
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
+
+    .jas-footer-content__inner {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .jas-footer-info {
+        border-top: none;
+        padding-top: 0;
+    }
 }

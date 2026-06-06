@@ -7,18 +7,20 @@ namespace Jasanika\Core;
 use Jasanika\Admin\SettingsManager;
 use Jasanika\Assets\AssetManager;
 use Jasanika\Hooks\HookManager;
+use Jasanika\Navigation\NavigationManager;
 
 /**
  * Single frontend rendering entry point.
  *
  * Responsibilities:
  * - Render complete page layout
- * - Render header
- * - Render footer
+ * - Render header with site branding and navigation
+ * - Render footer with navigation and copyright
  * - Resolve content template based on WordPress hierarchy
  * - Render content area (page, single, archive, search, 404)
  * - Integrate frontend settings (container width, typography)
  * - Register frontend asset enqueuing
+ * - Expose NavigationManager and SiteIdentityRenderer to templates
  *
  * No direct template includes outside this class.
  * No frontend rendering logic in Application.
@@ -37,17 +39,23 @@ final class ThemeRenderer
     private SettingsManager $settingsManager;
     private AssetManager $assetManager;
     private HookManager $hookManager;
+    private NavigationManager $navigationManager;
+    private SiteIdentityRenderer $siteIdentityRenderer;
 
     public function __construct(
         FrameworkInfo $frameworkInfo,
         SettingsManager $settingsManager,
         AssetManager $assetManager,
-        HookManager $hookManager
+        HookManager $hookManager,
+        NavigationManager $navigationManager,
+        SiteIdentityRenderer $siteIdentityRenderer
     ) {
         $this->frameworkInfo = $frameworkInfo;
         $this->settingsManager = $settingsManager;
         $this->assetManager = $assetManager;
         $this->hookManager = $hookManager;
+        $this->navigationManager = $navigationManager;
+        $this->siteIdentityRenderer = $siteIdentityRenderer;
     }
 
     /**
@@ -69,6 +77,9 @@ final class ThemeRenderer
 
         // Enqueue frontend assets during the wp_enqueue_scripts hook
         $this->hookManager->addAction('wp_enqueue_scripts', [$this, 'enqueueFrontendAssets']);
+
+        // Register navigation menu locations
+        $this->navigationManager->registerMenuLocations();
     }
 
     /**
@@ -139,8 +150,6 @@ final class ThemeRenderer
             return;
         }
 
-        $frameworkInfo = $instance->frameworkInfo;
-
         include get_template_directory() . '/templates/header.php';
     }
 
@@ -156,8 +165,6 @@ final class ThemeRenderer
         if (!$instance) {
             return;
         }
-
-        $frameworkInfo = $instance->frameworkInfo;
 
         include get_template_directory() . '/templates/footer.php';
     }
@@ -223,6 +230,22 @@ final class ThemeRenderer
 
         // Fallback to the original content template
         return $dir . 'content.php';
+    }
+
+    /**
+     * Get the NavigationManager instance.
+     */
+    public function getNavigationManager(): NavigationManager
+    {
+        return $this->navigationManager;
+    }
+
+    /**
+     * Get the SiteIdentityRenderer instance.
+     */
+    public function getSiteIdentityRenderer(): SiteIdentityRenderer
+    {
+        return $this->siteIdentityRenderer;
     }
 
     /**

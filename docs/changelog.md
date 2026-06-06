@@ -569,3 +569,35 @@ Date: 2026-06-07
 
 - No duplicated WordPress Loop logic across templates
 - No PHP warnings or WordPress notices in content rendering
+
+---
+
+# M20 - Navigation & Site Identity Architecture
+
+Version: 0.20
+
+Date: 2026-06-07
+
+## Added
+
+- NavigationManager with menu registration (primary, footer) and accessible rendering
+- SiteIdentityRenderer with logo/title/tagline rendering and fallback hierarchy
+- Logo integration — displays uploaded logo from LogoSetting, falls back to site title
+- Header architecture with site-branding and primary navigation components
+- Footer architecture with footer navigation, copyright, and dev-mode version
+- Navigation styling (header layout, dropdowns, mobile toggle, footer navigation)
+- Responsive navigation layout (768px, 1024px breakpoints)
+- Accessibility foundation (aria-label, keyboard navigation, proper heading hierarchy)
+- getNavigationManager() and getSiteIdentityRenderer() on ThemeRenderer and Application
+
+## Changed
+
+- header.php now renders site-branding and navigation components inside `<header>`
+- footer.php now renders footer-navigation component inside `<footer>`
+- ThemeRenderer constructor now accepts NavigationManager and SiteIdentityRenderer
+- ThemeRenderer::init() now registers navigation menu locations
+- Version updated to 0.20 in style.css, config/app.php, FrameworkInfo, docs/analyze.md
+
+## Fixed
+
+- N/A
