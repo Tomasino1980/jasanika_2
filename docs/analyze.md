@@ -6,7 +6,7 @@ Jasanika_2
 
 Modular WordPress Framework
 
-Current Version: 0.15
+Current Version: 0.16
 
 Status: Active Development
 
@@ -14,7 +14,7 @@ Status: Active Development
 
 # Current Milestone
 
-M15 - Field Consolidation
+M16 - Media & Logo Foundation
 
 Status: Completed
 
@@ -38,6 +38,7 @@ Status: Completed
 - M13 - Architecture Debt Refactoring & Repository Documentation
 - M14 - Registry Driven Settings Architecture
 - M15 - Field Consolidation
+- M16 - Media & Logo Foundation
 
 ---
 
@@ -92,6 +93,8 @@ Architecture documents:
 - FrameworkInfo
 - DashboardPage
 - AbstractField
+- MediaManager
+- MediaField
 
 ---
 
@@ -127,7 +130,7 @@ None
 
 # Next Planned Milestone
 
-M16 - TBD
+M17 - TBD
 
 ---
 

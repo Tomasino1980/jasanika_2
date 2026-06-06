@@ -411,3 +411,28 @@ Date: 2026-06-06
 ## Fixed
 
 - Architecture debt: duplicated state and constructor behavior consolidated into AbstractField
+
+---
+
+# M16 - Media & Logo Foundation
+
+Version: 0.16
+
+Date: 2026-06-06
+
+## Added
+
+- MediaManager infrastructure service with attachment validation and URL resolution
+- MediaField extending AbstractField for WordPress Media Library integration
+- MediaField stores attachment IDs only (no URLs, paths, or metadata)
+- Media infrastructure documented in architecture-rules.md
+
+## Changed
+
+- LogoSetting now uses media field type instead of text
+- FieldFactory supports media field type mapping
+- Version updated to 0.16 in style.css, config/app.php, README.md, docs/analyze.md, FrameworkInfo
+
+## Fixed
+
+- N/A

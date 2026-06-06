@@ -25,7 +25,7 @@ final class LogoSetting implements SettingInterface
 
     public function getFieldType(): string
     {
-        return 'text';
+        return 'media';
     }
 
     /**

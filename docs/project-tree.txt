@@ -55,6 +55,7 @@ src/
 │   │   ├── FieldInterface.php
 │   │   ├── AbstractField.php
 │   │   ├── FieldFactory.php
+│   │   ├── MediaField.php
 │   │   ├── TextField.php
 │   │   ├── SelectField.php
 │   │   ├── ColorField.php
@@ -64,6 +65,8 @@ src/
 │   ├── SettingsManager.php
 │   └── SettingsPage.php
 ├── WooCommerce/
+├── Media/
+│   └── MediaManager.php
 ├── Support/
 
 ---

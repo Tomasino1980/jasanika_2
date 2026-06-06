@@ -8,8 +8,8 @@ Jasanika_2 is a custom WordPress theme framework designed with an elegant, bouti
 
 ## Current Status
 
-- **Current Version:** 0.15
-- **Current Milestone:** M15 - Field Consolidation
+- **Current Version:** 0.16
+- **Current Milestone:** M16 - Media &amp; Logo Foundation
 - **Status:** Active Development
 
 ---
@@ -62,6 +62,7 @@ Fields implement `FieldInterface` (render, sanitize, get label, get default). Av
 - `ColorField` — hex color input
 - `NumberField` — numeric range input
 - `TextField` — generic text input
+- `MediaField` — WordPress Media Library image selection
 
 All concrete field classes extend `AbstractField`, which consolidates shared state (key, label, default, description, SettingsManager) and constructor behavior.
 
@@ -72,10 +73,10 @@ FieldInterface
     ↑
 AbstractField
     ↑
-┌──────┬──────┬──────┬──────┐
-│      │      │      │      │
-Text  Color  Number Select
-Field Field  Field  Field
+┌──────┬──────┬──────┬──────┬───────┐
+│      │      │      │      │       │
+Text  Color  Number Select  Media
+Field Field  Field  Field   Field
 ```
 
 Settings fields are created automatically via `FieldFactory`, which maps the setting's `getFieldType()` to the appropriate concrete field class. Adding a new Setting no longer requires modifying `SettingsPage` or `Application`.
@@ -101,6 +102,7 @@ Admin page structure:
 - **DashboardPage** — renders the Jasanika Dashboard (framework info)
 - **SettingsPage** — renders the Settings form, coordinating Field objects
 - **SettingsManager** — bridges `SettingsRegistry` with the WordPress Options API
+- **MediaManager** — attachment validation and URL resolution service
 - **AdminMenu** — responsible solely for menu/submenu page registration
 
 ---
@@ -136,6 +138,7 @@ jasanika_2/
 │   ├── Contracts/   # Shared interfaces
 │   ├── Core/        # Bootstrap, Application, FrameworkInfo
 │   ├── Hooks/       # WordPress hook abstraction
+│   ├── Media/       # Media infrastructure (MediaManager)
 │   ├── Modules/     # Module system
 │   ├── Settings/    # Setting definitions and registry
 │   ├── Support/     # Shared value objects and exceptions

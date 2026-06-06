@@ -38,7 +38,7 @@ final class Application
     {
         $this->frameworkInfo = new FrameworkInfo(
             'Jasanika 2',
-            '0.15'
+            '0.16'
         );
 
         $this->container = new Container();

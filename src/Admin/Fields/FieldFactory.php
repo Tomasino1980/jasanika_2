@@ -11,7 +11,7 @@ use Jasanika\Contracts\SettingInterface;
  * Creates FieldInterface instances from SettingInterface objects.
  *
  * FieldFactory is the single location that knows the mapping between
- * field types (select, color, number, text) and their concrete field classes.
+ * field types (select, color, number, text, media) and their concrete field classes.
  */
 final class FieldFactory
 {
@@ -50,6 +50,12 @@ final class FieldFactory
                 $setting->getDefaultValue(),
             ),
             'text' => new TextField(
+                $setting->getKey(),
+                $setting->getLabel(),
+                $this->settingsManager,
+                $setting->getDefaultValue(),
+            ),
+            'media' => new MediaField(
                 $setting->getKey(),
                 $setting->getLabel(),
                 $this->settingsManager,

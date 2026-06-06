@@ -147,10 +147,10 @@ FieldInterface
 ↑
 AbstractField
 ↑
-┌──────┬──────┬──────┬──────┐
-│      │      │      │      │
-Text  Color  Number Select
-Field Field  Field  Field
+┌──────┬──────┬──────┬──────┬───────┐
+│      │      │      │      │       │
+Text  Color  Number Select  Media
+Field Field  Field  Field   Field
 
 Rules:
 
@@ -372,3 +372,22 @@ Business Logic
 Infrastructure
 
 Infrastructure must exist before large user-facing features.
+
+---
+
+## Media Infrastructure
+
+MediaManager is infrastructure.
+
+Responsibilities:
+
+* attachment validation
+* attachment resolution
+
+MediaManager must never contain:
+
+* frontend rendering
+* image optimization
+* responsive image logic
+* CDN integration
+* business logic
