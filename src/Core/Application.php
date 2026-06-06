@@ -6,9 +6,7 @@ namespace Jasanika\Core;
 
 use Jasanika\Admin\AdminMenu;
 use Jasanika\Admin\AdminPage;
-use Jasanika\Admin\Fields\ColorField;
-use Jasanika\Admin\Fields\NumberField;
-use Jasanika\Admin\Fields\SelectField;
+use Jasanika\Admin\Fields\FieldFactory;
 use Jasanika\Admin\Pages\DashboardPage;
 use Jasanika\Admin\SettingsManager;
 use Jasanika\Admin\SettingsPage;
@@ -40,7 +38,7 @@ final class Application
     {
         $this->frameworkInfo = new FrameworkInfo(
             'Jasanika 2',
-            '0.13'
+            '0.14'
         );
 
         $this->container = new Container();
@@ -71,40 +69,12 @@ final class Application
         $this->adminMenu->registerPage($dashboardAdminPage);
         $this->adminMenu->register($this->hookManager);
 
+        $fieldFactory = new FieldFactory($this->settingsManager);
+
         $settingsPage = new SettingsPage(
             $this->frameworkInfo,
-            new SelectField(
-                'site_layout',
-                __('Site Layout', 'jasanika'),
-                $this->settingsManager,
-                ['full-width', 'boxed'],
-                null,
-                __('Select the layout style for your site.', 'jasanika')
-            ),
-            new ColorField(
-                'primary_color',
-                __('Primary Color', 'jasanika'),
-                $this->settingsManager,
-                null,
-                __('Enter a hex color for the primary theme color (e.g. #2c3e50).', 'jasanika')
-            ),
-            new SelectField(
-                'typography',
-                __('Typography', 'jasanika'),
-                $this->settingsManager,
-                ['system', 'playfair', 'inter', 'monospace'],
-                null,
-                __('Choose the typography style for your site.', 'jasanika')
-            ),
-            new NumberField(
-                'container_width',
-                __('Container Width', 'jasanika'),
-                $this->settingsManager,
-                null,
-                1,
-                9999,
-                __('Set the maximum container width in pixels (e.g. 1200).', 'jasanika')
-            )
+            $this->settingsRegistry,
+            $fieldFactory
         );
 
         $this->hookManager->addAction('admin_init', [$settingsPage, 'registerSettings']);

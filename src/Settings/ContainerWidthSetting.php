@@ -17,4 +17,22 @@ final class ContainerWidthSetting implements SettingInterface
     {
         return '1200';
     }
+
+    public function getLabel(): string
+    {
+        return 'Container Width';
+    }
+
+    public function getFieldType(): string
+    {
+        return 'number';
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getOptions(): array
+    {
+        return [];
+    }
 }

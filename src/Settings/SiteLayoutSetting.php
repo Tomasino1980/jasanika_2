@@ -17,4 +17,22 @@ final class SiteLayoutSetting implements SettingInterface
     {
         return 'full-width';
     }
+
+    public function getLabel(): string
+    {
+        return 'Site Layout';
+    }
+
+    public function getFieldType(): string
+    {
+        return 'select';
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getOptions(): array
+    {
+        return ['full-width', 'boxed'];
+    }
 }

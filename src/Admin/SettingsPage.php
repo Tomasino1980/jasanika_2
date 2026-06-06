@@ -4,37 +4,41 @@ declare(strict_types=1);
 
 namespace Jasanika\Admin;
 
+use Jasanika\Admin\Fields\FieldFactory;
 use Jasanika\Admin\Fields\FieldInterface;
 use Jasanika\Core\FrameworkInfo;
+use Jasanika\Settings\SettingsRegistry;
 
 /**
  * Settings page coordinator.
  *
- * Coordinates rendering of the settings page using FieldInterface objects.
- * Field rendering and sanitization are delegated to individual field classes.
- * Framework metadata is provided via FrameworkInfo.
+ * Iterates over all registered settings from SettingsRegistry,
+ * creates FieldInterface instances via FieldFactory,
+ * and registers them with the WordPress Settings API.
+ *
+ * No hardcoded field definitions exist in this class.
  */
 final class SettingsPage
 {
     private FrameworkInfo $frameworkInfo;
+    private SettingsRegistry $settingsRegistry;
+    private FieldFactory $fieldFactory;
 
-    /** @var FieldInterface[] */
-    private array $fields;
-
-    /**
-     * @param FrameworkInfo     $frameworkInfo Framework metadata service.
-     * @param FieldInterface ...$fields        Field objects for rendering and sanitization.
-     */
-    public function __construct(FrameworkInfo $frameworkInfo, FieldInterface ...$fields)
-    {
+    public function __construct(
+        FrameworkInfo $frameworkInfo,
+        SettingsRegistry $settingsRegistry,
+        FieldFactory $fieldFactory
+    ) {
         $this->frameworkInfo = $frameworkInfo;
-        $this->fields = $fields;
+        $this->settingsRegistry = $settingsRegistry;
+        $this->fieldFactory = $fieldFactory;
     }
 
     /**
      * Register settings, sections, and fields using the WordPress Settings API.
      *
-     * Delegates rendering and sanitization to field objects.
+     * Iterates over all registered settings, creates field objects via FieldFactory,
+     * and registers each with WordPress.
      * Hook this into the admin_init action.
      */
     public function registerSettings(): void
@@ -46,7 +50,9 @@ final class SettingsPage
             'jasanika_settings'
         );
 
-        foreach ($this->fields as $field) {
+        foreach ($this->settingsRegistry->all() as $setting) {
+            $field = $this->fieldFactory->create($setting);
+
             register_setting(
                 'jasanika_settings',
                 $field->getKey(),

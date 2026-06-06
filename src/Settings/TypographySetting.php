@@ -17,4 +17,22 @@ final class TypographySetting implements SettingInterface
     {
         return 'system';
     }
+
+    public function getLabel(): string
+    {
+        return 'Typography';
+    }
+
+    public function getFieldType(): string
+    {
+        return 'select';
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getOptions(): array
+    {
+        return ['system', 'inter', 'roboto'];
+    }
 }

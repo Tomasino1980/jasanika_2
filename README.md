@@ -8,8 +8,8 @@ Jasanika_2 is a custom WordPress theme framework designed with an elegant, bouti
 
 ## Current Status
 
-- **Current Version:** 0.13
-- **Current Milestone:** M13 - Architecture Debt Refactoring & Repository Documentation
+- **Current Version:** 0.14
+- **Current Milestone:** M14 - Registry Driven Settings Architecture
 - **Status:** Active Development
 
 ---
@@ -48,6 +48,12 @@ Asset management with `AssetManager` for registering and enqueuing CSS and JavaS
 
 `SettingsRegistry` stores `SettingInterface` objects and provides lookup by key. Used as the central repository for theme setting definitions and their defaults.
 
+Each setting now provides metadata:
+
+- `getLabel()` — human-readable field label
+- `getFieldType()` — field type (select, color, number, text)
+- `getOptions()` — allowed option values (for select fields)
+
 ### Field Architecture
 
 Fields implement `FieldInterface` (render, sanitize, get label, get default). Available field types:
@@ -57,7 +63,21 @@ Fields implement `FieldInterface` (render, sanitize, get label, get default). Av
 - `NumberField` — numeric range input
 - `TextField` — generic text input
 
-Fields resolve default values from `SettingsRegistry` via `SettingsManager` when not explicitly provided, reducing hardcoded knowledge.
+Settings fields are created automatically via `FieldFactory`, which maps the setting's `getFieldType()` to the appropriate concrete field class. Adding a new Setting no longer requires modifying `SettingsPage` or `Application`.
+
+### Registry-Driven Flow
+
+```
+Setting
+  ↓
+SettingsRegistry
+  ↓
+FieldFactory
+  ↓
+Field
+  ↓
+SettingsPage
+```
 
 ### Admin System
 
@@ -132,5 +152,5 @@ All development follows the principles defined in [Architecture Rules](docs/arch
 
 Version numbers follow milestone numbering. See [Versioning Policy](docs/versioning.md) for details.
 
-- Development versions: `0.<milestone_number>` (e.g., 0.13 for M13)
+- Development versions: `0.<milestone_number>` (e.g., 0.14 for M14)
 - Version 1.0.0 is reserved for the first feature-complete release and may only be declared by the project owner.

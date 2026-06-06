@@ -6,7 +6,7 @@ Jasanika_2
 
 Modular WordPress Framework
 
-Current Version: 0.13
+Current Version: 0.14
 
 Status: Active Development
 
@@ -14,7 +14,7 @@ Status: Active Development
 
 # Current Milestone
 
-M13 - Architecture Debt Refactoring & Repository Documentation
+M14 - Registry Driven Settings Architecture
 
 Status: Completed
 
@@ -36,12 +36,13 @@ Status: Completed
 - M11 - Theme Options Registry
 - M12 - Settings Field Architecture
 - M13 - Architecture Debt Refactoring & Repository Documentation
+- M14 - Registry Driven Settings Architecture
 
 ---
 
 # Current Architecture
 
-The project is currently in active development with architecture refactoring completed.
+The project is currently in active development with registry-driven settings architecture completed.
 
 Architecture documents:
 
@@ -86,6 +87,7 @@ Architecture documents:
 - ColorField
 - NumberField
 - TextField
+- FieldFactory
 - FrameworkInfo
 - DashboardPage
 
@@ -123,7 +125,7 @@ None
 
 # Next Planned Milestone
 
-M14 - TBD
+M15 - TBD
 
 ---
 

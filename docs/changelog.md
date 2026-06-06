@@ -357,3 +357,29 @@ Date: 2026-06-06
 
 - Architecture debt: AdminMenu no longer violates Single Responsibility Principle
 - Architecture debt: Framework version no longer duplicated across classes
+
+---
+
+# M14 - Registry Driven Settings Architecture
+
+Version: 0.14
+
+Date: 2026-06-06
+
+## Added
+
+- SettingInterface extended with getLabel(), getFieldType(), getOptions()
+- FieldFactory class mapping field types to concrete Field classes
+- Registry-driven settings architecture documented in analyze.md
+
+## Changed
+
+- SiteLayoutSetting, LogoSetting, PrimaryColorSetting, TypographySetting, ContainerWidthSetting now provide metadata (label, field type, options)
+- SettingsPage refactored to use SettingsRegistry and FieldFactory instead of hardcoded field definitions
+- Application.php no longer manually constructs Field instances; uses FieldFactory for automatic field creation
+- Version updated to 0.14 in style.css, config/app.php, and README.md
+
+## Fixed
+
+- Architecture debt: SettingsPage no longer contains hardcoded field definitions
+- Architecture debt: Adding a new Setting no longer requires modifying SettingsPage or Application.php

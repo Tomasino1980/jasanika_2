@@ -17,4 +17,22 @@ final class LogoSetting implements SettingInterface
     {
         return '';
     }
+
+    public function getLabel(): string
+    {
+        return 'Logo';
+    }
+
+    public function getFieldType(): string
+    {
+        return 'text';
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getOptions(): array
+    {
+        return [];
+    }
 }

@@ -17,4 +17,22 @@ final class PrimaryColorSetting implements SettingInterface
     {
         return '#2c3e50';
     }
+
+    public function getLabel(): string
+    {
+        return 'Primary Color';
+    }
+
+    public function getFieldType(): string
+    {
+        return 'color';
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getOptions(): array
+    {
+        return [];
+    }
 }
