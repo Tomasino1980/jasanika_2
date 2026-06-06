@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Jasanika\Admin\Fields;
 
+use Jasanika\Admin\SettingsManager;
 use Jasanika\Assets\AssetManager;
 
 /**
