@@ -383,3 +383,31 @@ Date: 2026-06-06
 
 - Architecture debt: SettingsPage no longer contains hardcoded field definitions
 - Architecture debt: Adding a new Setting no longer requires modifying SettingsPage or Application.php
+
+---
+
+# M15 - Field Consolidation
+
+Version: 0.15
+
+Date: 2026-06-06
+
+## Added
+
+- AbstractField as abstract base class consolidating shared field state and constructor
+- AbstractField listed in architecture hierarchy: FieldInterface → AbstractField → Concrete Fields
+
+## Changed
+
+- TextField now extends AbstractField instead of directly implementing FieldInterface
+- ColorField now extends AbstractField instead of directly implementing FieldInterface
+- NumberField now extends AbstractField instead of directly implementing FieldInterface
+- SelectField now extends AbstractField instead of directly implementing FieldInterface
+- Duplicate property declarations (key, label, settingsManager, default, description) removed from all four field classes
+- Duplicate constructor logic removed from all four field classes
+- Duplicate getKey() and getLabel() implementations removed from all four field classes
+- Version updated to 0.15 in style.css, config/app.php, README.md, docs/analyze.md
+
+## Fixed
+
+- Architecture debt: duplicated state and constructor behavior consolidated into AbstractField

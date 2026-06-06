@@ -6,13 +6,8 @@ namespace Jasanika\Admin\Fields;
 
 use Jasanika\Admin\SettingsManager;
 
-final class NumberField implements FieldInterface
+final class NumberField extends AbstractField
 {
-    private string $key;
-    private string $label;
-    private SettingsManager $settingsManager;
-    private ?string $default;
-    private string $description;
     private int $min;
     private int $max;
 
@@ -28,23 +23,10 @@ final class NumberField implements FieldInterface
         int $max = 9999,
         string $description = ''
     ) {
-        $this->key = $key;
-        $this->label = $label;
-        $this->settingsManager = $settingsManager;
-        $this->default = $default;
+        parent::__construct($key, $label, $settingsManager, $default, $description);
+
         $this->min = $min;
         $this->max = $max;
-        $this->description = $description;
-    }
-
-    public function getKey(): string
-    {
-        return $this->key;
-    }
-
-    public function getLabel(): string
-    {
-        return $this->label;
     }
 
     public function getDefault(): string

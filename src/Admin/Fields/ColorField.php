@@ -4,43 +4,8 @@ declare(strict_types=1);
 
 namespace Jasanika\Admin\Fields;
 
-use Jasanika\Admin\SettingsManager;
-
-final class ColorField implements FieldInterface
+final class ColorField extends AbstractField
 {
-    private string $key;
-    private string $label;
-    private SettingsManager $settingsManager;
-    private ?string $default;
-    private string $description;
-
-    /**
-     * @param string|null $default Default hex color. If null, resolved from SettingsRegistry.
-     */
-    public function __construct(
-        string $key,
-        string $label,
-        SettingsManager $settingsManager,
-        ?string $default = null,
-        string $description = ''
-    ) {
-        $this->key = $key;
-        $this->label = $label;
-        $this->settingsManager = $settingsManager;
-        $this->default = $default;
-        $this->description = $description;
-    }
-
-    public function getKey(): string
-    {
-        return $this->key;
-    }
-
-    public function getLabel(): string
-    {
-        return $this->label;
-    }
-
     public function getDefault(): string
     {
         if ($this->default !== null) {

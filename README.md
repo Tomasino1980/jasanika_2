@@ -8,8 +8,8 @@ Jasanika_2 is a custom WordPress theme framework designed with an elegant, bouti
 
 ## Current Status
 
-- **Current Version:** 0.14
-- **Current Milestone:** M14 - Registry Driven Settings Architecture
+- **Current Version:** 0.15
+- **Current Milestone:** M15 - Field Consolidation
 - **Status:** Active Development
 
 ---
@@ -62,6 +62,21 @@ Fields implement `FieldInterface` (render, sanitize, get label, get default). Av
 - `ColorField` — hex color input
 - `NumberField` — numeric range input
 - `TextField` — generic text input
+
+All concrete field classes extend `AbstractField`, which consolidates shared state (key, label, default, description, SettingsManager) and constructor behavior.
+
+Architecture hierarchy:
+
+```
+FieldInterface
+    ↑
+AbstractField
+    ↑
+┌──────┬──────┬──────┬──────┐
+│      │      │      │      │
+Text  Color  Number Select
+Field Field  Field  Field
+```
 
 Settings fields are created automatically via `FieldFactory`, which maps the setting's `getFieldType()` to the appropriate concrete field class. Adding a new Setting no longer requires modifying `SettingsPage` or `Application`.
 
@@ -152,5 +167,5 @@ All development follows the principles defined in [Architecture Rules](docs/arch
 
 Version numbers follow milestone numbering. See [Versioning Policy](docs/versioning.md) for details.
 
-- Development versions: `0.<milestone_number>` (e.g., 0.14 for M14)
+- Development versions: `0.<milestone_number>` (e.g., 0.15 for M15)
 - Version 1.0.0 is reserved for the first feature-complete release and may only be declared by the project owner.

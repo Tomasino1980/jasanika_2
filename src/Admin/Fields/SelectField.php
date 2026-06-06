@@ -6,17 +6,10 @@ namespace Jasanika\Admin\Fields;
 
 use Jasanika\Admin\SettingsManager;
 
-final class SelectField implements FieldInterface
+final class SelectField extends AbstractField
 {
-    private string $key;
-    private string $label;
-    private SettingsManager $settingsManager;
-    private string $description;
-
     /** @var string[] */
     private array $options;
-
-    private ?string $default;
 
     /**
      * @param string[]    $options          Allowed option values.
@@ -30,22 +23,9 @@ final class SelectField implements FieldInterface
         ?string $default = null,
         string $description = ''
     ) {
-        $this->key = $key;
-        $this->label = $label;
-        $this->settingsManager = $settingsManager;
+        parent::__construct($key, $label, $settingsManager, $default, $description);
+
         $this->options = $options;
-        $this->default = $default;
-        $this->description = $description;
-    }
-
-    public function getKey(): string
-    {
-        return $this->key;
-    }
-
-    public function getLabel(): string
-    {
-        return $this->label;
     }
 
     public function getDefault(): string

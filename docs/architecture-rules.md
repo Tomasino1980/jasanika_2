@@ -137,6 +137,33 @@ AI agents must never automatically promote the framework to version 1.0.
 
 ---
 
+# Field Class Consolidation
+
+### Completed in M15
+
+Current state:
+
+FieldInterface
+↑
+AbstractField
+↑
+┌──────┬──────┬──────┬──────┐
+│      │      │      │      │
+Text  Color  Number Select
+Field Field  Field  Field
+
+Rules:
+
+* Introduce abstractions only after real duplication exists.
+* Avoid speculative abstractions.
+* Prefer concrete implementations until duplication is proven.
+
+This architectural debt item is:
+
+Completed in M15.
+
+---
+
 # Architectural Debt Registry
 
 The following areas are intentionally simplified.
