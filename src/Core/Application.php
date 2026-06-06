@@ -75,6 +75,12 @@ final class Application
 
         $this->registerMediaFieldAsset();
 
+        // Register asset lifecycle hooks.
+        // WordPress registration (wp_register_script / wp_register_style)
+        // must happen during proper enqueue hooks, not during framework bootstrap.
+        $this->hookManager->addAction('admin_enqueue_scripts', [$this->assetManager, 'registerWordPressAssets']);
+        $this->hookManager->addAction('wp_enqueue_scripts', [$this->assetManager, 'registerWordPressAssets']);
+
         $fieldFactory = new FieldFactory($this->settingsManager, $this->assetManager);
 
         $settingsPage = new SettingsPage(
@@ -158,24 +164,24 @@ final class Application
     }
 
     /**
-     * Register the media-field.js script via AssetManager.
+     * Register the media-field.js asset definition.
      *
-     * The script is registered early and enqueued later
-     * when MediaField::render() is called.
+     * Stores the asset only. WordPress registration (wp_register_script)
+     * is deferred to the registerWordPressAssets() call, which runs
+     * during admin_enqueue_scripts / wp_enqueue_scripts hooks.
      */
     private function registerMediaFieldAsset(): void
     {
         $script = new Asset(
             'jasanika-media-field',
             get_template_directory_uri() . '/assets/admin/js/media-field.js',
-            '0.17'
-        );
-
-        $this->assetManager->registerScript(
-            $script,
+            '0.17',
             ['jquery'],
+            'all',
             true
         );
+
+        $this->assetManager->registerScript($script);
     }
 
     public function boot(): void

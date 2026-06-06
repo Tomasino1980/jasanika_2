@@ -14,7 +14,7 @@ Status: Active Development
 
 # Current Milestone
 
-M17 - Media Infrastructure Refinement
+M17.1 - Asset Registration Lifecycle Fix
 
 Status: Completed
 
@@ -40,6 +40,7 @@ Status: Completed
 - M15 - Field Consolidation
 - M16 - Media & Logo Foundation
 - M17 - Media Infrastructure Refinement
+- M17.1 - Asset Registration Lifecycle Fix
 
 ---
 

@@ -479,3 +479,28 @@ Date: 2026-06-06
 - Added missing SettingsManager import in MediaField
 - Verified M16 and M17 framework initialization
 - Confirmed admin integration and theme activation
+
+---
+
+# M17.1 - Asset Registration Lifecycle Fix
+
+Version: 0.17
+
+Date: 2026-06-07
+
+## Added
+
+- Asset now supports dependencies, media type, and inFooter metadata via constructor
+- AssetManager::registerWordPressAssets() — deferred WordPress asset registration
+- Asset lifecycle hooks for admin_enqueue_scripts and wp_enqueue_scripts in Application
+- Asset::getDependencies(), Asset::getMedia(), Asset::isInFooter() getters
+
+## Changed
+
+- AssetManager::registerStyle() and registerScript() no longer call wp_register_style / wp_register_script directly — they store asset definitions only
+- Application::registerMediaFieldAsset() passes metadata via Asset constructor instead of registerScript() parameters
+- AssetManager API — registerStyle() and registerScript() accept only an Asset instance (metadata now part of Asset value object)
+
+## Fixed
+
+- WordPress "wp_register_script was called incorrectly" notice — assets are now registered during proper enqueue hooks, not during framework bootstrap

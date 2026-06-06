@@ -17,35 +17,55 @@ final class AssetManager
     private array $scripts = [];
 
     /**
-     * Register a style asset.
+     * Register a style asset definition.
+     *
+     * Stores the asset only. WordPress registration happens later
+     * via registerWordPressAssets() during the enqueue hooks.
      */
-    public function registerStyle(Asset $asset, array $dependencies = [], string $media = 'all'): void
+    public function registerStyle(Asset $asset): void
     {
         $this->styles[$asset->getHandle()] = $asset;
-
-        wp_register_style(
-            $asset->getHandle(),
-            $asset->getSource(),
-            $dependencies,
-            $asset->getVersion(),
-            $media
-        );
     }
 
     /**
-     * Register a script asset.
+     * Register a script asset definition.
+     *
+     * Stores the asset only. WordPress registration happens later
+     * via registerWordPressAssets() during the enqueue hooks.
      */
-    public function registerScript(Asset $asset, array $dependencies = [], bool $inFooter = false): void
+    public function registerScript(Asset $asset): void
     {
         $this->scripts[$asset->getHandle()] = $asset;
+    }
 
-        wp_register_script(
-            $asset->getHandle(),
-            $asset->getSource(),
-            $dependencies,
-            $asset->getVersion(),
-            $inFooter
-        );
+    /**
+     * Register all stored assets with WordPress.
+     *
+     * Must be called during a proper WordPress enqueue hook
+     * (admin_enqueue_scripts or wp_enqueue_scripts), never during
+     * framework bootstrap.
+     */
+    public function registerWordPressAssets(): void
+    {
+        foreach ($this->styles as $handle => $asset) {
+            wp_register_style(
+                $handle,
+                $asset->getSource(),
+                $asset->getDependencies(),
+                $asset->getVersion(),
+                $asset->getMedia()
+            );
+        }
+
+        foreach ($this->scripts as $handle => $asset) {
+            wp_register_script(
+                $handle,
+                $asset->getSource(),
+                $asset->getDependencies(),
+                $asset->getVersion(),
+                $asset->isInFooter()
+            );
+        }
     }
 
     /**
