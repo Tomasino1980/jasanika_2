@@ -14,6 +14,7 @@ use Jasanika\Assets\Asset;
 use Jasanika\Assets\AssetManager;
 use Jasanika\Config\ConfigRepository;
 use Jasanika\Container\Container;
+use Jasanika\Core\ThemeRenderer;
 use Jasanika\Hooks\HookManager;
 use Jasanika\Media\MediaManager;
 use Jasanika\Modules\ModuleManager;
@@ -36,12 +37,13 @@ final class Application
     private SettingsManager $settingsManager;
     private AdminMenu $adminMenu;
     private FrameworkInfo $frameworkInfo;
+    private ThemeRenderer $themeRenderer;
 
     public function __construct()
     {
         $this->frameworkInfo = new FrameworkInfo(
             'Jasanika 2',
-            '0.17'
+            '0.18'
         );
 
         $this->container = new Container();
@@ -74,6 +76,8 @@ final class Application
         $this->adminMenu->register($this->hookManager);
 
         $this->registerMediaFieldAsset();
+        $this->registerFrontendAssets();
+        $this->initThemeRenderer();
 
         // Register asset lifecycle hooks.
         // WordPress registration (wp_register_script / wp_register_style)
@@ -161,6 +165,13 @@ final class Application
                 return $this->frameworkInfo;
             }
         );
+
+        $this->container->register(
+            ThemeRenderer::class,
+            function (Container $container): ThemeRenderer {
+                return $this->themeRenderer;
+            }
+        );
     }
 
     /**
@@ -182,6 +193,52 @@ final class Application
         );
 
         $this->assetManager->registerScript($script);
+    }
+
+    /**
+     * Register frontend CSS and JavaScript asset definitions.
+     *
+     * Stores the assets only. WordPress registration is deferred
+     * to registerWordPressAssets() during the wp_enqueue_scripts hook.
+     */
+    private function registerFrontendAssets(): void
+    {
+        $style = new Asset(
+            'jasanika-frontend',
+            get_template_directory_uri() . '/assets/css/frontend.css',
+            '0.18'
+        );
+
+        $this->assetManager->registerStyle($style);
+
+        $script = new Asset(
+            'jasanika-frontend',
+            get_template_directory_uri() . '/assets/js/frontend.js',
+            '0.18',
+            [],
+            'all',
+            true
+        );
+
+        $this->assetManager->registerScript($script);
+    }
+
+    /**
+     * Initialize the ThemeRenderer for frontend rendering.
+     *
+     * Creates the ThemeRenderer instance with all required dependencies,
+     * registers it in the Container, and calls init() to set up hooks.
+     */
+    private function initThemeRenderer(): void
+    {
+        $this->themeRenderer = new ThemeRenderer(
+            $this->frameworkInfo,
+            $this->settingsManager,
+            $this->assetManager,
+            $this->hookManager
+        );
+
+        $this->themeRenderer->init();
     }
 
     public function boot(): void
@@ -237,5 +294,10 @@ final class Application
     public function getFrameworkInfo(): FrameworkInfo
     {
         return $this->frameworkInfo;
+    }
+
+    public function getThemeRenderer(): ThemeRenderer
+    {
+        return $this->themeRenderer;
     }
 }

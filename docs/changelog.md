@@ -504,3 +504,38 @@ Date: 2026-06-07
 ## Fixed
 
 - WordPress "wp_register_script was called incorrectly" notice — assets are now registered during proper enqueue hooks, not during framework bootstrap
+
+---
+
+# M18 - Frontend Foundation & Theme Rendering
+
+Version: 0.18
+
+Date: 2026-06-07
+
+## Added
+
+- ThemeRenderer as single frontend rendering entry point
+- templates/layout.php — main page layout assembling header, content, footer
+- templates/header.php — HTML document head with wp_head() and body_class()
+- templates/footer.php — HTML document close with wp_footer()
+- templates/content.php — WordPress Loop with framework branding output
+- assets/css/frontend.css — frontend stylesheet with design system integration
+- assets/js/frontend.js — frontend JavaScript placeholder
+- Dynamic CSS custom properties output in wp_head (--jas-container-width, --jas-font-family)
+- ContainerWidthSetting integration via CSS custom property
+- TypographySetting integration via CSS custom property (system/inter/roboto font mapping)
+- Frontend asset registration (frontend.css, frontend.js) via AssetManager
+- ThemeRenderer registered in Container and exposed via Application::getThemeRenderer()
+- getThemeRenderer() method on Application
+- Framework branding visible on frontend (name + version)
+
+## Changed
+
+- Application constructor now creates and initializes ThemeRenderer
+- Version updated to 0.18 in style.css, config/app.php, FrameworkInfo, docs/analyze.md
+- Frontend no longer renders a blank page
+
+## Fixed
+
+- N/A

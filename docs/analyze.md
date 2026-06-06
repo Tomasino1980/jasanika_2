@@ -6,7 +6,7 @@ Jasanika_2
 
 Modular WordPress Framework
 
-Current Version: 0.17
+Current Version: 0.18
 
 Status: Active Development
 
@@ -14,7 +14,7 @@ Status: Active Development
 
 # Current Milestone
 
-M17.1 - Asset Registration Lifecycle Fix
+M18 - Frontend Foundation & Theme Rendering
 
 Status: Completed
 
@@ -41,12 +41,13 @@ Status: Completed
 - M16 - Media & Logo Foundation
 - M17 - Media Infrastructure Refinement
 - M17.1 - Asset Registration Lifecycle Fix
+- M18 - Frontend Foundation & Theme Rendering
 
 ---
 
 # Current Architecture
 
-The project is currently in active development with registry-driven settings architecture completed.
+The project is currently in active development with frontend rendering architecture completed alongside the existing registry-driven settings architecture.
 
 Architecture documents:
 
@@ -97,6 +98,9 @@ Architecture documents:
 - AbstractField
 - MediaManager
 - MediaField
+- ThemeRenderer
+- Frontend templates (header.php, footer.php, layout.php, content.php)
+- Frontend assets (frontend.css, frontend.js)
 
 ---
 
@@ -132,7 +136,7 @@ None
 
 # Next Planned Milestone
 
-M18 - TBD
+M19 - TBD
 
 ---
 

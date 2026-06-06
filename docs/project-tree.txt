@@ -5,6 +5,10 @@ jasanika_2/
 │   ├── admin/
 │   │   └── js/
 │   │       └── media-field.js
+│   ├── css/
+│   │   └── frontend.css
+│   └── js/
+│       └── frontend.js
 ├── config/
 │   ├── app.php
 │   ├── assets.php
@@ -14,6 +18,10 @@ jasanika_2/
 ├── docs/
 ├── src/
 ├── templates/
+│   ├── content.php
+│   ├── footer.php
+│   ├── header.php
+│   └── layout.php
 ├── tests/
 
 ├── functions.php
@@ -32,7 +40,8 @@ src/
 ├── Core/
 │   ├── Bootstrap.php
 │   ├── Application.php
-│   └── FrameworkInfo.php
+│   ├── FrameworkInfo.php
+│   └── ThemeRenderer.php
 ├── Container/
 │   └── Container.php
 ├── Modules/
