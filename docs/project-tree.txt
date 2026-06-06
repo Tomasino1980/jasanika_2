@@ -2,9 +2,13 @@
 jasanika_2/
 
 ├── assets/
+│   ├── admin/
+│   │   └── js/
+│   │       └── media-field.js
 ├── config/
 │   ├── app.php
 │   ├── assets.php
+│   ├── media.php
 │   ├── modules.php
 │   └── settings.php
 ├── docs/

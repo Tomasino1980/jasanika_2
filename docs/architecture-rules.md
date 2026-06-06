@@ -384,6 +384,18 @@ Responsibilities:
 * attachment validation
 * attachment resolution
 
+Media flow:
+
+```
+MediaManager
+    ↓
+Container / Application
+    ↓
+MediaField
+    ↓
+AssetManager → media-field.js → WordPress Media API
+```
+
 MediaManager must never contain:
 
 * frontend rendering
@@ -391,3 +403,54 @@ MediaManager must never contain:
 * responsive image logic
 * CDN integration
 * business logic
+
+---
+
+## JavaScript Placement
+
+Rules:
+
+* Field classes must not contain large inline JavaScript blocks.
+* Reusable JavaScript belongs in AssetManager-managed files.
+* Inline JavaScript is allowed only for small initialization snippets.
+* UI behavior should be separated from field rendering whenever practical.
+
+Current implementation:
+
+* MediaField renders HTML only.
+* media-field.js handles Media Library integration.
+* AssetManager registers and enqueues media-field.js.
+
+---
+
+## Future Media Architecture (Documentation)
+
+The current architecture prepares for future media-based settings.
+No implementation exists beyond what is described below.
+
+Future settings may include:
+
+* Logo
+* Favicon
+* Background Image
+* Theme Images
+
+Future architectural pattern:
+
+```
+MediaSetting (Interface)
+    ↑
+├── LogoSetting
+├── FaviconSetting
+└── BackgroundImageSetting
+```
+
+These would follow the existing registry-driven pattern:
+
+1. Setting class implements SettingInterface
+2. Setting registered in SettingsRegistry
+3. FieldFactory creates MediaField automatically
+4. MediaManager resolves attachment data
+5. AssetManager serves media-field.js
+
+This pattern eliminates special-case implementations for each media setting.

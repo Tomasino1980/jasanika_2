@@ -8,8 +8,8 @@ Jasanika_2 is a custom WordPress theme framework designed with an elegant, bouti
 
 ## Current Status
 
-- **Current Version:** 0.16
-- **Current Milestone:** M16 - Media &amp; Logo Foundation
+- **Current Version:** 0.17
+- **Current Milestone:** M17 - Media Infrastructure Refinement
 - **Status:** Active Development
 
 ---
@@ -51,8 +51,29 @@ Asset management with `AssetManager` for registering and enqueuing CSS and JavaS
 Each setting now provides metadata:
 
 - `getLabel()` — human-readable field label
-- `getFieldType()` — field type (select, color, number, text)
+- `getFieldType()` — field type (select, color, number, text, media)
 - `getOptions()` — allowed option values (for select fields)
+
+### Media Infrastructure
+
+Media support is a first-class framework service:
+
+- **MediaManager** — registered in the Container, accessible via `Application::getMediaManager()`
+- **MediaField** — renders HTML with WordPress Media Library integration
+- **media-field.js** — dedicated JavaScript asset managed by AssetManager (no inline scripts)
+- **AssetManager** — registers and enqueues media-field.js with jQuery dependency
+
+Flow:
+
+```
+MediaManager
+    ↓
+Container / Application
+    ↓
+MediaField
+    ↓
+AssetManager → media-field.js → WordPress Media API
+```
 
 ### Field Architecture
 
@@ -81,6 +102,8 @@ Field Field  Field  Field   Field
 
 Settings fields are created automatically via `FieldFactory`, which maps the setting's `getFieldType()` to the appropriate concrete field class. Adding a new Setting no longer requires modifying `SettingsPage` or `Application`.
 
+FieldFactory now also receives `AssetManager` and passes it to `MediaField` for script enqueuing.
+
 ### Registry-Driven Flow
 
 ```
@@ -102,8 +125,12 @@ Admin page structure:
 - **DashboardPage** — renders the Jasanika Dashboard (framework info)
 - **SettingsPage** — renders the Settings form, coordinating Field objects
 - **SettingsManager** — bridges `SettingsRegistry` with the WordPress Options API
-- **MediaManager** — attachment validation and URL resolution service
+- **MediaManager** — attachment validation and URL resolution service (registered in Container)
 - **AdminMenu** — responsible solely for menu/submenu page registration
+
+### Media JavaScript
+
+Media Library integration JavaScript lives in `assets/admin/js/media-field.js`, registered and enqueued through `AssetManager`. No inline script blocks remain in `MediaField`.
 
 ---
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Jasanika\Admin\Fields;
 
 use Jasanika\Admin\SettingsManager;
+use Jasanika\Assets\AssetManager;
 use Jasanika\Contracts\SettingInterface;
 
 /**
@@ -16,10 +17,12 @@ use Jasanika\Contracts\SettingInterface;
 final class FieldFactory
 {
     private SettingsManager $settingsManager;
+    private AssetManager $assetManager;
 
-    public function __construct(SettingsManager $settingsManager)
+    public function __construct(SettingsManager $settingsManager, AssetManager $assetManager)
     {
         $this->settingsManager = $settingsManager;
+        $this->assetManager = $assetManager;
     }
 
     /**
@@ -59,6 +62,7 @@ final class FieldFactory
                 $setting->getKey(),
                 $setting->getLabel(),
                 $this->settingsManager,
+                $this->assetManager,
                 $setting->getDefaultValue(),
             ),
             default => throw new \RuntimeException(

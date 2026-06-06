@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Jasanika\Admin\Fields;
 
+use Jasanika\Assets\AssetManager;
+
 /**
  * Media selection field for the WordPress Settings API.
  *
@@ -11,15 +13,42 @@ namespace Jasanika\Admin\Fields;
  * Stores attachment IDs only. URLs, file paths, and image metadata
  * are never stored — WordPress attachment IDs are the single source of truth.
  *
+ * JavaScript for Media Library integration is loaded from a dedicated
+ * asset file via the AssetManager.
+ *
  * Architecture:
  * FieldInterface
  *     ↑
  * AbstractField
  *     ↑
  * MediaField
+ *
+ * Flow:
+ * MediaField::render()
+ *     ↓
+ * wp_enqueue_media() — WordPress Media API
+ *     ↓
+ * AssetManager::enqueueScript() — media-field.js
+ *     ↓
+ * HTML output (hidden input, preview, buttons)
  */
 final class MediaField extends AbstractField
 {
+    private AssetManager $assetManager;
+
+    public function __construct(
+        string $key,
+        string $label,
+        SettingsManager $settingsManager,
+        AssetManager $assetManager,
+        ?string $default = null,
+        string $description = ''
+    ) {
+        parent::__construct($key, $label, $settingsManager, $default, $description);
+
+        $this->assetManager = $assetManager;
+    }
+
     public function getDefault(): string
     {
         if ($this->default !== null) {
@@ -41,6 +70,9 @@ final class MediaField extends AbstractField
      * Outputs a hidden input for the attachment ID,
      * a preview of the selected image (if one exists),
      * and a "Select Image" button that opens the WordPress Media Library.
+     *
+     * Media Library JavaScript is loaded via AssetManager,
+     * not inline — ensuring separation of concerns.
      */
     public function render(): void
     {
@@ -52,7 +84,11 @@ final class MediaField extends AbstractField
 
         $attachmentId = absint($current);
 
+        // WordPress Media API must be available before the external script runs.
         wp_enqueue_media();
+
+        // Load the dedicated Media Library integration script.
+        $this->assetManager->enqueueScript('jasanika-media-field');
 
         printf(
             '<input type="hidden" id="%s" name="%s" value="%s" class="jasanika-media-input" />',
@@ -92,81 +128,6 @@ final class MediaField extends AbstractField
         }
 
         echo '<p class="description">' . esc_html($this->description) . '</p>';
-
-        $this->renderMediaScript();
-    }
-
-    /**
-     * Inline JavaScript for WordPress Media Library integration.
-     *
-     * Uses the WordPress Media Frame API to allow image selection.
-     * jQuery is used because it is required by the WordPress Media Library API.
-     */
-    private function renderMediaScript(): void
-    {
-        ?>
-        <script type="text/javascript">
-        (function($) {
-            var frame;
-            var target = '<?php echo esc_js($this->key); ?>';
-
-            $('.jasanika-media-select[data-target="' + target + '"]').on('click', function(e) {
-                e.preventDefault();
-
-                if (frame) {
-                    frame.open();
-                    return;
-                }
-
-                frame = wp.media({
-                    title: '<?php echo esc_js(__('Select Image', 'jasanika')); ?>',
-                    button: {
-                        text: '<?php echo esc_js(__('Use Image', 'jasanika')); ?>'
-                    },
-                    multiple: false
-                });
-
-                frame.on('select', function() {
-                    var attachment = frame.state().get('selection').first().toJSON();
-                    var $input = $('#' + target);
-                    var $preview = $input.closest('td').find('.jasanika-media-preview');
-                    var $removeBtn = $input.closest('td').find('.jasanika-media-remove');
-
-                    $input.val(attachment.id);
-
-                    var imageUrl = attachment.url;
-                    if (attachment.sizes && attachment.sizes.medium) {
-                        imageUrl = attachment.sizes.medium.url;
-                    }
-
-                    $preview.html(
-                        '<img src="' + imageUrl + '" style="max-width: 200px; height: auto; border-radius: 4px;" class="jasanika-media-image" />'
-                    );
-
-                    if ($removeBtn.length === 0) {
-                        $input.closest('td').find('.jasanika-media-select').after(
-                            ' <button type="button" class="button jasanika-media-remove" data-target="' + target + '"><?php echo esc_js(__('Remove', 'jasanika')); ?></button>'
-                        );
-
-                        $('.jasanika-media-remove[data-target="' + target + '"]').on('click', function() {
-                            $('#' + target).val('');
-                            $input.closest('td').find('.jasanika-media-preview').html('');
-                            $(this).remove();
-                        });
-                    }
-                });
-
-                frame.open();
-            });
-
-            $('.jasanika-media-remove[data-target="' + target + '"]').on('click', function() {
-                $('#' + target).val('');
-                $('#' + target).closest('td').find('.jasanika-media-preview').html('');
-                $(this).remove();
-            });
-        })(jQuery);
-        </script>
-        <?php
     }
 
     /**

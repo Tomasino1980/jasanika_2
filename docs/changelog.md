@@ -245,6 +245,35 @@ Date: 2026-06-06
 
 ---
 
+# M17 - Media Infrastructure Refinement
+
+Version: 0.17
+
+Date: 2026-06-06
+
+## Added
+
+- MediaManager registered in Container and exposed via Application::getMediaManager()
+- assets/admin/js/media-field.js — dedicated JavaScript for Media Library integration
+- config/media.php with preview_size configuration
+- JavaScript Placement rules in architecture-rules.md
+- Future Media Architecture documentation in architecture-rules.md
+
+## Changed
+
+- MediaField no longer contains inline JavaScript — extracted to external asset
+- MediaField now receives AssetManager via constructor for script enqueuing
+- FieldFactory now receives and passes AssetManager to MediaField
+- AssetManager registers and enqueues media-field.js (jQuery dependency, footer)
+- Version updated to 0.17 in style.css, config/app.php, README.md, docs/analyze.md, FrameworkInfo
+
+## Fixed
+
+- Architecture debt: MediaField violated Single Responsibility Principle with inline JavaScript
+- Architecture debt: MediaManager was not integrated into framework services (Container, Application)
+
+---
+
 # M10 - Settings Registry
 
 Version: 0.10

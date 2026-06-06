@@ -10,10 +10,12 @@ use Jasanika\Admin\Fields\FieldFactory;
 use Jasanika\Admin\Pages\DashboardPage;
 use Jasanika\Admin\SettingsManager;
 use Jasanika\Admin\SettingsPage;
+use Jasanika\Assets\Asset;
 use Jasanika\Assets\AssetManager;
 use Jasanika\Config\ConfigRepository;
 use Jasanika\Container\Container;
 use Jasanika\Hooks\HookManager;
+use Jasanika\Media\MediaManager;
 use Jasanika\Modules\ModuleManager;
 use Jasanika\Settings\ContainerWidthSetting;
 use Jasanika\Settings\LogoSetting;
@@ -29,6 +31,7 @@ final class Application
     private ConfigRepository $configRepository;
     private HookManager $hookManager;
     private AssetManager $assetManager;
+    private MediaManager $mediaManager;
     private SettingsRegistry $settingsRegistry;
     private SettingsManager $settingsManager;
     private AdminMenu $adminMenu;
@@ -38,7 +41,7 @@ final class Application
     {
         $this->frameworkInfo = new FrameworkInfo(
             'Jasanika 2',
-            '0.16'
+            '0.17'
         );
 
         $this->container = new Container();
@@ -46,6 +49,7 @@ final class Application
         $this->configRepository = new ConfigRepository();
         $this->hookManager = new HookManager();
         $this->assetManager = new AssetManager();
+        $this->mediaManager = new MediaManager();
 
         $this->settingsRegistry = new SettingsRegistry();
         $this->settingsRegistry->register(new SiteLayoutSetting());
@@ -69,7 +73,9 @@ final class Application
         $this->adminMenu->registerPage($dashboardAdminPage);
         $this->adminMenu->register($this->hookManager);
 
-        $fieldFactory = new FieldFactory($this->settingsManager);
+        $this->registerMediaFieldAsset();
+
+        $fieldFactory = new FieldFactory($this->settingsManager, $this->assetManager);
 
         $settingsPage = new SettingsPage(
             $this->frameworkInfo,
@@ -116,6 +122,13 @@ final class Application
         );
 
         $this->container->register(
+            MediaManager::class,
+            function (Container $container): MediaManager {
+                return $this->mediaManager;
+            }
+        );
+
+        $this->container->register(
             SettingsManager::class,
             function (Container $container): SettingsManager {
                 return $this->settingsManager;
@@ -141,6 +154,27 @@ final class Application
             function (Container $container): FrameworkInfo {
                 return $this->frameworkInfo;
             }
+        );
+    }
+
+    /**
+     * Register the media-field.js script via AssetManager.
+     *
+     * The script is registered early and enqueued later
+     * when MediaField::render() is called.
+     */
+    private function registerMediaFieldAsset(): void
+    {
+        $script = new Asset(
+            'jasanika-media-field',
+            get_template_directory_uri() . '/assets/admin/js/media-field.js',
+            '0.17'
+        );
+
+        $this->assetManager->registerScript(
+            $script,
+            ['jquery'],
+            true
         );
     }
 
@@ -172,6 +206,11 @@ final class Application
     public function getAssetManager(): AssetManager
     {
         return $this->assetManager;
+    }
+
+    public function getMediaManager(): MediaManager
+    {
+        return $this->mediaManager;
     }
 
     public function getSettingsManager(): SettingsManager
