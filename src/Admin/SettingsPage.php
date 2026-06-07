@@ -333,7 +333,7 @@ final class SettingsPage
             FormRow::render(
                 $setting->getLabel(),
                 $inputHtml,
-                $setting->getDescription(),
+                '',
                 $key
             );
         }
@@ -378,7 +378,7 @@ final class SettingsPage
                 FormRow::render(
                     $setting->getLabel(),
                     $inputHtml,
-                    $setting->getDescription(),
+                    '',
                     $key
                 );
             }
