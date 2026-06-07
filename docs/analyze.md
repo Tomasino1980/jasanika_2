@@ -6,7 +6,7 @@ Jasanika_2
 
 Modular WordPress Framework
 
-Current Version: 0.20
+Current Version: 0.21
 
 Status: Active Development
 
@@ -14,7 +14,7 @@ Status: Active Development
 
 # Current Milestone
 
-M20 - Navigation & Site Identity Architecture
+M21 - Widget Areas & Layout Regions Architecture
 
 Status: Completed
 
@@ -44,6 +44,7 @@ Status: Completed
 - M18 - Frontend Foundation & Theme Rendering
 - M19 - Content Rendering & Template Architecture
 - M20 - Navigation & Site Identity Architecture
+- M21 - Widget Areas & Layout Regions Architecture
 
 ---
 
@@ -115,6 +116,12 @@ Architecture documents:
 - Footer composition with nav, copyright, version
 - Navigation styling (header, dropdowns, mobile toggle, footer)
 - Responsive navigation layout (768px, 1024px breakpoints)
+- WidgetAreaManager with sidebar registration (primary-sidebar, footer-left, footer-center, footer-right)
+- LayoutRegionRenderer with sidebar and footer region rendering
+- Content + Sidebar layout (right sidebar) support
+- Widget styling (widget titles, lists, forms, responsive layout)
+- Footer widget regions with responsive three-column grid
+- Sidebar template with graceful empty state
 
 ---
 
@@ -150,7 +157,7 @@ None
 
 # Next Planned Milestone
 
-M21 - TBD
+M22 - TBD
 
 ---
 

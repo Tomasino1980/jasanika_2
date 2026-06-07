@@ -18,9 +18,10 @@ use Jasanika\Navigation\NavigationManager;
  * - Render footer with navigation and copyright
  * - Resolve content template based on WordPress hierarchy
  * - Render content area (page, single, archive, search, 404)
+ * - Render content area with optional sidebar layout
  * - Integrate frontend settings (container width, typography)
  * - Register frontend asset enqueuing
- * - Expose NavigationManager and SiteIdentityRenderer to templates
+ * - Expose NavigationManager, SiteIdentityRenderer, LayoutRegionRenderer to templates
  *
  * No direct template includes outside this class.
  * No frontend rendering logic in Application.
@@ -41,6 +42,7 @@ final class ThemeRenderer
     private HookManager $hookManager;
     private NavigationManager $navigationManager;
     private SiteIdentityRenderer $siteIdentityRenderer;
+    private LayoutRegionRenderer $layoutRegionRenderer;
 
     public function __construct(
         FrameworkInfo $frameworkInfo,
@@ -48,7 +50,8 @@ final class ThemeRenderer
         AssetManager $assetManager,
         HookManager $hookManager,
         NavigationManager $navigationManager,
-        SiteIdentityRenderer $siteIdentityRenderer
+        SiteIdentityRenderer $siteIdentityRenderer,
+        LayoutRegionRenderer $layoutRegionRenderer
     ) {
         $this->frameworkInfo = $frameworkInfo;
         $this->settingsManager = $settingsManager;
@@ -56,6 +59,7 @@ final class ThemeRenderer
         $this->hookManager = $hookManager;
         $this->navigationManager = $navigationManager;
         $this->siteIdentityRenderer = $siteIdentityRenderer;
+        $this->layoutRegionRenderer = $layoutRegionRenderer;
     }
 
     /**
@@ -246,6 +250,63 @@ final class ThemeRenderer
     public function getSiteIdentityRenderer(): SiteIdentityRenderer
     {
         return $this->siteIdentityRenderer;
+    }
+
+    /**
+     * Get the LayoutRegionRenderer instance.
+     */
+    public function getLayoutRegionRenderer(): LayoutRegionRenderer
+    {
+        return $this->layoutRegionRenderer;
+    }
+
+    /**
+     * Render the content area with optional sidebar layout.
+     *
+     * If the primary sidebar has active widgets, renders a two-column
+     * layout (content + sidebar). Otherwise renders content full width.
+     *
+     * Called from templates/layout.php.
+     */
+    public static function renderContentArea(): void
+    {
+        $instance = self::$instance;
+
+        if (!$instance) {
+            return;
+        }
+
+        $layoutRenderer = $instance->layoutRegionRenderer;
+
+        if ($layoutRenderer->hasSidebar()) {
+            echo '<div class="jas-content-with-sidebar">' . "\n";
+            echo '  <main class="jas-content-main jas-content-main--with-sidebar">' . "\n";
+            self::renderContent();
+            echo '  </main>' . "\n";
+            $layoutRenderer->renderSidebar();
+            echo '</div>' . "\n";
+        } else {
+            echo '<div class="jas-content-full">' . "\n";
+            self::renderContent();
+            echo '</div>' . "\n";
+        }
+    }
+
+    /**
+     * Render the sidebar widget region.
+     *
+     * Delegates to LayoutRegionRenderer for accessible markup.
+     * Called from templates/sidebar.php.
+     */
+    public static function renderSidebar(): void
+    {
+        $instance = self::$instance;
+
+        if (!$instance) {
+            return;
+        }
+
+        $instance->layoutRegionRenderer->renderSidebar();
     }
 
     /**

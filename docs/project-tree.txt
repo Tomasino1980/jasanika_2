@@ -34,7 +34,8 @@ jasanika_2/
 │   ├── layout.php
 │   ├── page.php
 │   ├── search.php
-│   └── single.php
+│   ├── single.php
+│   └── sidebar.php
 ├── tests/
 
 ├── functions.php
@@ -55,6 +56,7 @@ src/
 │   ├── Application.php
 │   ├── FrameworkInfo.php
 │   ├── ContentRenderer.php
+│   ├── LayoutRegionRenderer.php
 │   ├── SiteIdentityRenderer.php
 │   └── ThemeRenderer.php
 ├── Container/
@@ -97,6 +99,8 @@ src/
 │   └── MediaManager.php
 ├── Navigation/
 │   └── NavigationManager.php
+├── Widgets/
+│   └── WidgetAreaManager.php
 ├── Support/
 
 ---

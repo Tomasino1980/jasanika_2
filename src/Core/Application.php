@@ -19,6 +19,7 @@ use Jasanika\Hooks\HookManager;
 use Jasanika\Media\MediaManager;
 use Jasanika\Modules\ModuleManager;
 use Jasanika\Navigation\NavigationManager;
+use Jasanika\Widgets\WidgetAreaManager;
 use Jasanika\Settings\ContainerWidthSetting;
 use Jasanika\Settings\LogoSetting;
 use Jasanika\Settings\PrimaryColorSetting;
@@ -40,13 +41,15 @@ final class Application
     private FrameworkInfo $frameworkInfo;
     private NavigationManager $navigationManager;
     private SiteIdentityRenderer $siteIdentityRenderer;
+    private WidgetAreaManager $widgetAreaManager;
+    private LayoutRegionRenderer $layoutRegionRenderer;
     private ThemeRenderer $themeRenderer;
 
     public function __construct()
     {
         $this->frameworkInfo = new FrameworkInfo(
             'Jasanika 2',
-            '0.20'
+            '0.21'
         );
 
         $this->container = new Container();
@@ -87,6 +90,11 @@ final class Application
             $this->settingsManager,
             $this->mediaManager
         );
+
+        // Initialize widget area and layout region services
+        $this->widgetAreaManager = new WidgetAreaManager($this->hookManager);
+        $this->widgetAreaManager->register();
+        $this->layoutRegionRenderer = new LayoutRegionRenderer($this->widgetAreaManager);
 
         $this->initThemeRenderer();
 
@@ -197,6 +205,20 @@ final class Application
                 return $this->themeRenderer;
             }
         );
+
+        $this->container->register(
+            WidgetAreaManager::class,
+            function (Container $container): WidgetAreaManager {
+                return $this->widgetAreaManager;
+            }
+        );
+
+        $this->container->register(
+            LayoutRegionRenderer::class,
+            function (Container $container): LayoutRegionRenderer {
+                return $this->layoutRegionRenderer;
+            }
+        );
     }
 
     /**
@@ -231,7 +253,7 @@ final class Application
         $style = new Asset(
             'jasanika-frontend',
             get_template_directory_uri() . '/assets/css/frontend.css',
-            '0.20'
+            '0.21'
         );
 
         $this->assetManager->registerStyle($style);
@@ -239,7 +261,7 @@ final class Application
         $script = new Asset(
             'jasanika-frontend',
             get_template_directory_uri() . '/assets/js/frontend.js',
-            '0.20',
+            '0.21',
             [],
             'all',
             true
@@ -262,7 +284,8 @@ final class Application
             $this->assetManager,
             $this->hookManager,
             $this->navigationManager,
-            $this->siteIdentityRenderer
+            $this->siteIdentityRenderer,
+            $this->layoutRegionRenderer
         );
 
         $this->themeRenderer->init();
@@ -336,5 +359,15 @@ final class Application
     public function getThemeRenderer(): ThemeRenderer
     {
         return $this->themeRenderer;
+    }
+
+    public function getWidgetAreaManager(): WidgetAreaManager
+    {
+        return $this->widgetAreaManager;
+    }
+
+    public function getLayoutRegionRenderer(): LayoutRegionRenderer
+    {
+        return $this->layoutRegionRenderer;
     }
 }

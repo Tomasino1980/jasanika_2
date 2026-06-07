@@ -601,3 +601,41 @@ Date: 2026-06-07
 ## Fixed
 
 - N/A
+
+---
+
+# M21 - Widget Areas & Layout Regions Architecture
+
+Version: 0.21
+
+Date: 2026-06-07
+
+## Added
+
+- WidgetAreaManager with sidebar registration (primary-sidebar, footer-left, footer-center, footer-right)
+- LayoutRegionRenderer with sidebar, footer region, and generic region rendering
+- templates/sidebar.php with graceful empty state handling
+- Content + Sidebar layout (right sidebar) support in layout.php
+- Footer widget regions rendered before footer navigation
+- Widget styling (titles, lists, forms, responsive layout)
+- Sidebar layout with responsive grid (single column on mobile, sidebar on tablet/desktop)
+- Footer widget three-column responsive grid
+- Accessibility: semantic <aside> and <section> markup for widget regions
+- getLayoutRegionRenderer() on ThemeRenderer and Application
+- WidgetAreaManager and LayoutRegionRenderer registered in Container
+- Empty state handling: no placeholder text visible to visitors
+
+## Changed
+
+- ThemeRenderer constructor now accepts LayoutRegionRenderer
+- ThemeRenderer::renderContentArea() — new method for content+sidebar layout
+- ThemeRenderer::renderSidebar() — new static method for sidebar rendering
+- layout.php now supports content-only and content-with-sidebar layouts
+- footer.php now renders footer widget regions before footer navigation
+- frontend.css extended with widget, sidebar, and footer widget styles
+- Application.php now instantiates WidgetAreaManager and LayoutRegionRenderer
+- Version updated to 0.21 in style.css, config/app.php, FrameworkInfo, docs/analyze.md
+
+## Fixed
+
+- N/A
