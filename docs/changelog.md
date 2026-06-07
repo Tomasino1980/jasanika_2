@@ -65,6 +65,43 @@ Date: 2026-06-07
 
 ---
 
+# M29 - Settings UI Refactor & Design System
+
+Version: 0.29
+
+Date: 2026-06-07
+
+## Added
+
+- Two-level settings navigation: top-level tabs (General, Appearance, Content, Marketing, Advanced) with second-level sub-navigation for sections
+- SettingsCard system (SettingsCard.php): reusable card component with header (title), optional description, settings content, and optional action buttons
+- AdminDesignRegistry (AdminDesignRegistry.php): admin design tokens — Radius (XS=2px, SM=4px, MD=6px), Spacing (8px grid), Colors (border, surface, background, text, muted, accent), Shadows (minimal)
+- DesignStyleRegistry (DesignStyleRegistry.php): UI style presets — Classic, Modern, Glass (Foundation Only)
+- Enhanced Settings Search: filters cards, highlights matches, hides irrelevant sections, shows result count
+- Collapsible Sections: large settings groups with first-group-only expanded by default, field key-based grouping
+- Content sub-sections: Blog, Search, Archives, Single Post (architecture ready)
+- Marketing sub-sections: Social, Analytics, SEO, Integrations (architecture ready)
+- Advanced sub-sections: Performance, Debug, Custom CSS, Custom JS (architecture ready)
+- Responsive admin UI: breakpoints at 1366px, 1024px, 782px, 600px — no horizontal scrolling
+- Subtle border system using token-driven rgba values throughout admin CSS
+- Preset card selector with enhanced visual states (hover, active, focus)
+
+## Changed
+
+- Application.php — version 0.29, AdminDesignRegistry/DesignStyleRegistry initialization, expanded settings categories (12 new sections), updated PHPDoc with M29 references
+- SettingsPage — V4 with two-level navigation (tabs + sub-tabs), SettingsCard-based field rendering, collapsible groups for large sections
+- SettingsSearch — enhanced filtering algorithm: filters whole cards, highlights titles and descriptions, hides irrelevant sub-tabs, debounced input
+- admin.css — complete rewrite: --jas-admin-* design token system, SettingsCard component, two-level navigation styles, responsive breakpoints (4 breakpoints), border system with rgba tokens
+- config/app.php — version updated to 0.29
+- style.css — version updated to 0.29
+- assets/css/components.css, tokens.css, frontend.css, header.css — version bump to 0.29
+
+## Fixed
+
+- PHP syntax error in Application.php (PHPDoc closing brace restored, class declaration reinserted after edit corruption)
+
+---
+
 # M27 - Theme Presets & Settings UX Framework
 
 Version: 0.27

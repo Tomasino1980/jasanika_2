@@ -7,16 +7,20 @@ namespace Jasanika\Admin\Search;
 /**
  * Settings Search for the Jasanika Settings UI.
  *
- * Provides a client-side search field that filters settings sections
- * and fields by label, description, and category. No page reload required.
+ * Provides client-side real-time filtering that:
+ * - Filters settings cards by title, description, and field content
+ * - Highlights matching field labels and descriptions
+ * - Displays result count (visible / total)
+ * - Hides irrelevant sections (sub-tabs and cards with no matches)
+ * - Shows matching parent sections when a child field matches
  *
- * M27 — Theme Presets & Settings UX Framework.
+ * M29 — Settings UI Refactor & Design System.
+ * Enhanced with group filtering, section visibility, and better UX.
  *
  * Rendering flow:
- * 1. Render search input at the top of the settings page
- * 2. Enqueue inline JavaScript that filters section cards in real time
- * 3. Matching sections are shown; non-matching sections are hidden
- * 4. Search highlights matched labels
+ * 1. Render search input with clear icon
+ * 2. Render inline JavaScript for real-time filtering
+ * 3. JS filters settings cards and shows/hides sub-navigation items
  */
 final class SettingsSearch
 {
@@ -31,11 +35,10 @@ final class SettingsSearch
                 type="search"
                 id="jas-settings-search-input"
                 class="jas-settings-search__input"
-                placeholder="Search Settings..."
+                placeholder="Search settings..."
                 aria-label="Search settings"
                 autocomplete="off"
             >
-            <span class="jas-settings-search__icon" aria-hidden="true">&#128269;</span>
             <span id="jas-settings-search-count" class="jas-settings-search__count"></span>
         </div>
         <?php
@@ -45,66 +48,151 @@ final class SettingsSearch
 
     /**
      * Render the inline JavaScript for client-side filtering.
+     *
+     * M29: Enhanced to filter whole cards, show/hide sub-nav items,
+     * and provide better visual feedback.
      */
     private static function renderScript(): void
     {
         ?>
 <script>
 (function() {
+    'use strict';
+
     var input = document.getElementById('jas-settings-search-input');
     if (!input) return;
 
     var countEl = document.getElementById('jas-settings-search-count');
 
-    input.addEventListener('input', function() {
-        var query = this.value.toLowerCase().trim();
-        var sections = document.querySelectorAll('.jas-settings__section');
+    /**
+     * Debounce utility to avoid excessive filtering on rapid input.
+     */
+    function debounce(fn, delay) {
+        var timer = null;
+        return function() {
+            var context = this;
+            var args = arguments;
+            if (timer) clearTimeout(timer);
+            timer = setTimeout(function() {
+                fn.apply(context, args);
+            }, delay);
+        };
+    }
+
+    /**
+     * Escape regex special characters for safe search highlighting.
+     */
+    function escapeRegex(str) {
+        return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
+    /**
+     * Restore original text in an element by removing highlight marks.
+     */
+    function restoreOriginal(el) {
+        var marks = el.querySelectorAll('.jas-search-highlight');
+        marks.forEach(function(mark) {
+            var parent = mark.parentNode;
+            if (parent) {
+                parent.replaceChild(document.createTextNode(mark.textContent), mark);
+                parent.normalize();
+            }
+        });
+    }
+
+    /**
+     * Highlight all occurrences of query in the given text node parent.
+     */
+    function highlightText(el, query) {
+        if (!el || el.querySelector('.jas-search-highlight')) return;
+
+        var text = el.textContent || '';
+        var lower = text.toLowerCase();
+        var idx = lower.indexOf(query);
+        if (idx === -1) return;
+
+        var regex = new RegExp('(' + escapeRegex(query) + ')', 'gi');
+        el.innerHTML = text.replace(regex, '<mark class="jas-search-highlight">$1</mark>');
+    }
+
+    var doFilter = debounce(function() {
+        var query = input.value.toLowerCase().trim();
+        var cards = document.querySelectorAll('.jas-settings-card');
         var visibleCount = 0;
 
-        sections.forEach(function(section) {
-            var card = section.querySelector('.jas-card');
-            if (!card) return;
+        cards.forEach(function(card) {
+            var text = (card.textContent || '').toLowerCase();
+            var title = card.querySelector('.jas-settings-card__title');
+            var desc  = card.querySelector('.jas-settings-card__description');
 
-            var text = card.textContent.toLowerCase();
+            // Restore original title and description before re-checking
+            if (title) restoreOriginal(title);
+            if (desc)  restoreOriginal(desc);
+
             var match = query === '' || text.indexOf(query) !== -1;
 
-            section.style.display = match ? '' : 'none';
-            if (match) visibleCount++;
+            card.style.display = match ? '' : 'none';
 
-            // Highlight matching text in labels
-            if (query !== '') {
-                var labels = section.querySelectorAll('.jas-card__body label, .jas-card__body th, .jas-card__body .jas-form-field__label');
-                labels.forEach(function(label) {
-                    var original = label.getAttribute('data-jas-original');
-                    if (!original) {
-                        original = label.innerHTML;
-                        label.setAttribute('data-jas-original', original);
-                    }
-                    if (original.toLowerCase().indexOf(query) !== -1) {
-                        var regex = new RegExp('(' + query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
-                        label.innerHTML = original.replace(regex, '<mark class="jas-search-highlight">$1</mark>');
-                    } else {
-                        label.innerHTML = original;
-                    }
-                });
-            } else {
-                // Restore original text
-                var labels = section.querySelectorAll('[data-jas-original]');
-                labels.forEach(function(label) {
-                    label.innerHTML = label.getAttribute('data-jas-original');
-                });
+            if (match) {
+                visibleCount++;
+
+                // Highlight title
+                if (title && query !== '' && (title.textContent || '').toLowerCase().indexOf(query) !== -1) {
+                    highlightText(title, query);
+                }
+
+                // Highlight description
+                if (desc && query !== '' && (desc.textContent || '').toLowerCase().indexOf(query) !== -1) {
+                    highlightText(desc, query);
+                }
+
+                // Highlight field labels inside the card body
+                if (query !== '') {
+                    var labels = card.querySelectorAll('.jas-settings-card__body th label, .jas-settings-card__body .form-table th');
+                    labels.forEach(function(label) {
+                        restoreOriginal(label);
+                        if ((label.textContent || '').toLowerCase().indexOf(query) !== -1) {
+                            highlightText(label, query);
+                        }
+                    });
+                }
             }
         });
 
+        // Update sub-tab visibility — hide sub-tabs whose section card is hidden
+        var subTabs = document.querySelectorAll('.jas-sub-tab');
+        subTabs.forEach(function(tab) {
+            var sectionSlug = tab.getAttribute('data-section');
+            if (!sectionSlug) return;
+            var card = document.querySelector('.jas-settings-card[id*="' + sectionSlug + '"]');
+            if (!card) {
+                var allCards = document.querySelectorAll('.jas-settings-card');
+                var found = false;
+                allCards.forEach(function(c) {
+                    if (c.id && c.id.indexOf(sectionSlug) !== -1) found = true;
+                });
+                if (!found) return;
+                tab.style.display = card && card.style.display === 'none' ? 'none' : '';
+            } else {
+                tab.style.display = card.style.display === 'none' ? 'none' : '';
+            }
+        });
+
+        // Update result count
         if (countEl) {
-            var total = sections.length;
+            var total = cards.length;
             if (query === '') {
                 countEl.textContent = '';
             } else {
                 countEl.textContent = visibleCount + ' / ' + total;
             }
         }
-    });
+    }, 150);
+
+    input.addEventListener('input', doFilter);
+
+    // Initial state — clear any stale highlights
+    doFilter();
 })();
 </script>
         <?php

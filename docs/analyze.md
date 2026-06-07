@@ -6,13 +6,13 @@ Jasanika_2
 
 Modular WordPress Framework
 
-Current Version: 0.28
+Current Version: 0.29
 
 ---
 
 # Current Milestone
 
-M28.2 - Bootstrap Documentation & Architecture Cleanup
+M29 - Settings UI Refactor & Design System
 
 Status: Completed
 
@@ -52,6 +52,7 @@ Status: Completed
 - M28 - Dynamic Header Builder
 - M28.1 - Constructor Dependency Order Fix
 - M28.2 - Bootstrap Documentation & Architecture Cleanup
+- M29 - Settings UI Refactor & Design System
 
 ---
 
@@ -182,6 +183,22 @@ The project has been transformed into a configurable Site Builder with a user-fr
 
 ---
 
+**Settings UI Refactor & Design System (M29):**
+- Two-level settings navigation: top-level tabs (General, Appearance, Content, Marketing, Advanced) with second-level sub-navigation for sections
+- Settings Card System (SettingsCard.php): reusable card component with header (title), optional description, settings content, and optional action buttons
+- Admin Design Registry (AdminDesignRegistry.php): design tokens for admin UI — Radius (XS=2px, SM=4px, MD=6px), Spacing (8px grid), Colors (border, surface, background, text, muted, accent), Shadows (minimal)
+- Subtle border system using token-driven values (rgba borders, no strong separators)
+- Design Style Registry (DesignStyleRegistry.php): UI style presets — Classic, Modern, Glass (Foundation Only, no visual implementation)
+- Enhanced Settings Search: filters cards, highlights matches, hides irrelevant sections, shows result count
+- Collapsible Sections: large settings groups with only first section expanded by default, field key-based grouping
+- Responsive admin UI: breakpoints at 1366px, 1024px, 782px, 600px — no horizontal scrolling
+- Content sub-sections: Blog, Search, Archives, Single Post (architecture ready)
+- Marketing sub-sections: Social, Analytics, SEO, Integrations (architecture ready)
+- Advanced sub-sections: Performance, Debug, Custom CSS, Custom JS (architecture ready)
+- Admin CSS rewritten with --jas-admin-* design tokens, card system, responsive breakpoints, and improved visual hierarchy
+
+---
+
 # Implemented Components
 
 - Composer
@@ -300,6 +317,17 @@ The project has been transformed into a configurable Site Builder with a user-fr
 - **M28 NEW:** assets/js/header.js (sticky, search overlay, mobile nav)
 - **M28 NEW:** WP_DEBUG header configuration debug output
 - **M28 NEW:** Expanded header settings (layout, responsive heights, CTA, top bar)
+- **M29 NEW:** Two-level settings navigation (top-level tabs + second-level sub-navigation)
+- **M29 NEW:** SettingsCard system — reusable card component for all settings fields
+- **M29 NEW:** AdminDesignRegistry — admin design tokens (radius, spacing, colors, shadows)
+- **M29 NEW:** DesignStyleRegistry — UI style presets (Classic, Modern, Glass foundation)
+- **M29 NEW:** Enhanced settings search — filters cards, highlights, hides irrelevant sections
+- **M29 NEW:** Collapsible sections with first-group-only expanded by default
+- **M29 NEW:** Content sub-sections (Blog, Search, Archives, Single Post)
+- **M29 NEW:** Marketing sub-sections (Social, Analytics, SEO, Integrations)
+- **M29 NEW:** Advanced sub-sections (Performance, Debug, Custom CSS, Custom JS)
+- **M29 NEW:** Responsive admin UI — breakpoints at 1366px, 1024px, 782px, 600px
+- **M29 NEW:** Admin CSS rewritten with --jas-admin-* tokens, card system, subtle borders
 
 ---
 
@@ -335,7 +363,7 @@ None
 
 # Next Planned Milestone
 
-M29 - Advanced Color System
+M30 - Advanced Color System
 
 ---
 

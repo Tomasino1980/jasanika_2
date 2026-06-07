@@ -124,8 +124,11 @@ src/
 │   │   └── PresetCard.php
 │   ├── Dashboard/
 │   │   └── AppearanceDashboard.php
+│   ├── AdminDesignRegistry.php
 │   ├── AdminMenu.php
 │   ├── AdminPage.php
+│   ├── DesignStyleRegistry.php
+│   ├── SettingsCard.php
 │   ├── SettingsManager.php
 │   └── SettingsPage.php
 ├── Header/

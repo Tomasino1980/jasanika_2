@@ -2,20 +2,280 @@
  * Jasanika 2 Admin Styles
  *
  * Modular WordPress Framework
- * Version 0.28
- * M28 — Dynamic Header Builder
+ * Version 0.29
+ * M29 — Settings UI Refactor & Design System
  *
  * Admin UI components:
+ * - Admin Design Token System (radius, spacing, colors, shadows)
+ * - Two-Level Settings Navigation (tabs + sub-tabs)
+ * - Settings Card System
  * - Settings Search
  * - Collapsible Panels
  * - Preset Cards
- * - Settings Cards
  * - Appearance Dashboard
- * - Color Scheme Builder
+ * - Responsive Admin UI
  *
- * Consumes design tokens via --jas-* CSS custom properties
- * when available in the admin context.
+ * All spacing, borders, and radii are token-driven via CSS custom properties.
+ * --jas-admin-* tokens defined below for consistency across all components.
  */
+
+/* ========================================
+   Admin Design Token Definitions
+   ======================================== */
+
+:root {
+    /* Radius */
+    --jas-admin-radius-xs: 2px;
+    --jas-admin-radius-sm: 4px;
+    --jas-admin-radius-md: 6px;
+
+    /* Spacing (8px grid) */
+    --jas-admin-space-xs: 4px;
+    --jas-admin-space-sm: 8px;
+    --jas-admin-space-md: 16px;
+    --jas-admin-space-lg: 24px;
+    --jas-admin-space-xl: 32px;
+
+    /* Colors */
+    --jas-admin-color-border:      rgba(255,255,255,0.08);
+    --jas-admin-color-surface:     #ffffff;
+    --jas-admin-color-bg:          #f0f0f1;
+    --jas-admin-color-text:        #1d2327;
+    --jas-admin-color-text-muted:  #8c8f94;
+    --jas-admin-color-accent:      #b78acb;
+    --jas-admin-color-accent-hover: #c79cda;
+
+    /* Shadows */
+    --jas-admin-shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+    --jas-admin-shadow-md: 0 2px 6px rgba(0,0,0,0.06);
+}
+
+/* ========================================
+   Settings Page Layout
+   ======================================== */
+
+.jas-settings {
+    max-width: 100%;
+    padding-bottom: var(--jas-admin-space-xl);
+}
+
+.jas-settings__header {
+    display: flex;
+    align-items: baseline;
+    gap: var(--jas-admin-space-md);
+    margin-bottom: var(--jas-admin-space-md);
+}
+
+.jas-settings__header h1 {
+    margin: 0;
+}
+
+.jas-settings__version {
+    font-size: 0.8125rem;
+    color: var(--jas-admin-color-text-muted);
+    font-weight: 400;
+}
+
+.jas-settings__form {
+    margin-top: var(--jas-admin-space-lg);
+}
+
+.jas-settings__form .submit {
+    margin-top: var(--jas-admin-space-lg);
+    padding-top: var(--jas-admin-space-md);
+    border-top: 1px solid var(--jas-admin-color-border);
+}
+
+.jas-section__description {
+    color: var(--jas-admin-color-text-muted);
+    font-size: 0.8125rem;
+    margin-top: 0;
+    margin-bottom: var(--jas-admin-space-md);
+}
+
+/* ========================================
+   Two-Level Navigation (Tabs + Sub-Tabs)
+   ======================================== */
+
+/* Top-level tabs */
+.jas-settings__tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    border-bottom: 1px solid #dcdcde;
+    margin-bottom: 0;
+    padding: 0;
+}
+
+.jas-tab {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.625rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--jas-admin-color-text-muted);
+    text-decoration: none;
+    border: 1px solid transparent;
+    border-bottom: none;
+    margin-bottom: -1px;
+    transition: color 0.15s ease, background 0.15s ease;
+    white-space: nowrap;
+}
+
+.jas-tab:hover {
+    color: var(--jas-admin-color-text);
+    background: rgba(0, 0, 0, 0.02);
+}
+
+.jas-tab--active {
+    color: var(--jas-admin-color-accent);
+    background: var(--jas-admin-color-surface);
+    border-color: #dcdcde;
+    border-bottom-color: var(--jas-admin-color-surface);
+    font-weight: 600;
+}
+
+/* Second-level sub-tabs */
+.jas-settings__sub-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--jas-admin-space-xs);
+    padding: var(--jas-admin-space-md) 0;
+    border-bottom: 1px solid var(--jas-admin-color-border);
+    margin-bottom: var(--jas-admin-space-md);
+}
+
+.jas-sub-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jas-admin-space-xs);
+    padding: 0.375rem 0.875rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--jas-admin-color-text-muted);
+    text-decoration: none;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--jas-admin-radius-sm);
+    transition: all 0.15s ease;
+    white-space: nowrap;
+}
+
+.jas-sub-tab:hover {
+    color: var(--jas-admin-color-text);
+    background: rgba(0, 0, 0, 0.03);
+    border-color: #dcdcde;
+}
+
+.jas-sub-tab--active {
+    color: var(--jas-admin-color-accent);
+    background: rgba(183, 138, 203, 0.08);
+    border-color: var(--jas-admin-color-accent);
+    font-weight: 600;
+}
+
+.jas-sub-tab__count {
+    font-size: 0.6875rem;
+    font-weight: 400;
+    color: var(--jas-admin-color-text-muted);
+    background: #f0f0f1;
+    padding: 0.0625rem 0.375rem;
+    border-radius: 0.75rem;
+    line-height: 1.4;
+}
+
+.jas-sub-tab--active .jas-sub-tab__count {
+    background: rgba(183, 138, 203, 0.15);
+    color: var(--jas-admin-color-accent);
+}
+
+/* ========================================
+   Settings Card System
+   ======================================== */
+
+.jas-settings-card {
+    background: var(--jas-admin-color-surface);
+    border: 1px solid #dcdcde;
+    border-radius: var(--jas-admin-radius-md);
+    box-shadow: var(--jas-admin-shadow-sm);
+    margin-bottom: var(--jas-admin-space-lg);
+    overflow: hidden;
+}
+
+.jas-settings-card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--jas-admin-space-md);
+    padding: var(--jas-admin-space-md) var(--jas-admin-space-lg);
+    border-bottom: 1px solid #f0f0f1;
+    background: #fafafa;
+}
+
+.jas-settings-card__title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--jas-admin-color-text);
+    line-height: 1.4;
+}
+
+.jas-settings-card__actions {
+    display: flex;
+    gap: var(--jas-admin-space-sm);
+    flex-shrink: 0;
+}
+
+.jas-settings-card__description {
+    margin: 0;
+    padding: var(--jas-admin-space-sm) var(--jas-admin-space-lg);
+    font-size: 0.8125rem;
+    color: var(--jas-admin-color-text-muted);
+    border-bottom: 1px solid #f0f0f1;
+    line-height: 1.5;
+}
+
+.jas-settings-card__body {
+    padding: var(--jas-admin-space-md) var(--jas-admin-space-lg);
+}
+
+.jas-settings-card__body .form-table {
+    margin: 0;
+}
+
+.jas-settings-card__body .form-table th {
+    width: 200px;
+    padding: 0.75rem 1rem 0.75rem 0;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--jas-admin-color-text);
+}
+
+.jas-settings-card__body .form-table td {
+    padding: 0.5rem 0;
+}
+
+.jas-settings-card__body .form-table tr {
+    border-bottom: 1px solid #f0f0f1;
+}
+
+.jas-settings-card__body .form-table tr:last-child {
+    border-bottom: none;
+}
+
+.jas-settings-card__body .form-table input[type="text"],
+.jas-settings-card__body .form-table input[type="number"],
+.jas-settings-card__body .form-table select {
+    width: 100%;
+    max-width: 400px;
+}
+
+.jas-settings-card__body .form-table input[type="color"] {
+    width: 60px;
+    height: 36px;
+    padding: 2px;
+    cursor: pointer;
+}
 
 /* ========================================
    Settings Search
@@ -23,40 +283,30 @@
 
 .jas-settings-search {
     position: relative;
-    margin-bottom: 1.5rem;
+    margin-bottom: var(--jas-admin-space-lg);
     max-width: 480px;
 }
 
 .jas-settings-search__input {
     width: 100%;
-    padding: 0.625rem 1rem 0.625rem 2.5rem;
+    padding: 0.625rem 3rem 0.625rem 1rem;
     font-size: 0.875rem;
     line-height: 1.5;
-    color: #32373c;
-    background: #fff;
+    color: var(--jas-admin-color-text);
+    background: var(--jas-admin-color-surface);
     border: 1px solid #8c8f94;
-    border-radius: 0.25rem;
+    border-radius: var(--jas-admin-radius-sm);
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .jas-settings-search__input:focus {
-    border-color: #2271b1;
-    box-shadow: 0 0 0 1px #2271b1;
+    border-color: var(--jas-admin-color-accent);
+    box-shadow: 0 0 0 1px var(--jas-admin-color-accent);
     outline: none;
 }
 
 .jas-settings-search__input::placeholder {
-    color: #8c8f94;
-}
-
-.jas-settings-search__icon {
-    position: absolute;
-    left: 0.75rem;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 1rem;
-    color: #8c8f94;
-    pointer-events: none;
+    color: var(--jas-admin-color-text-muted);
 }
 
 .jas-settings-search__count {
@@ -65,13 +315,16 @@
     top: 50%;
     transform: translateY(-50%);
     font-size: 0.75rem;
-    color: #8c8f94;
+    font-weight: 500;
+    color: var(--jas-admin-color-text-muted);
+    pointer-events: none;
 }
 
 .jas-search-highlight {
     background: #ffeb3b;
     padding: 0 0.125rem;
     border-radius: 0.125rem;
+    font-style: normal;
 }
 
 /* ========================================
@@ -79,9 +332,9 @@
    ======================================== */
 
 .jas-collapsible {
-    margin-bottom: 0.75rem;
+    margin-bottom: var(--jas-admin-space-sm);
     border: 1px solid #dcdcde;
-    border-radius: 0.375rem;
+    border-radius: var(--jas-admin-radius-sm);
     background: #f6f7f7;
     overflow: hidden;
 }
@@ -90,16 +343,16 @@
     display: flex;
     align-items: center;
     width: 100%;
-    padding: 0.75rem 1rem;
-    font-size: 0.875rem;
+    padding: 0.625rem 1rem;
+    font-size: 0.8125rem;
     font-weight: 600;
-    color: #1d2327;
+    color: var(--jas-admin-color-text);
     background: transparent;
     border: none;
     cursor: pointer;
     text-align: left;
     transition: background 0.15s ease;
-    gap: 0.5rem;
+    gap: var(--jas-admin-space-sm);
 }
 
 .jas-collapsible__toggle:hover {
@@ -107,7 +360,7 @@
 }
 
 .jas-collapsible__toggle:focus {
-    box-shadow: inset 0 0 0 1px #2271b1;
+    box-shadow: inset 0 0 0 1px var(--jas-admin-color-accent);
     outline: none;
 }
 
@@ -115,6 +368,7 @@
     font-size: 0.625rem;
     transition: transform 0.2s ease;
     flex-shrink: 0;
+    color: var(--jas-admin-color-text-muted);
 }
 
 .jas-collapsible__toggle[aria-expanded="false"] .jas-collapsible__icon {
@@ -126,33 +380,29 @@
 }
 
 .jas-collapsible__badge {
-    font-size: 0.75rem;
+    font-size: 0.6875rem;
     font-weight: 400;
-    color: #8c8f94;
+    color: var(--jas-admin-color-text-muted);
     background: #dcdcde;
-    padding: 0.125rem 0.5rem;
+    padding: 0.0625rem 0.5rem;
     border-radius: 0.75rem;
 }
 
 .jas-collapsible__body {
     border-top: 1px solid #dcdcde;
-    background: #fff;
-    padding: 1rem;
+    background: var(--jas-admin-color-surface);
+    padding: var(--jas-admin-space-md);
 }
 
 /* ========================================
    Preset Cards
    ======================================== */
 
-.jas-presets-section {
-    margin-bottom: 1.5rem;
-}
-
 .jas-presets-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 1rem;
-    margin-top: 1rem;
+    gap: var(--jas-admin-space-md);
+    margin-top: var(--jas-admin-space-sm);
 }
 
 .jas-preset-card {
@@ -160,23 +410,23 @@
     display: flex;
     flex-direction: column;
     padding: 1.25rem;
-    background: #fff;
+    background: var(--jas-admin-color-surface);
     border: 2px solid #dcdcde;
-    border-radius: 0.5rem;
+    border-radius: var(--jas-admin-radius-md);
     cursor: pointer;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
     min-height: 120px;
 }
 
 .jas-preset-card:hover {
-    border-color: #2271b1;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    border-color: var(--jas-admin-color-accent);
+    box-shadow: var(--jas-admin-shadow-sm);
 }
 
 .jas-preset-card--active {
-    border-color: #2271b1;
-    box-shadow: 0 0 0 1px #2271b1, 0 1px 4px rgba(0, 0, 0, 0.1);
-    background: #f0f6fc;
+    border-color: var(--jas-admin-color-accent);
+    box-shadow: 0 0 0 1px var(--jas-admin-color-accent), var(--jas-admin-shadow-md);
+    background: rgba(183, 138, 203, 0.04);
 }
 
 .jas-preset-card__input {
@@ -190,65 +440,37 @@
     position: absolute;
     top: 0.75rem;
     right: 0.75rem;
-    width: 1rem;
-    height: 1rem;
+    width: 1.125rem;
+    height: 1.125rem;
     border: 2px solid #dcdcde;
     border-radius: 50%;
     transition: border-color 0.2s ease, background 0.2s ease;
 }
 
 .jas-preset-card--active .jas-preset-card__indicator {
-    border-color: #2271b1;
-    background: #2271b1;
-    box-shadow: inset 0 0 0 3px #f0f6fc;
+    border-color: var(--jas-admin-color-accent);
+    background: var(--jas-admin-color-accent);
+    box-shadow: inset 0 0 0 3px var(--jas-admin-color-surface);
 }
 
 .jas-preset-card__content {
     display: flex;
     flex-direction: column;
     gap: 0.375rem;
+    flex: 1;
 }
 
 .jas-preset-card__label {
     font-size: 1rem;
     font-weight: 600;
-    color: #1d2327;
+    color: var(--jas-admin-color-text);
 }
 
 .jas-preset-card__desc {
     font-size: 0.8125rem;
-    color: #8c8f94;
+    color: var(--jas-admin-color-text-muted);
     line-height: 1.4;
-}
-
-/* ========================================
-   Settings Cards (within Collapsible panels)
-   ======================================== */
-
-.jas-settings__section {
-    margin-bottom: 0.5rem;
-}
-
-.jas-settings__section .jas-card {
-    background: #fff;
-    border: none;
-    border-radius: 0;
-    padding: 0;
-    box-shadow: none;
-}
-
-.jas-settings__section .jas-card:hover {
-    border-color: transparent;
-    background: #fff;
-}
-
-.jas-settings__section .jas-card__header {
-    display: none;
-}
-
-.jas-settings__section .jas-card__body {
-    color: #3c434a;
-    font-size: 0.875rem;
+    flex: 1;
 }
 
 /* ========================================
@@ -260,7 +482,7 @@
 }
 
 .jas-appearance-dashboard__subtitle {
-    color: #8c8f94;
+    color: var(--jas-admin-color-text-muted);
     font-size: 0.875rem;
     margin-top: 0;
     margin-bottom: 1.5rem;
@@ -290,7 +512,7 @@
 
 .jas-dashboard__list dt {
     font-weight: 600;
-    color: #1d2327;
+    color: var(--jas-admin-color-text);
     font-size: 0.8125rem;
 }
 
@@ -304,79 +526,172 @@
     display: inline-block;
     width: 1rem;
     height: 1rem;
-    border-radius: 0.25rem;
+    border-radius: var(--jas-admin-radius-xs);
     vertical-align: middle;
     border: 1px solid #dcdcde;
     margin-right: 0.375rem;
 }
 
 /* ========================================
-   Settings Page General
+   Content & Marketing Placeholder Sections
    ======================================== */
 
-.jas-settings__form {
-    margin-top: 1rem;
+.jas-settings-card--placeholder {
+    opacity: 0.7;
 }
 
-.jas-settings__form .submit {
-    margin-top: 1.5rem;
-    padding-top: 1rem;
-    border-top: 1px solid #dcdcde;
+.jas-settings-card--placeholder .jas-settings-card__body {
+    color: var(--jas-admin-color-text-muted);
+    font-style: italic;
 }
 
-.jas-section__description {
-    color: #8c8f94;
-    font-size: 0.8125rem;
-    margin-top: 0;
-    margin-bottom: 1rem;
+/* ========================================
+   Responsive Admin UI
+   ======================================== */
+
+/* Desktop: default styles (already defined above) */
+
+/* Small laptop / tablet landscape (≤1366px) */
+@media (max-width: 1366px) {
+    .jas-settings-card__body .form-table th {
+        width: 160px;
+    }
 }
 
-.jas-settings__version {
-    color: #8c8f94;
-    font-size: 0.8125rem;
+/* Tablet (≤1024px) */
+@media (max-width: 1024px) {
+    .jas-settings-card__body .form-table th {
+        width: 140px;
+    }
+
+    .jas-presets-grid {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    }
+
+    .jas-appearance-dashboard__grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    }
 }
 
-/* Override WordPress default form-table for better spacing */
-.jas-settings .form-table th {
-    width: 200px;
-    padding: 0.75rem 1rem 0.75rem 0;
-    font-size: 0.8125rem;
-    font-weight: 600;
-    color: #1d2327;
+/* Mobile / small tablet (≤782px) — WordPress admin breakpoint */
+@media (max-width: 782px) {
+    .jas-settings__header {
+        flex-direction: column;
+        gap: var(--jas-admin-space-xs);
+    }
+
+    .jas-tab {
+        padding: 0.5rem 0.875rem;
+        font-size: 0.8125rem;
+    }
+
+    .jas-settings__sub-tabs {
+        gap: var(--jas-admin-space-xs);
+        padding: var(--jas-admin-space-sm) 0;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .jas-sub-tab {
+        padding: 0.25rem 0.625rem;
+        font-size: 0.75rem;
+        white-space: nowrap;
+    }
+
+    .jas-settings-card__header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--jas-admin-space-sm);
+        padding: var(--jas-admin-space-md);
+    }
+
+    .jas-settings-card__description {
+        padding: var(--jas-admin-space-sm) var(--jas-admin-space-md);
+    }
+
+    .jas-settings-card__body {
+        padding: var(--jas-admin-space-md);
+    }
+
+    .jas-settings-card__body .form-table th {
+        width: 100%;
+        display: block;
+        padding: 0.5rem 0 0.25rem;
+    }
+
+    .jas-settings-card__body .form-table td {
+        display: block;
+        padding: 0 0 0.75rem;
+    }
+
+    .jas-settings-card__body .form-table input[type="text"],
+    .jas-settings-card__body .form-table input[type="number"],
+    .jas-settings-card__body .form-table select {
+        max-width: 100%;
+    }
+
+    .jas-presets-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: var(--jas-admin-space-sm);
+    }
+
+    .jas-preset-card {
+        padding: 1rem;
+        min-height: 100px;
+    }
+
+    .jas-appearance-dashboard__grid {
+        grid-template-columns: 1fr;
+    }
+
+    .jas-settings-search {
+        max-width: 100%;
+    }
+
+    .jas-collapsible__toggle {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.75rem;
+    }
+
+    .jas-collapsible__body {
+        padding: var(--jas-admin-space-sm);
+    }
 }
 
-.jas-settings .form-table td {
-    padding: 0.5rem 0;
+/* Small mobile (≤600px) */
+@media (max-width: 600px) {
+    .jas-tab {
+        flex: 1 1 auto;
+        justify-content: center;
+        text-align: center;
+        padding: 0.5rem 0.5rem;
+        font-size: 0.75rem;
+    }
+
+    .jas-presets-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
-.jas-settings .form-table tr {
-    border-bottom: 1px solid #f0f0f1;
-}
-
-.jas-settings .form-table tr:last-child {
-    border-bottom: none;
-}
-
-.jas-settings .form-table input[type="text"],
-.jas-settings .form-table input[type="number"],
-.jas-settings .form-table select {
-    width: 100%;
-    max-width: 400px;
-}
-
-.jas-settings .form-table input[type="color"] {
-    width: 60px;
-    height: 36px;
-    padding: 2px;
-    cursor: pointer;
-}
-
-/* Collapsible panel JS for toggling */
+/* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
     .jas-collapsible__icon {
         transition: none;
     }
     .jas-collapsible__body {
+        transition: none;
+    }
+    .jas-preset-card {
+        transition: none;
+    }
+    .jas-settings-card {
+        transition: none;
+    }
+    .jas-tab,
+    .jas-sub-tab {
+        transition: none;
+    }
+    .jas-settings-search__input {
         transition: none;
     }
 }

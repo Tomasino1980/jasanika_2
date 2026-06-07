@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Jasanika\Core;
 
+use Jasanika\Admin\AdminDesignRegistry;
 use Jasanika\Admin\AdminMenu;
 use Jasanika\Admin\AdminPage;
+use Jasanika\Admin\DesignStyleRegistry;
 use Jasanika\Admin\Fields\FieldFactory;
 use Jasanika\Admin\Pages\DashboardPage;
 use Jasanika\Admin\Dashboard\AppearanceDashboard;
@@ -85,11 +87,15 @@ use Jasanika\Widgets\WidgetAreaManager;
  *     └─ HeroRenderer
  *
  * Current Version:
- * 0.28
+ * 0.29
+*
+ * These are framework prerequisites required by all other systems.
  *
- * @see FrameworkInfo
- * @see ThemeRenderer
+ * M1 — Core Foundation
+ * M2 — Service Container
+ * M29 — AdminDesignRegistry, DesignStyleRegistry
  */
+
 final class Application
 {
     // ============================================================
@@ -205,10 +211,11 @@ final class Application
         //
         // M1 — Core Foundation
         // M2 — Service Container
+        // M29 — AdminDesignRegistry, DesignStyleRegistry
 
         $this->frameworkInfo = new FrameworkInfo(
             'Jasanika 2',
-            '0.28'
+            '0.29'
         );
 
         $this->container = new Container();
@@ -217,6 +224,27 @@ final class Application
         $this->hookManager = new HookManager();
         $this->assetManager = new AssetManager();
         $this->mediaManager = new MediaManager();
+
+        // ============================================================
+        // ADMIN DESIGN SYSTEM
+        // ============================================================
+        //
+        // Depends on:
+        // - Nothing (standalone static registries)
+        //
+        // Provides:
+        // - AdminDesignRegistry (admin design tokens for spacing, radii, colors, shadows)
+        // - DesignStyleRegistry (admin UI style presets: Classic, Modern, Glass)
+        //
+        // M29 — Settings UI Refactor & Design System
+        //
+        // Initialize admin design registries. These are static registries
+        // that define the admin visual design system. Initialization is
+        // lazy (happens on first access), so explicit init is optional.
+        // We call getAllTokens() here to eagerly initialize.
+
+        AdminDesignRegistry::getAllTokens();
+        DesignStyleRegistry::getAllStyles();
 
         // ============================================================
         // SETTINGS SYSTEM
@@ -529,6 +557,7 @@ final class Application
         // M9 — Settings Page Foundation
         // M26 — Site Builder Settings UI (tabbed categories)
         // M27 — Settings UX Framework (search, collapsible panels, presets)
+        // M29 — Settings UI Refactor (two-level navigation, card system, design tokens)
 
         $fieldFactory = new FieldFactory($this->settingsManager, $this->assetManager);
 
@@ -795,6 +824,9 @@ final class Application
      * - M26 (tabbed categories with sections)
      * - M27 (Presets, Color Scheme, Typography sections)
      * - M28 (CTA Button, Top Bar sections)
+     * - M29 (Content sub-sections: Blog, Search, Archives, Single Post;
+     *         Marketing sub-sections: Social, Analytics, SEO, Integrations;
+     *         Advanced sub-sections: Performance, Debug, Custom CSS, Custom JS)
      */
     private function registerSettingsCategories(SettingsPage $settingsPage): void
     {
@@ -904,29 +936,101 @@ final class Application
             ['layout_header_width', 'layout_content_width', 'layout_sidebar_width', 'layout_footer_width', 'layout_section_padding', 'layout_section_margin']
         ));
 
-        // --- Content Category (placeholder for future milestones) ---
+        // --- Content Category ---
         $settingsPage->registerSection(new Section(
             'content_blog',
             'Blog',
-            'Blog and archive settings. (Coming in a future milestone)',
+            'Blog index page settings: layout, excerpt length, featured images, and pagination.',
             'content',
             []
         ));
 
-        // --- Marketing Category (placeholder) ---
+        $settingsPage->registerSection(new Section(
+            'content_search',
+            'Search',
+            'Search results page configuration: layout, highlighting, and empty state behavior.',
+            'content',
+            []
+        ));
+
+        $settingsPage->registerSection(new Section(
+            'content_archives',
+            'Archives',
+            'Category, tag, and date archive settings: layout, header display, and post count.',
+            'content',
+            []
+        ));
+
+        $settingsPage->registerSection(new Section(
+            'content_single',
+            'Single Post',
+            'Individual post and page settings: featured image position, metadata, and comments.',
+            'content',
+            []
+        ));
+
+        // --- Marketing Category ---
         $settingsPage->registerSection(new Section(
             'marketing_social',
-            'Social Media',
-            'Social media links and sharing settings. (Coming in a future milestone)',
+            'Social',
+            'Social media links, sharing buttons, and Open Graph configuration.',
             'marketing',
             []
         ));
 
-        // --- Advanced Category (placeholder) ---
         $settingsPage->registerSection(new Section(
-            'advanced_development',
-            'Development',
-            'Performance, caching, and developer settings. (Coming in a future milestone)',
+            'marketing_analytics',
+            'Analytics',
+            'Tracking code integration for Google Analytics, Meta Pixel, and custom scripts.',
+            'marketing',
+            []
+        ));
+
+        $settingsPage->registerSection(new Section(
+            'marketing_seo',
+            'SEO',
+            'Search engine optimization settings: meta tags, sitemaps, and schema markup.',
+            'marketing',
+            []
+        ));
+
+        $settingsPage->registerSection(new Section(
+            'marketing_integrations',
+            'Integrations',
+            'Third-party service integrations, webhooks, and API connections.',
+            'marketing',
+            []
+        ));
+
+        // --- Advanced Category ---
+        $settingsPage->registerSection(new Section(
+            'advanced_performance',
+            'Performance',
+            'Performance optimization settings: caching, minification, lazy loading, and CDN.',
+            'advanced',
+            []
+        ));
+
+        $settingsPage->registerSection(new Section(
+            'advanced_debug',
+            'Debug',
+            'Developer debug settings: WP_DEBUG toggle, query monitor, error logging, and debug bar.',
+            'advanced',
+            []
+        ));
+
+        $settingsPage->registerSection(new Section(
+            'advanced_custom_css',
+            'Custom CSS',
+            'Additional custom CSS styles that override theme defaults.',
+            'advanced',
+            []
+        ));
+
+        $settingsPage->registerSection(new Section(
+            'advanced_custom_js',
+            'Custom JS',
+            'Additional custom JavaScript for advanced frontend behavior.',
             'advanced',
             []
         ));
@@ -957,7 +1061,7 @@ final class Application
         $script = new Asset(
             'jasanika-media-field',
             get_template_directory_uri() . '/assets/admin/js/media-field.js',
-            '0.28',
+            '0.29',
             ['jquery'],
             'all',
             true
@@ -986,12 +1090,12 @@ final class Application
         $adminCss = new Asset(
             'jasanika-admin',
             get_template_directory_uri() . '/assets/css/admin.css',
-            '0.28'
+            '0.29'
         );
 
         $this->assetManager->registerStyle($adminCss);
 
-        // Enqueue admin CSS on Jasanika admin pages
+        // M29: Enqueue admin CSS on Jasanika admin pages
         $this->hookManager->addAction('admin_enqueue_scripts', function (): void {
             $screen = get_current_screen();
 
@@ -1030,7 +1134,7 @@ final class Application
         $style = new Asset(
             'jasanika-frontend',
             get_template_directory_uri() . '/assets/css/frontend.css',
-            '0.28'
+            '0.29'
         );
 
         $this->assetManager->registerStyle($style);
@@ -1038,7 +1142,7 @@ final class Application
         $tokens = new Asset(
             'jasanika-tokens',
             get_template_directory_uri() . '/assets/css/tokens.css',
-            '0.28'
+            '0.29'
         );
 
         $this->assetManager->registerStyle($tokens);
@@ -1046,7 +1150,7 @@ final class Application
         $components = new Asset(
             'jasanika-components',
             get_template_directory_uri() . '/assets/css/components.css',
-            '0.28'
+            '0.29'
         );
 
         $this->assetManager->registerStyle($components);
@@ -1055,7 +1159,7 @@ final class Application
         $headerStyle = new Asset(
             'jasanika-header',
             get_template_directory_uri() . '/assets/css/header.css',
-            '0.28'
+            '0.29'
         );
 
         $this->assetManager->registerStyle($headerStyle);
@@ -1064,7 +1168,7 @@ final class Application
         $headerScript = new Asset(
             'jasanika-header',
             get_template_directory_uri() . '/assets/js/header.js',
-            '0.28',
+            '0.29',
             [],
             'all',
             true
@@ -1075,7 +1179,7 @@ final class Application
         $script = new Asset(
             'jasanika-frontend',
             get_template_directory_uri() . '/assets/js/frontend.js',
-            '0.28',
+            '0.29',
             [],
             'all',
             true
