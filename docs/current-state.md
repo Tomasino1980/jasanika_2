@@ -6,11 +6,11 @@ Jasanika_2 — Modular WordPress Framework
 
 ## Current Version
 
-0.34
+0.36
 
 ## Current Milestone
 
-M34 - Unified Form Layout System
+M36 - Compact Form Controls UI
 
 Status: Completed
 

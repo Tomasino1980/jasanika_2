@@ -308,10 +308,10 @@
 .jas-form-row {
     display: grid;
     grid-template-columns: 240px 1fr;
-    gap: var(--jas-admin-space-md, 16px);
-    padding: var(--jas-admin-space-sm, 8px) 0;
+    gap: var(--jas-admin-space-sm, 8px);
+    padding: 5px 0;
     border-bottom: 1px solid var(--jas-admin-color-divider, rgba(255,255,255,0.06));
-    align-items: start;
+    align-items: center;
 }
 
 .jas-form-row:first-child {
@@ -332,9 +332,9 @@
 
 .jas-form-row__label-text {
     font-size: 0.75rem;
-    font-weight: 600;
+    font-weight: 500;
     color: var(--jas-admin-color-text, #f5f2f7);
-    line-height: 1.4;
+    line-height: 1.3;
 }
 
 .jas-form-row__desc {
@@ -355,7 +355,7 @@
 .jas-form-input {
     width: 100%;
     max-width: 360px;
-    padding: 0.375rem 0.5rem;
+    padding: 0.3125rem 0.5rem;
     font-size: 0.8125rem;
     line-height: 1.4;
     color: var(--jas-admin-color-input-text, #f5f2f7);
@@ -364,7 +364,7 @@
     border-radius: 2px;
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
     box-sizing: border-box;
-    min-height: 2rem;
+    min-height: 1.875rem;
 }
 
 .jas-form-input:focus {
@@ -382,7 +382,7 @@
 select.jas-form-input {
     appearance: auto;
     padding-right: 1.5rem;
-    min-height: 2rem;
+    min-height: 1.875rem;
 }
 
 /* ========================================
@@ -517,9 +517,9 @@ select.jas-form-input {
    ======================================== */
 
 .jas-collapsible {
-    margin-bottom: var(--jas-admin-space-md);
-    border: 1px solid var(--jas-admin-color-border);
-    border-radius: var(--jas-admin-radius-xs);
+    margin-bottom: var(--jas-admin-space-xs, 4px);
+    border: 1px solid var(--jas-admin-color-border, rgba(255,255,255,0.08));
+    border-radius: 2px;
     background: rgba(0, 0, 0, 0.15);
     overflow: hidden;
 }
@@ -528,16 +528,16 @@ select.jas-form-input {
     display: flex;
     align-items: center;
     width: 100%;
-    padding: 0.75rem 1rem;
-    font-size: 0.8125rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.75rem;
     font-weight: 600;
-    color: var(--jas-admin-color-text);
+    color: var(--jas-admin-color-text, #f5f2f7);
     background: transparent;
     border: none;
     cursor: pointer;
     text-align: left;
     transition: background 0.15s ease;
-    gap: var(--jas-admin-space-sm);
+    gap: var(--jas-admin-space-xs, 4px);
 }
 
 .jas-collapsible__toggle:hover {
@@ -565,18 +565,18 @@ select.jas-form-input {
 }
 
 .jas-collapsible__badge {
-    font-size: 0.6875rem;
+    font-size: 0.625rem;
     font-weight: 400;
-    color: var(--jas-admin-color-text-muted);
+    color: var(--jas-admin-color-text-muted, #b9b1c4);
     background: rgba(255, 255, 255, 0.08);
-    padding: 0.0625rem 0.5rem;
-    border-radius: 0.75rem;
+    padding: 0.0625rem 0.375rem;
+    border-radius: 0.625rem;
 }
 
 .jas-collapsible__body {
-    border-top: 1px solid var(--jas-admin-color-border);
-    background: var(--jas-admin-color-surface);
-    padding: var(--jas-admin-space-md);
+    border-top: 1px solid var(--jas-admin-color-border, rgba(255,255,255,0.08));
+    background: var(--jas-admin-color-surface, #24212b);
+    padding: 6px var(--jas-admin-space-sm, 8px) var(--jas-admin-space-sm, 8px);
 }
 
 /* ========================================
@@ -783,7 +783,7 @@ select.jas-form-input {
 @media (max-width: 1024px) {
     .jas-form-row {
         grid-template-columns: 140px 1fr;
-        gap: var(--jas-admin-space-sm);
+        gap: var(--jas-admin-space-xs, 4px);
     }
 
     .jas-settings-card__body .form-table th {

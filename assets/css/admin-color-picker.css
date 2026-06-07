@@ -15,15 +15,60 @@
    ======================================== */
 
 .jas-cp {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
+    width: 100%;
 }
 
 .jas-cp__swatch {
     display: inline-block;
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
+    border-radius: 2px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    position: relative;
+}
+
+.jas-cp__swatch:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 2px rgba(183, 138, 203, 0.3);
+}
+
+.jas-cp__swatch:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(183, 138, 203, 0.5);
+}
+
+.jas-cp__swatch--active {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 2px rgba(183, 138, 203, 0.5);
+}
+
+.jas-cp__hex {
+    flex: 1;
+    min-width: 0;
+    max-width: 100px;
+    padding: 0.3125rem 0.5rem;
+    background: var(--jas-admin-color-input-bg, #1b1a1f);
+    border: 1px solid var(--jas-admin-color-border, rgba(255,255,255,0.08));
+    border-radius: 2px;
+    color: var(--jas-admin-color-input-text, #f5f2f7);
+    font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    min-height: 1.875rem;
+    box-sizing: border-box;
+    transition: border-color 0.15s ease;
+}
+
+.jas-cp__swatch {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
     border-radius: 2px;
     border: 1px solid rgba(255, 255, 255, 0.12);
     cursor: pointer;
@@ -447,7 +492,7 @@
 .jas-color-scheme-grid .form-table tr {
     display: flex;
     flex-direction: column;
-    padding: 8px 12px;
+    padding: 6px 10px;
     background: rgba(255, 255, 255, 0.02);
     border-radius: 2px;
     border: 1px solid rgba(255, 255, 255, 0.04);
@@ -455,18 +500,22 @@
 
 .jas-color-scheme-grid .form-table th {
     display: block;
-    padding: 0 0 4px;
-    font-size: 11px;
-    font-weight: 500;
+    padding: 0 0 2px;
+    font-size: 10px;
+    font-weight: 600;
     color: var(--jas-admin-color-text-muted, #b9b1c4);
     text-transform: uppercase;
-    letter-spacing: 0.03em;
+    letter-spacing: 0.04em;
     width: auto;
 }
 
 .jas-color-scheme-grid .form-table td {
     display: block;
     padding: 0;
+}
+
+.jas-color-scheme-grid .form-table td .jas-cp {
+    width: 100%;
 }
 
 .jas-color-scheme-grid .form-table td .description {

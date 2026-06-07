@@ -371,3 +371,50 @@ Date: 2026-06-07
 ## Fixed
 
 - N/A
+
+---
+
+# M35 - Settings Density & Container Cleanup
+
+Version: 0.35
+
+Date: 2026-06-07
+
+## Changed
+
+- Inputs: min-height 2rem, padding 0.375rem 0.5rem, font-size 0.8125rem
+- Form row: grid 240px | 1fr, gap 16px, padding 8px 0
+- Section content padding: 16px (was 24px)
+- Section margin-bottom: 8px (was 24px)
+- Section title font-size: 0.875rem (was 1rem)
+- Label font-size: 0.75rem, description font-size: 0.6875rem
+- Settings container wrapper: dark surface background, 1px border, 2px radius
+
+## Added
+
+- `.jas-settings-container` — main dark wrapper wrapping tabs, search, form sections
+
+---
+
+# M36 - Compact Form Controls UI
+
+Version: 0.36
+
+Date: 2026-06-07
+
+## Changed
+
+- Inputs: min-height 1.875rem (30px), padding 0.3125rem 0.5rem, vertical padding reduced
+- Selects: min-height 1.875rem, matching input height exactly
+- Form rows: padding 5px 0, gap 8px, align-items center (was start)
+- Label font-weight: 500 (was 600)
+- Color swatch: enlarged from 28×28px to 32×32px
+- HEX input: flex: 1 full-width, compact height matching inputs, font-size 0.8125rem
+- Color scheme grid: tighter cell padding 6px 10px, label font 10px
+- Collapsible panels: toggle padding 0.5rem 0.75rem, body padding 6px 8px 8px, margin 4px
+- All inputs/selects/color fields: identical height, border-radius (2px), border style
+
+## Fixed
+
+- Color picker field now fills full width of its grid cell (flex: 1 on hex input)
+- Color scheme grid labels consistently uppercase with uniform letter-spacing
