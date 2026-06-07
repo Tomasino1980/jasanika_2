@@ -65,11 +65,35 @@ Date: 2026-06-07
 
 ---
 
-# M30 - Admin UI Dark Card Layout
+# M31 - Dynamic Theme Settings Engine
 
-Version: 0.30
+Version: 0.31
 
 Date: 2026-06-07
+
+## Added
+
+- Theme Settings Compiler (ThemeSettingsCompiler.php) — dedicated service that reads all appearance settings and generates CSS variables
+- Frontend CSS Variable Injection — renderThemeSettingsInlineCss() outputs `<style id="jasanika-theme-settings">` block via wp_head
+- Theme Preset Application Engine — actual token definitions for all presets (Default, Modern, Minimal, Business), applyPresetToSettings() writes values to SettingsManager
+- Frontend CSS Dynamic Variables — all hardcoded colors/text/fonts replaced with CSS custom properties (--jas-color-background, --jas-color-text, --jas-color-heading, etc.)
+- Dynamic Container Width — ThemeSettingsCompiler generates container width from settings
+- Dynamic Logo Dimensions — logo width/height from settings available as CSS variables
+- Debug Support — renderThemeSettingsDebug() outputs Preset, Primary Color, Container Width, Logo in WP_DEBUG mode
+
+## Changed
+
+- Application.php — version 0.31, ThemeSettingsCompiler initialization, updated ThemeRenderer constructor with compiler dependency, actual preset token definitions, all asset versions updated to 0.31
+- ThemeRenderer.php — accepts ThemeSettingsCompiler, two new wp_head hooks for inline CSS and debug, getThemeSettingsCompiler() accessor
+- ThemePresetManager.php — actual preset token overrides for all 4 presets, applyPresetToSettings(), getAppliedTokens()
+- frontend.css — all hardcoded color/text/border/font values replaced with CSS variable references, version 0.31
+- tokens.css — renamed to use --jas-color-* naming, hardcoded backgrounds replaced with dynamic variables, version 0.31
+- config/app.php — version updated to 0.31
+- style.css — version updated to 0.31
+
+## Fixed
+
+- N/A
 
 ## Added
 

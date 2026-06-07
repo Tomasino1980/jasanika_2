@@ -15,6 +15,7 @@ use Jasanika\Hooks\HookManager;
 use Jasanika\Layout\LayoutManager;
 use Jasanika\Layout\LayoutRenderer;
 use Jasanika\Navigation\NavigationManager;
+use Jasanika\Settings\ThemeSettingsCompiler;
 
 /**
  * Single frontend rendering entry point.
@@ -28,6 +29,8 @@ use Jasanika\Navigation\NavigationManager;
  * - Resolve content template based on WordPress hierarchy
  * - Register frontend asset enqueuing
  * - Expose rendering services to templates (orchestration-only)
+ * - Inject compiled theme settings as inline CSS (M31)
+ * - Output Theme Settings Compiler debug info (M31)
  *
  * Layout selection is delegated to LayoutManager.
  * Layout rendering is delegated to LayoutRenderer.
@@ -46,6 +49,7 @@ use Jasanika\Navigation\NavigationManager;
  * - M18 (Frontend Foundation & Theme Rendering)
  * - M26 (Header, Footer, Hero delegation)
  * - M28 (Header CSS/JS enqueuing)
+ * - M31 (ThemeSettingsCompiler integration, inline theme CSS, debug)
  *
  * @todo M30+: Consider replacing the static singleton pattern with
  *       explicit dependency injection in template files. The static
@@ -64,6 +68,7 @@ final class ThemeRenderer
     private SiteIdentityRenderer $siteIdentityRenderer;
     private LayoutRegionRenderer $layoutRegionRenderer;
     private DesignTokenGenerator $designTokenGenerator;
+    private ThemeSettingsCompiler $themeSettingsCompiler;
     private LayoutManager $layoutManager;
     private LayoutRenderer $layoutRenderer;
     private ComponentRenderer $componentRenderer;
@@ -80,6 +85,7 @@ final class ThemeRenderer
         SiteIdentityRenderer $siteIdentityRenderer,
         LayoutRegionRenderer $layoutRegionRenderer,
         DesignTokenGenerator $designTokenGenerator,
+        ThemeSettingsCompiler $themeSettingsCompiler,
         LayoutManager $layoutManager,
         LayoutRenderer $layoutRenderer,
         ComponentRenderer $componentRenderer,
@@ -95,6 +101,7 @@ final class ThemeRenderer
         $this->siteIdentityRenderer = $siteIdentityRenderer;
         $this->layoutRegionRenderer = $layoutRegionRenderer;
         $this->designTokenGenerator = $designTokenGenerator;
+        $this->themeSettingsCompiler = $themeSettingsCompiler;
         $this->layoutManager = $layoutManager;
         $this->layoutRenderer = $layoutRenderer;
         $this->componentRenderer = $componentRenderer;
@@ -128,6 +135,12 @@ final class ThemeRenderer
 
         // Output component debug information in <head> when WP_DEBUG is enabled
         $this->hookManager->addAction('wp_head', [$this->componentRenderer->getRegistry(), 'renderDebugComment']);
+
+        // Output generated theme settings as inline CSS (M31)
+        $this->hookManager->addAction('wp_head', [$this, 'renderThemeSettingsInlineCss']);
+
+        // Output Theme Settings Compiler debug in <head> when WP_DEBUG is enabled (M31)
+        $this->hookManager->addAction('wp_head', [$this, 'renderThemeSettingsDebug']);
 
         // Output Site Builder debug information in <head> when WP_DEBUG is enabled
         $this->hookManager->addAction('wp_head', [$this, 'renderSiteBuilderDebugComment']);
@@ -182,14 +195,21 @@ final class ThemeRenderer
     /**
      * Get the DesignTokenGenerator instance.
      */
-    public function getDesignTokenGenerator(): DesignTokenGenerator
+public function getDesignTokenGenerator(): DesignTokenGenerator
     {
         return $this->designTokenGenerator;
     }
 
     /**
-     * Get the LayoutManager instance.
+     * Get the ThemeSettingsCompiler instance.
+     *
+     * M31 — Dynamic Theme Settings Engine.
      */
+    public function getThemeSettingsCompiler(): ThemeSettingsCompiler
+    {
+        return $this->themeSettingsCompiler;
+    }
+
     public function getLayoutManager(): LayoutManager
     {
         return $this->layoutManager;
@@ -438,6 +458,64 @@ final class ThemeRenderer
         echo 'Header: ' . $headerEnabled . "\n";
         echo 'Footer: ' . $footerEnabled . "\n";
         echo 'Hero: ' . $heroStatus . "\n";
+        echo '-->' . "\n";
+    }
+
+    /**
+     * Render compiled theme settings as inline CSS.
+     *
+     * Outputs a <style id="jasanika-theme-settings"> block with
+     * CSS custom properties generated from the active theme settings.
+     * These variables are consumed by frontend.css and all component
+     * styles to make settings visibly affect the frontend.
+     *
+     * M31 — Dynamic Theme Settings Engine.
+     *
+     * Called via wp_head action hook.
+     */
+    public function renderThemeSettingsInlineCss(): void
+    {
+        $tokens = $this->themeSettingsCompiler->compile();
+
+        if (empty($tokens)) {
+            return;
+        }
+
+        echo '<style id="jasanika-theme-settings">' . "\n";
+
+        echo ':root {' . "\n";
+
+        foreach ($tokens as $name => $value) {
+            echo '  ' . $name . ': ' . esc_attr($value) . ';' . "\n";
+        }
+
+        echo '}' . "\n";
+
+        echo '</style>' . "\n";
+    }
+
+    /**
+     * Render Theme Settings Compiler debug output when WP_DEBUG is enabled.
+     *
+     * Outputs current preset, colors, container width, and logo status
+     * as an HTML comment. Never visible in production.
+     *
+     * M31 — Dynamic Theme Settings Engine.
+     */
+    public function renderThemeSettingsDebug(): void
+    {
+        if (!defined('WP_DEBUG') || !WP_DEBUG) {
+            return;
+        }
+
+        $config = $this->themeSettingsCompiler->getConfig();
+
+        echo '<!--' . "\n";
+        echo 'Theme Settings Compiler Active' . "\n";
+        echo 'Preset: ' . esc_html($config['Preset']) . "\n";
+        echo 'Primary Color: ' . esc_html($config['Primary Color']) . "\n";
+        echo 'Container Width: ' . esc_html($config['Container Width']) . "\n";
+        echo 'Logo: ' . esc_html($config['Logo']) . "\n";
         echo '-->' . "\n";
     }
 }

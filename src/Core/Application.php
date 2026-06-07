@@ -44,6 +44,7 @@ use Jasanika\Settings\LogoSetting;
 use Jasanika\Settings\PrimaryColorSetting;
 use Jasanika\Settings\SettingsRegistry;
 use Jasanika\Settings\SiteLayoutSetting;
+use Jasanika\Settings\ThemeSettingsCompiler;
 use Jasanika\Settings\TypographySetting;
 use Jasanika\Widgets\WidgetAreaManager;
 
@@ -87,10 +88,11 @@ use Jasanika\Widgets\WidgetAreaManager;
  *     └─ HeroRenderer
  *
 * Current Version:
- * 0.30
+ * 0.31
  *
  * M29 — Settings UI Refactor & Design System
  * M30 — Admin UI Dark Card Layout
+ * M31 — Dynamic Theme Settings Engine
  *
  * @see FrameworkInfo
  * @see ThemeRenderer
@@ -116,6 +118,7 @@ final class Application
 
     private SettingsRegistry $settingsRegistry;
     private SettingsManager $settingsManager;
+    private ThemeSettingsCompiler $themeSettingsCompiler;
 
     // ============================================================
     // ADMIN
@@ -215,7 +218,7 @@ final class Application
 
         $this->frameworkInfo = new FrameworkInfo(
             'Jasanika 2',
-            '0.30'
+            '0.31'
         );
 
         $this->container = new Container();
@@ -396,6 +399,29 @@ final class Application
             $this->designSettingsManager,
             $this->tokenRegistry,
             $this->presetManager
+        );
+
+        // ============================================================
+        // THEME SETTINGS COMPILER
+        // ============================================================
+        //
+        // Depends on:
+        // - DesignSettingsManager
+        // - ThemePresetManager
+        // - SettingsManager
+        //
+        // Provides:
+        // - ThemeSettingsCompiler (settings → CSS variables)
+        //
+        // Must be initialized after Design Token System because it
+        // depends on DesignSettingsManager for normalized values.
+        //
+        // M31 — Dynamic Theme Settings Engine
+
+        $this->themeSettingsCompiler = new ThemeSettingsCompiler(
+            $this->designSettingsManager,
+            $this->presetManager,
+            $this->settingsManager
         );
 
         // ============================================================
@@ -1061,7 +1087,7 @@ final class Application
         $script = new Asset(
             'jasanika-media-field',
             get_template_directory_uri() . '/assets/admin/js/media-field.js',
-            '0.30',
+            '0.31',
             ['jquery'],
             'all',
             true
@@ -1090,7 +1116,7 @@ final class Application
         $adminCss = new Asset(
             'jasanika-admin',
             get_template_directory_uri() . '/assets/css/admin.css',
-            '0.30'
+            '0.31'
         );
 
         $this->assetManager->registerStyle($adminCss);
@@ -1134,7 +1160,7 @@ final class Application
         $style = new Asset(
             'jasanika-frontend',
             get_template_directory_uri() . '/assets/css/frontend.css',
-            '0.30'
+            '0.31'
         );
 
         $this->assetManager->registerStyle($style);
@@ -1142,7 +1168,7 @@ final class Application
         $tokens = new Asset(
             'jasanika-tokens',
             get_template_directory_uri() . '/assets/css/tokens.css',
-            '0.30'
+            '0.31'
         );
 
         $this->assetManager->registerStyle($tokens);
@@ -1150,7 +1176,7 @@ final class Application
         $components = new Asset(
             'jasanika-components',
             get_template_directory_uri() . '/assets/css/components.css',
-            '0.30'
+            '0.31'
         );
 
         $this->assetManager->registerStyle($components);
@@ -1159,7 +1185,7 @@ final class Application
         $headerStyle = new Asset(
             'jasanika-header',
             get_template_directory_uri() . '/assets/css/header.css',
-            '0.30'
+            '0.31'
         );
 
         $this->assetManager->registerStyle($headerStyle);
@@ -1168,7 +1194,7 @@ final class Application
         $headerScript = new Asset(
             'jasanika-header',
             get_template_directory_uri() . '/assets/js/header.js',
-            '0.30',
+            '0.31',
             [],
             'all',
             true
@@ -1179,7 +1205,7 @@ final class Application
         $script = new Asset(
             'jasanika-frontend',
             get_template_directory_uri() . '/assets/js/frontend.js',
-            '0.30',
+            '0.31',
             [],
             'all',
             true
@@ -1220,6 +1246,7 @@ final class Application
             $this->siteIdentityRenderer,
             $this->layoutRegionRenderer,
             $this->designTokenGenerator,
+            $this->themeSettingsCompiler,
             $this->layoutManager,
             $this->layoutRenderer,
             $this->componentRenderer,
@@ -1277,6 +1304,7 @@ final class Application
             LayoutRenderer::class      => 'layoutRenderer',
             DesignTokenRegistry::class => 'tokenRegistry',
             ThemePresetManager::class  => 'presetManager',
+            ThemeSettingsCompiler::class => 'themeSettingsCompiler',
             ComponentRegistry::class   => 'componentRegistry',
             ComponentRenderer::class   => 'componentRenderer',
             HeaderManager::class       => 'headerManager',
@@ -1403,35 +1431,85 @@ final class Application
      */
     private function registerThemePresets(): void
     {
+        // --- Default Preset ---
+        // Standard Jasanika design: purple primary, dark background,
+        // warm accent. This is the baseline appearance.
         $this->presetManager->registerPreset(
             'default',
             'Default',
             'Standardni Jasanika design',
-            []
+            [
+                '--jas-color-primary'    => '#b78acb',
+                '--jas-color-secondary'  => '#24212b',
+                '--jas-color-accent'     => '#f1c95d',
+                '--jas-color-background' => '#1b1a1f',
+                '--jas-color-surface'    => '#24212b',
+                '--jas-color-text'       => '#f5f2f7',
+                '--jas-color-heading'    => '#f5f2f7',
+                '--jas-color-border'     => 'rgba(255,255,255,0.08)',
+            ]
         );
 
+        // --- Modern Preset ---
+        // Cleaner contemporary variant: softer purple, slightly
+        // lighter background, muted accent.
         $this->presetManager->registerPreset(
             'modern',
             'Modern',
             'Cistsi a soucasnejsi varianta',
-            []
+            [
+                '--jas-color-primary'    => '#9b72aa',
+                '--jas-color-secondary'  => '#2a2533',
+                '--jas-color-accent'     => '#e8c44a',
+                '--jas-color-background' => '#1e1d24',
+                '--jas-color-surface'    => '#272530',
+                '--jas-color-text'       => '#f0edf2',
+                '--jas-color-heading'    => '#ffffff',
+                '--jas-color-border'     => 'rgba(255,255,255,0.06)',
+            ]
         );
 
+        // --- Minimal Preset ---
+        // Reduced visual complexity: monochromatic palette,
+        // grey primary, minimal contrast.
         $this->presetManager->registerPreset(
             'minimal',
             'Minimal',
             'Redukovana vizualni komplexita',
-            []
+            [
+                '--jas-color-primary'    => '#8c8c8c',
+                '--jas-color-secondary'  => '#2c2c2c',
+                '--jas-color-accent'     => '#d4d4d4',
+                '--jas-color-background' => '#1a1a1a',
+                '--jas-color-surface'    => '#242424',
+                '--jas-color-text'       => '#e8e8e8',
+                '--jas-color-heading'    => '#f0f0f0',
+                '--jas-color-border'     => 'rgba(255,255,255,0.05)',
+            ]
         );
 
-        // --- M27 Presets ---
+        // --- Business Preset ---
+        // Professional business appearance: blue primary,
+        // dark navy background, warm gold accent.
         $this->presetManager->registerPreset(
             'business',
             'Business',
             'Professionalni vzhled pro firemni prezentaci',
-            []
+            [
+                '--jas-color-primary'    => '#4a90d9',
+                '--jas-color-secondary'  => '#2c3e50',
+                '--jas-color-accent'     => '#f39c12',
+                '--jas-color-background' => '#1a1d23',
+                '--jas-color-surface'    => '#242830',
+                '--jas-color-text'       => '#ecf0f1',
+                '--jas-color-heading'    => '#ffffff',
+                '--jas-color-border'     => 'rgba(255,255,255,0.07)',
+            ]
         );
 
+        // --- Custom Preset ---
+        // Full manual control — no token overrides.
+        // Every design setting is editable via the settings UI.
         $this->presetManager->registerPreset(
             'custom',
             'Custom',
@@ -1603,6 +1681,11 @@ final class Application
     public function getDesignTokenGenerator(): DesignTokenGenerator
     {
         return $this->designTokenGenerator;
+    }
+
+    public function getThemeSettingsCompiler(): ThemeSettingsCompiler
+    {
+        return $this->themeSettingsCompiler;
     }
 
     public function getLayoutManager(): LayoutManager

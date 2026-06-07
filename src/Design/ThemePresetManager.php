@@ -4,24 +4,28 @@ declare(strict_types=1);
 
 namespace Jasanika\Design;
 
+use Jasanika\Admin\SettingsManager;
+
 /**
  * Theme Preset Manager.
  *
  * Manages design presets that define token overrides for complete
  * theme appearance switching. Provides preset registration, active
- * preset resolution, and token override retrieval.
+ * preset resolution, token override retrieval, and preset application.
  *
- * Initial presets:
+ * M31: Added actual token definitions for all presets. Added
+ * applyPresetToSettings() method for applying preset values to
+ * the SettingsManager.
+ *
+ * Presets:
  * - default  — Standard Jasanika design
  * - modern   — Cleaner, more contemporary variant
  * - minimal  — Reduced visual complexity
+ * - business — Professional business appearance
+ * - custom   — Full manual control
  *
- * Each preset can override any subset of design tokens. Unspecified
- * tokens fall through to values from DesignSettingsManager and
- * DesignTokenRegistry defaults.
- *
- * No admin UI exists yet — this is the foundation layer.
- * The active preset is always 'default' by default.
+ * Each preset defines complete token overrides. Unspecified
+ * tokens fall through to values from DesignSettingsManager defaults.
  *
  * M27: Added Business preset, Custom preset mode support, and
  * display helper methods for the Appearance Dashboard.
@@ -153,5 +157,66 @@ final class ThemePresetManager
     public function isCustomMode(): bool
     {
         return $this->activePreset === 'custom';
+    }
+
+    /**
+     * Apply the active preset's token values to the SettingsManager.
+     *
+     * Writes preset color and typography values as WordPress options
+     * so that DesignSettingsManager reads the correct values for the
+     * active preset. When the active preset is 'custom', no values
+     * are overwritten (full manual control).
+     *
+     * M31: New method for preset application engine.
+     *
+     * @param SettingsManager $settingsManager Settings manager to write to.
+     */
+    public function applyPresetToSettings(SettingsManager $settingsManager): void
+    {
+        if ($this->isCustomMode()) {
+            return;
+        }
+
+        $overrides = $this->getActiveTokenOverrides();
+
+        if (empty($overrides)) {
+            return;
+        }
+
+        $colorMap = [
+            '--jas-color-primary'    => 'primary_color',
+            '--jas-color-secondary'  => 'secondary_color',
+            '--jas-color-accent'     => 'accent_color',
+            '--jas-color-background' => 'background_color',
+            '--jas-color-surface'    => 'surface_color',
+            '--jas-color-text'       => 'text_color',
+            '--jas-color-heading'    => 'heading_color',
+            '--jas-color-border'     => 'border_color',
+        ];
+
+        foreach ($colorMap as $token => $settingKey) {
+            if (isset($overrides[$token])) {
+                $settingsManager->set($settingKey, $overrides[$token]);
+            }
+        }
+    }
+
+    /**
+     * Get the complete resolved token set for the active preset.
+     *
+     * Returns all token overrides merged with the default preset
+     * values so frontend rendering receives a complete picture.
+     *
+     * M31: New method for preset application engine.
+     *
+     * @return array<string, string> Token name → CSS value.
+     */
+    public function getAppliedTokens(): array
+    {
+        if ($this->isCustomMode()) {
+            return [];
+        }
+
+        return $this->getActiveTokenOverrides();
     }
 }

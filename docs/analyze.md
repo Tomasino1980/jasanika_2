@@ -6,13 +6,13 @@ Jasanika_2
 
 Modular WordPress Framework
 
-Current Version: 0.30
+Current Version: 0.31
 
 ---
 
 # Current Milestone
 
-M30 - Admin UI Dark Card Layout
+M31 - Dynamic Theme Settings Engine
 
 Status: Completed
 
@@ -54,6 +54,7 @@ Status: Completed
 - M28.2 - Bootstrap Documentation & Architecture Cleanup
 - M29 - Settings UI Refactor & Design System
 - M30 - Admin UI Dark Card Layout
+- M31 - Dynamic Theme Settings Engine
 
 ---
 
@@ -342,21 +343,72 @@ The project has been transformed into a configurable Site Builder with a user-fr
 
 ---
 
-# Existing Directory Structure
+# M31 — Dynamic Theme Settings Engine
 
-See:
+Version: 0.31
 
-docs/project-tree.txt
+Status: Completed
 
----
+## Added
 
-# Active Decisions
+**Theme Settings Compiler (ThemeSettingsCompiler.php):**
+- Dedicated service that reads all appearance settings and generates CSS variables
+- Normalizes color scheme (primary, secondary, accent, background, surface, text, heading, border)
+- Generates container width, site layout, and typography CSS variables
+- Generates logo dimension CSS variables (--jas-logo-width, --jas-logo-height)
+- Generates layout control tokens (header, content, sidebar, footer widths, padding, margin)
+- getConfig() method returns human-readable configuration array for debug output
 
-ADR documents will be created in:
+**Frontend CSS Variable Injection (M31):**
+- New `renderThemeSettingsInlineCss()` method in ThemeRenderer outputs `<style id="jasanika-theme-settings">` block
+- Inline style block contains all compiled CSS custom properties at `:root` level
+- Registered via `wp_head` action hook, decoupled from DesignTokenGenerator
 
-docs/architecture/
+**Theme Preset Application Engine (M31):**
+- ThemePresetManager now has actual token definitions for all presets
+- Default: standard Jasanika design (purple primary, dark background)
+- Modern: softer purple, slightly lighter background
+- Minimal: monochromatic grey palette
+- Business: blue primary, navy background, gold accent
+- Custom: no overrides (full manual control)
+- New `applyPresetToSettings()` method writes preset values to SettingsManager
+- New `getAppliedTokens()` method returns resolved preset token set
 
-No ADR exists yet.
+**Frontend CSS Dynamic Variables (M31):**
+- All hardcoded color values in frontend.css replaced with CSS custom properties
+- Body background now uses `var(--jas-color-background)`
+- Body text now uses `var(--jas-color-text)`
+- Heading colors use `var(--jas-color-heading)`
+- Heading font family uses `var(--jas-font-family-heading)` (was hardcoded Playfair Display)
+- Button backgrounds use `var(--jas-color-primary)` with `var(--jas-color-background)` for contrast
+- Border colors use `var(--jas-color-border)`
+- Surface/panel backgrounds use `var(--jas-color-surface)`
+- Token-link hover colors use `var(--jas-color-primary-hover)`
+- All with sensible CSS fallbacks
+
+**Container Width Integration (M31):**
+- Container width already used `var(--jas-container-width)` in CSS
+- ThemeSettingsCompiler now dynamically generates this from settings
+- Boxed layout wrapper background uses dynamic `var(--jas-color-background)`
+
+**Debug Support (M31):**
+- New `renderThemeSettingsDebug()` in ThemeRenderer for WP_DEBUG mode
+- Outputs: Preset, Primary Color, Container Width, Logo status
+- Never visible in production
+
+## Changed
+
+- Application.php — version 0.31, ThemeSettingsCompiler initialization, updated constructor signature for ThemeRenderer, actual preset token definitions, updated asset versions to 0.31
+- ThemeRenderer.php — accepts ThemeSettingsCompiler dependency, two new hooks for inline CSS and debug output, renderThemeSettingsInlineCss(), renderThemeSettingsDebug(), getThemeSettingsCompiler() accessor
+- ThemePresetManager.php — actual token definitions in all presets, new applyPresetToSettings() method, new getAppliedTokens() method, updated PHPDoc
+- frontend.css — all hardcoded color/text/font values replaced with CSS custom properties, version 0.31
+- tokens.css — all hardcoded color values replaced with CSS custom properties, renamed from --jas-primary-color to --jas-color-primary, version 0.31
+- config/app.php — version updated to 0.31
+- style.css — version updated to 0.31
+
+## Fixed
+
+- N/A
 
 ---
 
@@ -374,7 +426,7 @@ None
 
 # Next Planned Milestone
 
-M31 - Advanced Color System
+M32 - Advanced Color System
 
 ---
 
