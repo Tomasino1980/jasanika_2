@@ -349,7 +349,7 @@ final class SettingsPage
         $sec = new FormSection($section->getName(), $section->getDescription());
         $sec->start();
 
-        $groups = $this->buildFieldGroups($section->getSlug(), $section->getSettingKeys());
+        $groups = $this->buildFieldGroups($section->getSlug(), $section->getSettingKeys(), $section->getName());
 
         $firstGroup = true;
         foreach ($groups as $groupSlug => $group) {
@@ -499,10 +499,11 @@ final class SettingsPage
      *
      * @param string   $sectionSlug Section identifier.
      * @param string[] $keys        Setting keys in the section.
+     * @param string   $sectionName Section name for fallback group label.
      *
      * @return array<string, array{label: string, keys: string[]}>
      */
-    private function buildFieldGroups(string $sectionSlug, array $keys): array
+    private function buildFieldGroups(string $sectionSlug, array $keys, string $sectionName = ''): array
     {
         $groups = [];
 
@@ -540,7 +541,7 @@ final class SettingsPage
         } elseif (str_contains($sectionSlug, 'color_scheme')) {
             $groups['colors'] = ['label' => 'Colors', 'keys' => $keys];
         } else {
-            $groups['default'] = ['label' => $section->getName(), 'keys' => $keys];
+            $groups['default'] = ['label' => $sectionName !== '' ? $sectionName : 'Settings', 'keys' => $keys];
         }
 
         foreach ($groups as $slug => $group) {
