@@ -93,6 +93,9 @@ final class DesignTokenGenerator
         $tokens['--jas-container-width']     = $this->designSettingsManager->getContainerWidth();
         $tokens['--jas-site-layout']         = $this->designSettingsManager->getSiteLayout();
 
+        // M28: Header layout tokens
+        $tokens['--jas-header-bg']   = $this->designSettingsManager->getPrimaryColor(); // placeholder, overridden by inline style
+
         // 3. Compute semantic color values
         // For now, design-system-fixed values are the defaults in the registry.
         // Dynamic derived color logic will be expanded in future milestones.

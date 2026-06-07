@@ -27,6 +27,19 @@ return [
         'header_show_search'  => 'no',
         'header_show_top_bar' => 'no',
 
+        // --- M28: Dynamic Header Builder ---
+        'header_layout'            => 'logo-left',
+        'header_height_desktop'    => '80px',
+        'header_height_tablet'     => '72px',
+        'header_height_mobile'     => '64px',
+        'header_show_cta'          => 'no',
+        'header_cta_label'         => 'Get Started',
+        'header_cta_url'           => '#',
+        'header_cta_style'         => 'primary',
+        'header_top_bar_content'   => '',
+        'header_top_bar_bg'        => '#24212b',
+        'header_top_bar_text_color' => '#b9b1c4',
+
         // --- Footer ---
         'footer_layout'        => '3',
         'footer_bg_color'      => '#1b1a1f',

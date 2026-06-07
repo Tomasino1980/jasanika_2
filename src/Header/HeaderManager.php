@@ -12,17 +12,34 @@ use Jasanika\Admin\SettingsManager;
  * Owns all header-related settings and provides typed accessors
  * for the rendering pipeline. No rendering logic in this class.
  *
+ * M28: Expanded with header layout, responsive heights, top bar,
+ * CTA button settings, and tablet/mobile height variants.
+ *
  * Settings are managed by the Settings Framework and stored in
  * the WordPress Options API via SettingsManager.
  */
 final class HeaderManager
 {
     private SettingsManager $settingsManager;
+    private HeaderLayout $headerLayout;
 
-    public function __construct(SettingsManager $settingsManager)
+    public function __construct(SettingsManager $settingsManager, ?HeaderLayout $headerLayout = null)
     {
         $this->settingsManager = $settingsManager;
+        $this->headerLayout = $headerLayout ?? new HeaderLayout();
     }
+
+    /**
+     * Get the HeaderLayout instance.
+     */
+    public function getLayoutEngine(): HeaderLayout
+    {
+        return $this->headerLayout;
+    }
+
+    // ---------------------------------------------------------------
+    //  Logo Settings (V3)
+    // ---------------------------------------------------------------
 
     /**
      * Get the desktop logo attachment ID.
@@ -81,7 +98,63 @@ final class HeaderManager
     }
 
     /**
-     * Get the header height CSS value.
+     * Get desktop logo URL or empty string.
+     */
+    public function getDesktopLogoUrl(): string
+    {
+        $id = $this->getDesktopLogoId();
+        if ($id <= 0) {
+            return '';
+        }
+        $src = wp_get_attachment_image_url($id, 'full');
+        return is_string($src) ? $src : '';
+    }
+
+    /**
+     * Get mobile logo URL or empty string.
+     */
+    public function getMobileLogoUrl(): string
+    {
+        $id = $this->getMobileLogoId();
+        if ($id <= 0) {
+            return '';
+        }
+        $src = wp_get_attachment_image_url($id, 'full');
+        return is_string($src) ? $src : '';
+    }
+
+    /**
+     * Get retina logo URL or empty string.
+     */
+    public function getRetinaLogoUrl(): string
+    {
+        $id = $this->getRetinaLogoId();
+        if ($id <= 0) {
+            return '';
+        }
+        $src = wp_get_attachment_image_url($id, 'full');
+        return is_string($src) ? $src : '';
+    }
+
+    // ---------------------------------------------------------------
+    //  Header Layout
+    // ---------------------------------------------------------------
+
+    /**
+     * Get the active header layout slug.
+     */
+    public function getLayout(): string
+    {
+        $layout = $this->settingsManager->get('header_layout');
+        return is_string($layout) && $layout !== '' ? $layout : 'logo-left';
+    }
+
+    // ---------------------------------------------------------------
+    //  Header Height (responsive)
+    // ---------------------------------------------------------------
+
+    /**
+     * Get the header height CSS value (base/default).
      */
     public function getHeaderHeight(): string
     {
@@ -90,46 +163,124 @@ final class HeaderManager
     }
 
     /**
-     * Get the header background color.
+     * Get the desktop header height CSS value.
      */
+    public function getDesktopHeaderHeight(): string
+    {
+        $height = $this->settingsManager->get('header_height_desktop');
+        return is_string($height) && $height !== '' ? $height : $this->getHeaderHeight();
+    }
+
+    /**
+     * Get the tablet header height CSS value.
+     */
+    public function getTabletHeaderHeight(): string
+    {
+        $height = $this->settingsManager->get('header_height_tablet');
+        return is_string($height) && $height !== '' ? $height : $this->getDesktopHeaderHeight();
+    }
+
+    /**
+     * Get the mobile header height CSS value.
+     */
+    public function getMobileHeaderHeight(): string
+    {
+        $height = $this->settingsManager->get('header_height_mobile');
+        return is_string($height) && $height !== '' ? $height : '64px';
+    }
+
+    // ---------------------------------------------------------------
+    //  Header Colors
+    // ---------------------------------------------------------------
+
     public function getHeaderBackgroundColor(): string
     {
         $color = $this->settingsManager->get('header_bg_color');
         return is_string($color) && $color !== '' ? $color : '#1b1a1f';
     }
 
-    /**
-     * Get the header text color.
-     */
     public function getHeaderTextColor(): string
     {
         $color = $this->settingsManager->get('header_text_color');
         return is_string($color) && $color !== '' ? $color : '#f5f2f7';
     }
 
-    /**
-     * Whether sticky header is enabled.
-     */
+    // ---------------------------------------------------------------
+    //  Sticky Header
+    // ---------------------------------------------------------------
+
     public function isStickyEnabled(): bool
     {
         return $this->settingsManager->get('header_sticky') === 'yes';
     }
 
-    /**
-     * Whether search is shown in header.
-     */
+    // ---------------------------------------------------------------
+    //  Search Toggle
+    // ---------------------------------------------------------------
+
     public function showSearch(): bool
     {
-        return $this->settingsManager->get('header_show_search') === 'yes';
+        $show = $this->settingsManager->get('header_show_search');
+        return $show === 'yes';
     }
 
-    /**
-     * Whether top bar is shown.
-     */
+    // ---------------------------------------------------------------
+    //  CTA Button
+    // ---------------------------------------------------------------
+
+    public function showCta(): bool
+    {
+        return $this->settingsManager->get('header_show_cta') === 'yes';
+    }
+
+    public function getCtaLabel(): string
+    {
+        $label = $this->settingsManager->get('header_cta_label');
+        return is_string($label) && $label !== '' ? $label : __('Get Started', 'jasanika');
+    }
+
+    public function getCtaUrl(): string
+    {
+        $url = $this->settingsManager->get('header_cta_url');
+        return is_string($url) ? $url : '#';
+    }
+
+    public function getCtaStyle(): string
+    {
+        $style = $this->settingsManager->get('header_cta_style');
+        return in_array($style, ['primary', 'secondary', 'outline'], true) ? $style : 'primary';
+    }
+
+    // ---------------------------------------------------------------
+    //  Top Bar
+    // ---------------------------------------------------------------
+
     public function showTopBar(): bool
     {
         return $this->settingsManager->get('header_show_top_bar') === 'yes';
     }
+
+    public function getTopBarContent(): string
+    {
+        $content = $this->settingsManager->get('header_top_bar_content');
+        return is_string($content) ? $content : '';
+    }
+
+    public function getTopBarBackground(): string
+    {
+        $color = $this->settingsManager->get('header_top_bar_bg');
+        return is_string($color) && $color !== '' ? $color : '#24212b';
+    }
+
+    public function getTopBarTextColor(): string
+    {
+        $color = $this->settingsManager->get('header_top_bar_text_color');
+        return is_string($color) && $color !== '' ? $color : '#b9b1c4';
+    }
+
+    // ---------------------------------------------------------------
+    //  Debug Info
+    // ---------------------------------------------------------------
 
     /**
      * Get all header settings for debug output.
@@ -139,16 +290,21 @@ final class HeaderManager
     public function getDebugInfo(): array
     {
         return [
-            'Logo Desktop'      => $this->getDesktopLogoId(),
-            'Logo Width'        => $this->getLogoWidth(),
-            'Logo Height'       => $this->getLogoHeight(),
-            'Logo Position'     => $this->getLogoPosition(),
-            'Header Height'     => $this->getHeaderHeight(),
-            'Header BG Color'   => $this->getHeaderBackgroundColor(),
-            'Header Text Color' => $this->getHeaderTextColor(),
-            'Sticky Header'     => $this->isStickyEnabled() ? 'yes' : 'no',
-            'Show Search'       => $this->showSearch() ? 'yes' : 'no',
-            'Show Top Bar'      => $this->showTopBar() ? 'yes' : 'no',
+            'Layout'              => $this->getLayout(),
+            'Sticky Header'       => $this->isStickyEnabled() ? 'enabled' : 'disabled',
+            'Search'              => $this->showSearch() ? 'enabled' : 'disabled',
+            'CTA'                 => $this->showCta() ? 'enabled' : 'disabled',
+            'Desktop Logo'        => $this->getDesktopLogoId() > 0 ? 'loaded' : 'not set',
+            'Mobile Logo'         => $this->getMobileLogoId() > 0 ? 'loaded' : 'not set',
+            'Top Bar'             => $this->showTopBar() ? 'enabled' : 'disabled',
+            'Header Height'       => $this->getHeaderHeight(),
+            'Desktop Height'      => $this->getDesktopHeaderHeight(),
+            'Tablet Height'       => $this->getTabletHeaderHeight(),
+            'Mobile Height'       => $this->getMobileHeaderHeight(),
+            'Header BG Color'     => $this->getHeaderBackgroundColor(),
+            'Header Text Color'   => $this->getHeaderTextColor(),
+            'CTA Label'           => $this->showCta() ? $this->getCtaLabel() : '—',
+            'Top Bar Content'     => $this->showTopBar() ? $this->getTopBarContent() : '—',
         ];
     }
 }

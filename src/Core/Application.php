@@ -25,8 +25,10 @@ use Jasanika\Design\DesignTokenRegistry;
 use Jasanika\Design\ThemePresetManager;
 use Jasanika\Footer\FooterManager;
 use Jasanika\Footer\FooterRenderer;
+use Jasanika\Header\HeaderLayout;
 use Jasanika\Header\HeaderManager;
 use Jasanika\Header\HeaderRenderer;
+use Jasanika\Header\MobileMenu;
 use Jasanika\Hero\HeroManager;
 use Jasanika\Hero\HeroRenderer;
 use Jasanika\Hooks\HookManager;
@@ -71,6 +73,8 @@ final class Application
     private ComponentRenderer $componentRenderer;
     private HeaderManager $headerManager;
     private HeaderRenderer $headerRenderer;
+    private HeaderLayout $headerLayout;
+    private MobileMenu $mobileMenu;
     private FooterManager $footerManager;
     private FooterRenderer $footerRenderer;
     private HeroManager $heroManager;
@@ -80,7 +84,7 @@ final class Application
     {
         $this->frameworkInfo = new FrameworkInfo(
             'Jasanika 2',
-            '0.27'
+            '0.28'
         );
 
         $this->container = new Container();
@@ -150,12 +154,16 @@ final class Application
             $this->layoutRegionRenderer
         );
 
-        // --- Initialize Header Builder ---
-        $this->headerManager = new HeaderManager($this->settingsManager);
+        // --- Initialize Header Builder (M28: Dynamic Header Builder) ---
+        $this->headerLayout = new HeaderLayout();
+        $this->mobileMenu = new MobileMenu();
+        $this->headerManager = new HeaderManager($this->settingsManager, $this->headerLayout);
         $this->headerRenderer = new HeaderRenderer(
             $this->headerManager,
             $this->siteIdentityRenderer,
-            $this->navigationManager
+            $this->navigationManager,
+            $this->componentRenderer,
+            $this->mobileMenu
         );
 
         // --- Initialize Footer Builder ---
@@ -256,6 +264,30 @@ final class Application
             'center' => 'Center',
             'right'  => 'Right',
         ]));
+
+        // --- M28: Dynamic Header Builder Settings ---
+        $headerLayoutOptions = [];
+        foreach ($this->headerLayout->getAllLayouts() as $slug => $config) {
+            $headerLayoutOptions[$slug] = $config['label'];
+        }
+        $r->register(new Setting('header_layout', 'logo-left', 'Header Layout', 'select', $headerLayoutOptions));
+        $r->register(new Setting('header_height_desktop', '80px', 'Desktop Header Height', 'text'));
+        $r->register(new Setting('header_height_tablet', '72px', 'Tablet Header Height', 'text'));
+        $r->register(new Setting('header_height_mobile', '64px', 'Mobile Header Height', 'text'));
+        $r->register(new Setting('header_show_cta', 'no', 'Show CTA Button', 'select', [
+            'yes' => 'Show',
+            'no'  => 'Hide',
+        ]));
+        $r->register(new Setting('header_cta_label', 'Get Started', 'CTA Label', 'text'));
+        $r->register(new Setting('header_cta_url', '#', 'CTA URL', 'text'));
+        $r->register(new Setting('header_cta_style', 'primary', 'CTA Style', 'select', [
+            'primary'   => 'Primary',
+            'secondary' => 'Secondary',
+            'outline'   => 'Outline',
+        ]));
+        $r->register(new Setting('header_top_bar_content', '', 'Top Bar Content', 'text'));
+        $r->register(new Setting('header_top_bar_bg', '#24212b', 'Top Bar Background', 'color'));
+        $r->register(new Setting('header_top_bar_text_color', '#b9b1c4', 'Top Bar Text Color', 'color'));
 
         // --- Header Settings (M26) ---
         $r->register(new Setting('header_height', '80px', 'Header Height', 'text'));
@@ -398,9 +430,32 @@ final class Application
         $settingsPage->registerSection(new Section(
             'appearance_header',
             'Header',
-            'Header height, background color, text color, and feature toggles.',
+            'Header layout, height, colors, and feature toggles.',
             'appearance',
-            ['header_height', 'header_bg_color', 'header_text_color', 'header_sticky', 'header_show_search', 'header_show_top_bar']
+            [
+                'header_layout', 'header_height', 'header_height_desktop', 'header_height_tablet', 'header_height_mobile',
+                'header_bg_color', 'header_text_color', 'header_sticky', 'header_show_search', 'header_show_cta',
+            ]
+        ));
+
+        $settingsPage->registerSection(new Section(
+            'appearance_header_cta',
+            'CTA Button',
+            'Call-to-action button configuration.',
+            'appearance',
+            [
+                'header_cta_label', 'header_cta_url', 'header_cta_style',
+            ]
+        ));
+
+        $settingsPage->registerSection(new Section(
+            'appearance_header_top_bar',
+            'Top Bar',
+            'Top bar content, colors, and visibility.',
+            'appearance',
+            [
+                'header_show_top_bar', 'header_top_bar_content', 'header_top_bar_bg', 'header_top_bar_text_color',
+            ]
         ));
 
         $settingsPage->registerSection(new Section(
@@ -472,7 +527,7 @@ final class Application
         $script = new Asset(
             'jasanika-media-field',
             get_template_directory_uri() . '/assets/admin/js/media-field.js',
-            '0.27',
+            '0.28',
             ['jquery'],
             'all',
             true
@@ -492,7 +547,7 @@ final class Application
         $adminCss = new Asset(
             'jasanika-admin',
             get_template_directory_uri() . '/assets/css/admin.css',
-            '0.27'
+            '0.28'
         );
 
         $this->assetManager->registerStyle($adminCss);
@@ -516,7 +571,7 @@ final class Application
         $style = new Asset(
             'jasanika-frontend',
             get_template_directory_uri() . '/assets/css/frontend.css',
-            '0.27'
+            '0.28'
         );
 
         $this->assetManager->registerStyle($style);
@@ -524,7 +579,7 @@ final class Application
         $tokens = new Asset(
             'jasanika-tokens',
             get_template_directory_uri() . '/assets/css/tokens.css',
-            '0.27'
+            '0.28'
         );
 
         $this->assetManager->registerStyle($tokens);
@@ -532,15 +587,36 @@ final class Application
         $components = new Asset(
             'jasanika-components',
             get_template_directory_uri() . '/assets/css/components.css',
-            '0.27'
+            '0.28'
         );
 
         $this->assetManager->registerStyle($components);
 
+        // M28: Header CSS
+        $headerStyle = new Asset(
+            'jasanika-header',
+            get_template_directory_uri() . '/assets/css/header.css',
+            '0.28'
+        );
+
+        $this->assetManager->registerStyle($headerStyle);
+
+        // M28: Header JS
+        $headerScript = new Asset(
+            'jasanika-header',
+            get_template_directory_uri() . '/assets/js/header.js',
+            '0.28',
+            [],
+            'all',
+            true
+        );
+
+        $this->assetManager->registerScript($headerScript);
+
         $script = new Asset(
             'jasanika-frontend',
             get_template_directory_uri() . '/assets/js/frontend.js',
-            '0.26',
+            '0.28',
             [],
             'all',
             true
@@ -604,6 +680,8 @@ final class Application
             ComponentRenderer::class   => 'componentRenderer',
             HeaderManager::class       => 'headerManager',
             HeaderRenderer::class      => 'headerRenderer',
+            HeaderLayout::class        => 'headerLayout',
+            MobileMenu::class          => 'mobileMenu',
             FooterManager::class       => 'footerManager',
             FooterRenderer::class      => 'footerRenderer',
             HeroManager::class         => 'heroManager',

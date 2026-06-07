@@ -2,8 +2,10 @@
  * Jasanika 2 Frontend Styles
  *
  * Modular WordPress Framework
- * Version 0.26
- * M26 — Site Builder & Settings UI Framework
+ * Version 0.28
+ * M28 — Dynamic Header Builder
+ *
+ * Note: Header-specific styles have been moved to assets/css/header.css (M28).
  */
 
 /* ========================================
@@ -564,213 +566,6 @@ body {
 }
 
 /* ========================================
-   Header Layout
-   ======================================== */
-
-.jas-header {
-    background: rgba(255,255,255,0.03);
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-    position: relative;
-    z-index: 100;
-}
-
-.jas-header__inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1.5rem;
-    padding-top: 0.75rem;
-    padding-bottom: 0.75rem;
-}
-
-/* ========================================
-   Site Branding
-   ======================================== */
-
-.jas-site-branding {
-    display: flex;
-    flex-direction: column;
-    gap: 0.125rem;
-    flex-shrink: 0;
-}
-
-.jas-branding__title {
-    margin: 0;
-    font-family: "Playfair Display", serif;
-    font-weight: 700;
-    font-size: 1.5rem;
-    line-height: 1.2;
-}
-
-.jas-branding__title a {
-    color: #f5f2f7;
-    text-decoration: none;
-    transition: color 0.2s ease;
-}
-
-.jas-branding__title a:hover {
-    color: var(--jas-primary-color, #b78acb);
-}
-
-.jas-branding__logo {
-    display: block;
-    max-height: 3rem;
-    width: auto;
-    height: auto;
-}
-
-.jas-branding__link {
-    display: inline-block;
-    text-decoration: none;
-}
-
-.jas-branding__tagline {
-    margin: 0;
-    font-size: 0.8125rem;
-    color: #b9b1c4;
-    line-height: 1.4;
-}
-
-/* ========================================
-   Primary Navigation
-   ======================================== */
-
-.jas-primary-nav {
-    display: flex;
-    align-items: center;
-}
-
-.jas-nav__menu {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-.jas-nav__menu li {
-    position: relative;
-    margin: 0;
-}
-
-.jas-nav__menu a {
-    display: block;
-    padding: 0.5rem 0.875rem;
-    font-size: 0.9375rem;
-    font-weight: 500;
-    color: #b9b1c4;
-    text-decoration: none;
-    border-radius: 0.375rem;
-    transition: color 0.2s ease, background 0.2s ease;
-    white-space: nowrap;
-}
-
-.jas-nav__menu a:hover,
-.jas-nav__menu a:focus {
-    color: #f5f2f7;
-    background: rgba(255,255,255,0.05);
-}
-
-.jas-nav__menu .current-menu-item > a,
-.jas-nav__menu .current_page_item > a,
-.jas-nav__menu .current-menu-ancestor > a {
-    color: var(--jas-primary-color, #b78acb);
-}
-
-.jas-nav__menu .current-menu-item > a:hover,
-.jas-nav__menu .current_page_item > a:hover {
-    color: var(--jas-primary-hover, #c79cda);
-}
-
-/* Sub-menu */
-.jas-nav__menu .sub-menu,
-.jas-nav__menu .children {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    min-width: 12rem;
-    background: #24212b;
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 0.5rem;
-    padding: 0.5rem;
-    list-style: none;
-    margin: 0;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(0.25rem);
-    transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
-    z-index: 200;
-}
-
-.jas-nav__menu li:hover > .sub-menu,
-.jas-nav__menu li:hover > .children,
-.jas-nav__menu li:focus-within > .sub-menu,
-.jas-nav__menu li:focus-within > .children {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-}
-
-.jas-nav__menu .sub-menu li,
-.jas-nav__menu .children li {
-    width: 100%;
-}
-
-.jas-nav__menu .sub-menu a,
-.jas-nav__menu .children a {
-    padding: 0.5rem 0.75rem;
-    font-size: 0.875rem;
-}
-
-/* Nested sub-menus */
-.jas-nav__menu .sub-menu .sub-menu,
-.jas-nav__menu .children .children {
-    top: 0;
-    left: 100%;
-    margin-left: 0.25rem;
-}
-
-/* Mobile navigation toggle placeholder */
-.jas-mobile-nav-toggle {
-    display: none;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0.5rem;
-    color: #f5f2f7;
-}
-
-.jas-mobile-nav-toggle__icon {
-    display: block;
-    width: 1.5rem;
-    height: 2px;
-    background: #f5f2f7;
-    position: relative;
-    transition: background 0.2s ease;
-}
-
-.jas-mobile-nav-toggle__icon::before,
-.jas-mobile-nav-toggle__icon::after {
-    content: '';
-    display: block;
-    width: 1.5rem;
-    height: 2px;
-    background: #f5f2f7;
-    position: absolute;
-    left: 0;
-    transition: transform 0.2s ease;
-}
-
-.jas-mobile-nav-toggle__icon::before {
-    top: -0.4375rem;
-}
-
-.jas-mobile-nav-toggle__icon::after {
-    top: 0.4375rem;
-}
-
-/* ========================================
    Footer Layout
    ======================================== */
 
@@ -1190,74 +985,6 @@ body {
 }
 
 /* ========================================
-   Header Builder (M26)
-   ======================================== */
-
-.jas-header {
-    background: var(--jas-header-bg, rgba(255,255,255,0.03));
-    color: var(--jas-header-text, #f5f2f7);
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-    position: relative;
-    z-index: 100;
-    min-height: var(--jas-header-height, 80px);
-}
-
-.jas-header--sticky {
-    position: sticky;
-    top: 0;
-    z-index: 200;
-}
-
-.jas-header--logo-center .jas-header__inner {
-    justify-content: center;
-}
-
-.jas-header--logo-right .jas-header__inner {
-    justify-content: flex-end;
-}
-
-.jas-header__search {
-    padding: 0.75rem 0;
-    border-top: 1px solid rgba(255,255,255,0.08);
-}
-
-.jas-header__search .search-form {
-    display: flex;
-    gap: 0.5rem;
-    max-width: 28rem;
-}
-
-.jas-header__search .search-form input[type="search"] {
-    flex: 1;
-    padding: 0.5rem 0.75rem;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 0.375rem;
-    color: #f5f2f7;
-    font-size: 0.875rem;
-}
-
-.jas-header__search .search-form input[type="submit"] {
-    padding: 0.5rem 1rem;
-    background: var(--jas-primary-color, #b78acb);
-    color: #1b1a1f;
-    border: none;
-    border-radius: 0.375rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s ease;
-}
-
-/* Logo V2 responsive */
-.jas-branding__logo--mobile {
-    display: none;
-}
-
-.jas-branding__logo--retina {
-    display: none;
-}
-
-/* ========================================
    Footer Builder (M26)
    ======================================== */
 
@@ -1314,7 +1041,10 @@ body {
     color: var(--jas-footer-text, #b9b1c4);
 }
 
-/* Footer column layouts */
+/* ========================================
+   Footer column layouts
+   ======================================== */
+
 .jas-footer--cols-1 .jas-footer-widgets__grid {
     grid-template-columns: 1fr;
 }
@@ -1380,17 +1110,5 @@ body {
 
     .jas-footer--cols-2 .jas-footer-widgets__grid {
         grid-template-columns: 1fr;
-    }
-}
-
-/* Retina display */
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-    .jas-branding__logo--retina {
-        display: block;
-    }
-
-    .jas-branding__logo--desktop,
-    .jas-branding__logo--mobile {
-        display: none;
     }
 }

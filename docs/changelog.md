@@ -110,3 +110,48 @@ Date: 2026-06-07
 - Settings UI rendering inconsistencies — form table layout with proper spacing and labels
 - Section grouping — split Site Identity and Color Scheme into dedicated sections
 - Typography select options — now shows full font names instead of keys
+
+---
+
+# M28 - Dynamic Header Builder
+
+Version: 0.28
+
+Date: 2026-06-07
+
+## Added
+
+- HeaderLayout engine with 7 layout definitions (logo-left, logo-center, logo-right, logo-menu, logo-menu-search, logo-menu-cta, logo-menu-search-cta)
+- Layout validation and zone-based rendering configuration
+- Responsive Logo Rendering V3 (desktop, mobile, retina, site title fallback)
+- Sticky Header with scroll detection and smooth transition (jas-header--scrolled class)
+- Search Toggle (desktop inline form, mobile fullscreen overlay with focus management)
+- CTA Button System (label, URL, Primary/Secondary/Outline styles via Component Framework)
+- Top Bar System (content, background, text color, responsive)
+- MobileMenu foundation class with breakpoint and JS configuration
+- Mobile hamburger toggle with aria-expanded
+- assets/css/header.css — token-driven header styling (no hardcoded values)
+- assets/js/header.js — sticky header, search overlay, mobile nav functionality
+- WP_DEBUG header configuration debug output (layout, sticky, search, CTA, logo)
+- Header settings expansion: header_layout, header_height_desktop, header_height_tablet, header_height_mobile, header_show_cta, header_cta_label, header_cta_url, header_cta_style, header_top_bar_content, header_top_bar_bg, header_top_bar_text_color
+- New settings sections: CTA Button, Top Bar (Appearance category)
+
+## Changed
+
+- Application.php — version 0.28, 10 new header settings, HeaderLayout/MobileMenu instances, ComponentRenderer dependency for HeaderRenderer, header.css/header.js asset registration, expanded header/CTA/top-bar settings sections
+- HeaderManager.php — expanded with getLayout(), getDesktopHeaderHeight(), getTabletHeaderHeight(), getMobileHeaderHeight(), showCta(), getCtaLabel(), getCtaUrl(), getCtaStyle(), getTopBarContent(), getTopBarBackground(), getTopBarTextColor(), getLayoutEngine(), getDesktopLogoUrl(), getMobileLogoUrl(), getRetinaLogoUrl()
+- HeaderRenderer.php — complete rewrite with dynamic layout engine, zone-based rendering, Logo V3, search toggle (desktop/mobile), CTA button via ComponentRenderer, top bar, sticky header, debug support
+- ThemeRenderer.php — enqueues jasanika-header CSS and JS
+- DesignTokenGenerator.php — added --jas-header-bg token for header color
+- config/settings.php — 10 new M28 header setting defaults
+- config/app.php — version updated to 0.28
+- style.css — version updated to 0.28
+- frontend.css — removed duplicated header styles (moved to header.css), version bump
+- assets/css/components.css — version bump
+- assets/css/tokens.css — version bump
+- assets/css/admin.css — version bump
+
+## Fixed
+
+- Header styles no longer duplicated between frontend.css and header.css
+- HeaderRenderer now single source of truth for all header HTML output

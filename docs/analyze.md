@@ -6,15 +6,13 @@ Jasanika_2
 
 Modular WordPress Framework
 
-Current Version: 0.27
-
-Status: Active Development
+Current Version: 0.28
 
 ---
 
 # Current Milestone
 
-M27 - Theme Presets & Settings UX Framework
+M28 - Dynamic Header Builder
 
 Status: Completed
 
@@ -56,7 +54,68 @@ Status: Completed
 
 # Current Architecture
 
-The project has been transformed into a configurable Site Builder with a user-friendly Settings UI Framework (M27).
+The project has been transformed into a configurable Site Builder with a user-friendly Settings UI Framework (M27) and Dynamic Header Builder (M28).
+
+**Dynamic Header Builder (M28):**
+- HeaderLayout engine with 7 layout definitions (logo-left, logo-center, logo-right, logo-menu, logo-menu-search, logo-menu-cta, logo-menu-search-cta)
+- Layout validation and zone-based rendering configuration
+- Layout switching immediately affects frontend output
+- Header settings expanded: layout, responsive heights (desktop/tablet/mobile), CTA button, top bar
+- HeaderRenderer now fully responsible for all header HTML output
+- No header HTML outside HeaderRenderer
+
+**Responsive Logo Rendering V3 (M28):**
+- Desktop, Mobile, Retina logo with automatic selection via CSS
+- Responsive display (mobile logo on <768px, retina on high-DPI)
+- Site title fallback when no logo is set
+- Logo width/height/position controls
+
+**Sticky Header (M28):**
+- jas-header--sticky class generated from settings
+- CSS position: sticky with smooth transition
+- Scroll detection via header.js adds jas-header--scrolled class
+- Mobile compatible
+
+**Search Toggle (M28):**
+- Desktop: search icon with expandable inline form
+- Mobile: fullscreen search overlay with focus management
+- Controlled via header.js, accessible aria attributes
+- Uses existing search-form markup
+
+**CTA Button System (M28):**
+- Fully configurable via settings (label, URL, style)
+- Uses Component Framework Button component
+- Styles: Primary, Secondary, Outline
+- Token-driven styling
+
+**Top Bar System (M28):**
+- Optional top bar above header
+- Configurable content, background, and text color
+- Token driven via CSS custom properties
+- Responsive (compact on mobile)
+
+**Mobile Navigation Foundation (M28):**
+- MobileMenu class with breakpoint and JS configuration
+- Mobile hamburger toggle with aria-expanded
+- Foundation for future Mega Menu support
+
+**Header CSS Architecture (M28):**
+- Dedicated assets/css/header.css (token-driven, no hardcoded values)
+- All header/navigation/sticky/search/top-bar/logo styles in single file
+- Removed duplicated header styles from frontend.css
+- Mobile and tablet responsive breakpoints
+
+**Debug Support (M28):**
+- WP_DEBUG mode outputs header configuration as HTML comment
+- Shows: layout, sticky, search, CTA, logo statuses
+- No debug output in production
+
+**Theme Presets UI (M27):**
+- Visual preset selection cards in Appearance → Presets section
+- Available presets: Default, Modern, Minimal, Business, Custom
+- PresetCard component for visual preset selection with radio buttons
+- Preset switching integrated with ThemePresetManager
+- Custom mode enables full editing of Color Scheme and Typography
 
 **Theme Presets UI (M27):**
 - Visual preset selection cards in Appearance → Presets section
@@ -226,6 +285,18 @@ The project has been transformed into a configurable Site Builder with a user-fr
 - **M27 NEW:** Expanded Typography (6 font options)
 - **M27 NEW:** Admin CSS for all new UI components
 - **M27 NEW:** FrontendRefreshEvent for future Live Preview (M28)
+- **M28 NEW:** HeaderLayout engine with 7 layout definitions and zone-based rendering
+- **M28 NEW:** Dynamic HeaderRenderer with full settings-driven output
+- **M28 NEW:** Responsive Logo Rendering V3 (desktop, mobile, retina, site title fallback)
+- **M28 NEW:** Sticky Header with scroll detection and smooth transition
+- **M28 NEW:** Search Toggle (desktop inline, mobile fullscreen overlay)
+- **M28 NEW:** CTA Button System (label, URL, style via Component Framework)
+- **M28 NEW:** Top Bar System (content, background, text color)
+- **M28 NEW:** MobileMenu foundation class with breakpoint and JS config
+- **M28 NEW:** assets/css/header.css (token-driven, no hardcoded values)
+- **M28 NEW:** assets/js/header.js (sticky, search overlay, mobile nav)
+- **M28 NEW:** WP_DEBUG header configuration debug output
+- **M28 NEW:** Expanded header settings (layout, responsive heights, CTA, top bar)
 
 ---
 
@@ -261,7 +332,7 @@ None
 
 # Next Planned Milestone
 
-M28 - Live Preview System
+M29 - Advanced Color System
 
 ---
 

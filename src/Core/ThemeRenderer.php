@@ -156,7 +156,9 @@ final class ThemeRenderer
         $this->assetManager->enqueueStyle('jasanika-frontend');
         $this->assetManager->enqueueStyle('jasanika-tokens');
         $this->assetManager->enqueueStyle('jasanika-components');
+        $this->assetManager->enqueueStyle('jasanika-header');
         $this->assetManager->enqueueScript('jasanika-frontend');
+        $this->assetManager->enqueueScript('jasanika-header');
     }
 
     /**

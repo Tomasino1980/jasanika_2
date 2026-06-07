@@ -9,9 +9,11 @@ jasanika_2/
 │   │   ├── admin.css
 │   │   ├── components.css
 │   │   ├── frontend.css
+│   │   ├── header.css
 │   │   └── tokens.css
 │   └── js/
-│       └── frontend.js
+│       ├── frontend.js
+│       └── header.js
 ├── config/
 │   ├── app.php
 │   ├── assets.php
@@ -127,8 +129,10 @@ src/
 │   ├── SettingsManager.php
 │   └── SettingsPage.php
 ├── Header/
+│   ├── HeaderLayout.php
 │   ├── HeaderManager.php
-│   └── HeaderRenderer.php
+│   ├── HeaderRenderer.php
+│   └── MobileMenu.php
 ├── Footer/
 │   ├── FooterManager.php
 │   └── FooterRenderer.php
