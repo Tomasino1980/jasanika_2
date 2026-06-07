@@ -94,12 +94,20 @@ final class Application
         $this->assetManager = new AssetManager();
         $this->mediaManager = new MediaManager();
 
-        // --- Initialize Settings Registry ---
+        // ===========================================================
+        // SETTINGS REGISTRY
+        // ===========================================================
         $this->settingsRegistry = new SettingsRegistry();
+
+        $this->headerLayout = new HeaderLayout();
+        $this->mobileMenu = new MobileMenu();
         $this->registerSettings();
 
         $this->settingsManager = new SettingsManager($this->settingsRegistry);
 
+        // ===========================================================
+        // ADMIN MENU
+        // ===========================================================
         $this->adminMenu = new AdminMenu();
 
         $dashboardPage = new DashboardPage($this->frameworkInfo);
@@ -117,46 +125,63 @@ final class Application
         $this->registerAdminAssets();
         $this->registerFrontendAssets();
 
-        // --- Initialize navigation and site identity services ---
+        // ===========================================================
+        // NAVIGATION & SITE IDENTITY
+        // ===========================================================
         $this->navigationManager = new NavigationManager($this->hookManager);
         $this->siteIdentityRenderer = new SiteIdentityRenderer(
             $this->settingsManager,
             $this->mediaManager
         );
 
-        // --- Initialize widget area and layout region services ---
+        // ===========================================================
+        // WIDGET AREAS & LAYOUT REGIONS
+        // ===========================================================
         $this->widgetAreaManager = new WidgetAreaManager($this->hookManager);
         $this->widgetAreaManager->register();
         $this->layoutRegionRenderer = new LayoutRegionRenderer($this->widgetAreaManager);
 
-        // --- Initialize design settings and token generation services ---
+        // ===========================================================
+        // DESIGN SETTINGS & TOKEN SYSTEM
+        // ===========================================================
         $this->designSettingsManager = new DesignSettingsManager($this->settingsManager);
 
-        // Initialize Design Token Registry — single source of truth for token definitions
+        // Design Token Registry — single source of truth for token definitions
         $this->tokenRegistry = new DesignTokenRegistry();
         $this->registerDesignTokens();
 
-        // Initialize Theme Preset Manager — preset registration and resolution
+        // Theme Preset Manager — preset registration and resolution
         $this->presetManager = new ThemePresetManager();
         $this->registerThemePresets();
 
-        // Initialize DesignTokenGenerator with expanded dependencies
+        // DesignTokenGenerator with expanded dependencies
         $this->designTokenGenerator = new DesignTokenGenerator(
             $this->designSettingsManager,
             $this->tokenRegistry,
             $this->presetManager
         );
 
-        // Initialize layout services
+        // ===========================================================
+        // LAYOUT SYSTEM
+        // ===========================================================
         $this->layoutManager = new LayoutManager($this->designSettingsManager);
         $this->layoutRenderer = new LayoutRenderer(
             $this->layoutManager,
             $this->layoutRegionRenderer
         );
 
-        // --- Initialize Header Builder (M28: Dynamic Header Builder) ---
-        $this->headerLayout = new HeaderLayout();
-        $this->mobileMenu = new MobileMenu();
+        // ===========================================================
+        // COMPONENT SYSTEM
+        // ===========================================================
+        $this->componentRegistry = new ComponentRegistry();
+        $this->registerComponents();
+        $this->componentRenderer = new ComponentRenderer(
+            $this->componentRegistry
+        );
+
+        // ===========================================================
+        // HEADER BUILDER
+        // ===========================================================
         $this->headerManager = new HeaderManager($this->settingsManager, $this->headerLayout);
         $this->headerRenderer = new HeaderRenderer(
             $this->headerManager,
@@ -166,7 +191,9 @@ final class Application
             $this->mobileMenu
         );
 
-        // --- Initialize Footer Builder ---
+        // ===========================================================
+        // FOOTER BUILDER
+        // ===========================================================
         $this->footerManager = new FooterManager($this->settingsManager);
         $this->footerRenderer = new FooterRenderer(
             $this->footerManager,
@@ -175,12 +202,9 @@ final class Application
             $this->layoutManager
         );
 
-        // Initialize component system
-        $this->componentRegistry = new ComponentRegistry();
-        $this->registerComponents();
-        $this->componentRenderer = new ComponentRenderer($this->componentRegistry);
-
-        // --- Initialize Hero Builder (depends on ComponentRenderer) ---
+        // ===========================================================
+        // HERO BUILDER
+        // ===========================================================
         $this->heroManager = new HeroManager($this->settingsManager, $this->mediaManager);
         $this->heroRenderer = new HeroRenderer($this->heroManager, $this->componentRenderer);
 
@@ -190,7 +214,9 @@ final class Application
         $this->hookManager->addAction('admin_enqueue_scripts', [$this->assetManager, 'registerWordPressAssets']);
         $this->hookManager->addAction('wp_enqueue_scripts', [$this->assetManager, 'registerWordPressAssets']);
 
-        // --- Initialize Settings Page with categories and sections ---
+        // ===========================================================
+        // SETTINGS PAGE
+        // ===========================================================
         $fieldFactory = new FieldFactory($this->settingsManager, $this->assetManager);
 
         $settingsPage = new SettingsPage(
@@ -213,7 +239,9 @@ final class Application
 
         $this->adminMenu->registerSubPage($settingsSubPage);
 
-        // --- Register Appearance Dashboard ---
+        // ===========================================================
+        // APPEARANCE DASHBOARD
+        // ===========================================================
         $appearanceDashboard = new AppearanceDashboard(
             $this->presetManager,
             $this->designSettingsManager,
@@ -233,7 +261,9 @@ final class Application
 
         $this->adminMenu->registerSubPage($appearanceSubPage);
 
-        // --- Register services in Container ---
+        // ===========================================================
+        // CONTAINER SERVICES
+        // ===========================================================
         $this->registerContainerServices();
     }
 

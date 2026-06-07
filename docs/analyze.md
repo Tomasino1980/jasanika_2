@@ -12,7 +12,7 @@ Current Version: 0.28
 
 # Current Milestone
 
-M28 - Dynamic Header Builder
+M28.1 - Constructor Dependency Order Fix
 
 Status: Completed
 
@@ -49,6 +49,8 @@ Status: Completed
 - M25 - Component Styling Framework
 - M26 - Site Builder & Settings UI Framework
 - M27 - Theme Presets & Settings UX Framework
+- M28 - Dynamic Header Builder
+- M28.1 - Constructor Dependency Order Fix
 
 ---
 

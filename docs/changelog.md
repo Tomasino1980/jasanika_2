@@ -155,3 +155,19 @@ Date: 2026-06-07
 
 - Header styles no longer duplicated between frontend.css and header.css
 - HeaderRenderer now single source of truth for all header HTML output
+
+---
+
+# M28.1 - Constructor Dependency Order Fix
+
+Version: 0.28
+
+Date: 2026-06-07
+
+## Fixed
+
+- Constructor initialization order bug: ComponentRenderer used by HeaderRenderer before initialization
+
+## Changed
+
+- Application.php — Component System initialization moved before Header Builder, all section comments replaced with consistent separator format
