@@ -704,7 +704,39 @@ Date: 2026-06-07
 
 ---
 
-# M24 - Design Token Engine & Theme Preset Foundation
+# M25 - Component Styling Framework
+
+Version: 0.25
+
+Date: 2026-06-07
+
+## Added
+
+- ComponentRegistry with component registration (button, card, alert, form-field)
+- ComponentRenderer with token-driven rendering methods
+- Button component template (primary, secondary, outline variants)
+- Card component template (header, body, footer sections)
+- Alert component template (info, success, warning, error types)
+- Form field component template (text, email, search, textarea, select)
+- components.css — token-driven component styling (no hardcoded values)
+- Component debug output (HTML comment) in WP_DEBUG mode
+- ComponentRegistry and ComponentRenderer registered in Container
+- getComponentRegistry() and getComponentRenderer() methods on Application
+
+## Changed
+
+- Application version updated to 0.25
+- ThemeRenderer now accepts ComponentRenderer dependency
+- ThemeRenderer::enqueueFrontendAssets() enqueues components.css
+- ThemeRenderer::init() registers component debug output in wp_head
+- templates/archive.php uses Card component instead of raw content-card template part
+- templates/search.php uses Card, Form Field, and Button components
+- Version updated to 0.25 in style.css, config/app.php, FrameworkInfo, docs/analyze.md
+- Card component CSS moved from frontend.css to components.css
+
+## Fixed
+
+- N/A
 
 Version: 0.24
 

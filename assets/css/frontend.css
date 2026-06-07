@@ -2,7 +2,7 @@
  * Jasanika 2 Frontend Styles
  *
  * Modular WordPress Framework
- * Version 0.24
+ * Version 0.25
  */
 
 /* ========================================
@@ -362,63 +362,6 @@ body {
 }
 
 /* ========================================
-   Card Component
-   ======================================== */
-
-.jas-card {
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 0.75rem;
-    padding: 1.5rem;
-    transition: border-color 0.2s ease, background 0.2s ease;
-    display: flex;
-    flex-direction: column;
-}
-
-.jas-card:hover {
-    border-color: rgba(255,255,255,0.15);
-    background: rgba(255,255,255,0.05);
-}
-
-.jas-card__header {
-    margin-bottom: 0.75rem;
-}
-
-.jas-card__header .jas-content__title {
-    font-size: 1.375rem;
-    margin-bottom: 0.5rem;
-}
-
-.jas-card__body {
-    flex: 1;
-}
-
-.jas-card__footer {
-    margin-top: auto;
-    padding-top: 1rem;
-    border-top: 1px solid rgba(255,255,255,0.08);
-}
-
-.jas-card__footer .jas-content__meta {
-    font-size: 0.8125rem;
-    margin-bottom: 0.75rem;
-}
-
-.jas-content__read-more-link {
-    display: inline-block;
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: var(--jas-primary-color, #b78acb);
-    text-decoration: none;
-    transition: color 0.2s ease;
-}
-
-.jas-content__read-more-link:hover {
-    color: var(--jas-primary-hover, #c79cda);
-    text-decoration: underline;
-}
-
-/* ========================================
    Search Results
    ======================================== */
 
@@ -554,6 +497,24 @@ body {
 
 .jas-empty-state .search-form input[type="submit"]:hover {
     background: var(--jas-primary-hover, #c79cda);
+}
+
+/* Search form using component system */
+.jas-search-form {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.5rem;
+    max-width: 28rem;
+    margin: 0 auto;
+}
+
+.jas-search-form .jas-form-field {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+.jas-search-form .jas-btn {
+    flex-shrink: 0;
 }
 
 /* ========================================

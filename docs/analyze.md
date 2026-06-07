@@ -6,7 +6,7 @@ Jasanika_2
 
 Modular WordPress Framework
 
-Current Version: 0.24
+Current Version: 0.25
 
 Status: Active Development
 
@@ -14,7 +14,7 @@ Status: Active Development
 
 # Current Milestone
 
-M24 - Design Token Engine & Theme Preset Foundation
+M25 - Component Styling Framework
 
 Status: Completed
 
@@ -48,12 +48,13 @@ Status: Completed
 - M22 - Theme Customizer & Design Settings Integration
 - M23 - Dynamic Layout System
 - M24 - Design Token Engine & Theme Preset Foundation
+- M25 - Component Styling Framework
 
 ---
 
 # Current Architecture
 
-The project is currently in active development with the Design Token Engine and Theme Preset Foundation completed. The design system is now token-driven with semantic color tokens, typography scale, spacing system, border radius tokens, and a preset architecture ready for future expansion.
+The project is currently in active development with the Component Styling Framework completed. The design system is now token-driven with a reusable component architecture (button, card, alert, form-field) consuming CSS custom properties from the Design Token Engine. All components follow the registry-driven pattern (ComponentRegistry + ComponentRenderer) and avoid hardcoded visual values.
 
 Architecture documents:
 
@@ -145,6 +146,14 @@ Architecture documents:
 - Extended design token debug output with preset and token count
 - Preset-aware token generation architecture
 - .jas-theme CSS context for future theme switching
+- ComponentRegistry with component registration (button, card, alert, form-field)
+- ComponentRenderer with renderButton(), renderCard(), renderAlert(), renderFormField()
+- Button component with primary, secondary, outline variants
+- Card component with header, body, footer sections
+- Alert component with info, success, warning, error types
+- Form field component with text, email, search, textarea, select support
+- components.css — token-driven component styling (no hardcoded values)
+- Component debug output in WP_DEBUG mode
 
 ---
 
@@ -180,7 +189,7 @@ None
 
 # Next Planned Milestone
 
-M24 - Design Token Engine Expansion
+M26 - Theme Presets UI
 
 ---
 

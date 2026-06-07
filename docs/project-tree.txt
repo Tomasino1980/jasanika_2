@@ -6,6 +6,7 @@ jasanika_2/
 │   │   └── js/
 │   │       └── media-field.js
 │   ├── css/
+│   │   ├── components.css
 │   │   ├── frontend.css
 │   │   └── tokens.css
 │   └── js/
@@ -20,10 +21,14 @@ jasanika_2/
 ├── src/
 ├── templates/
 │   ├── components/
+│   │   ├── alert.php
+│   │   ├── button.php
+│   │   ├── card.php
 │   │   ├── content-card.php
 │   │   ├── content-meta.php
 │   │   ├── empty-state.php
 │   │   ├── footer-navigation.php
+│   │   ├── form-field.php
 │   │   ├── navigation.php
 │   │   ├── page-header.php
 │   │   └── site-branding.php
@@ -68,6 +73,9 @@ src/
 │   └── Container.php
 ├── Modules/
 │   └── ModuleManager.php
+├── Components/
+│   ├── ComponentRegistry.php
+│   └── ComponentRenderer.php
 ├── Config/
 │   ├── Config.php
 │   └── ConfigRepository.php

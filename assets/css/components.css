@@ -1,0 +1,257 @@
+/*
+ * Jasanika 2 Component Styles
+ *
+ * Modular WordPress Framework
+ * Version 0.25
+ *
+ * Reusable UI component framework built on top of design tokens.
+ * All visual values MUST reference CSS custom properties —
+ * no hardcoded colors, spacing, or typography values.
+ *
+ * Component architecture:
+ * - .jas-btn       — Action button (primary, secondary, outline)
+ * - .jas-card      — Content presentation card
+ * - .jas-alert     — Semantic alert/message banner
+ * - .jas-form-field — Standardized form field
+ *
+ * Token reference:
+ * --jas-color-primary      — Primary brand color
+ * --jas-color-primary-hover — Primary hover state
+ * --jas-color-text         — Body text color
+ * --jas-color-heading      — Heading text color
+ * --jas-color-background   — Main background
+ * --jas-color-surface      — Surface / card background
+ * --jas-color-border       — Border color
+ * --jas-font-family        — Body font family
+ * --jas-font-size-*        — Typography scale
+ * --jas-space-*            — Spacing scale
+ * --jas-radius-*           — Border radius scale
+ */
+
+/* ========================================
+   Button Component
+   ======================================== */
+
+.jas-btn {
+    display: inline-block;
+    padding: var(--jas-space-xs, 0.5rem) var(--jas-space-md, 1.5rem);
+    font-family: var(--jas-font-family, system-ui, sans-serif);
+    font-size: var(--jas-font-size-sm, 0.875rem);
+    font-weight: 600;
+    line-height: 1.5;
+    text-decoration: none;
+    text-align: center;
+    border: 1px solid transparent;
+    border-radius: var(--jas-radius-sm, 0.25rem);
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    user-select: none;
+    white-space: nowrap;
+}
+
+.jas-btn:focus-visible {
+    outline: 2px solid var(--jas-color-primary, #b78acb);
+    outline-offset: 2px;
+}
+
+/* Primary variant */
+.jas-btn--primary {
+    background: var(--jas-color-primary, #b78acb);
+    color: var(--jas-color-background, #1b1a1f);
+    border-color: var(--jas-color-primary, #b78acb);
+}
+
+.jas-btn--primary:hover,
+.jas-btn--primary:focus-visible {
+    background: var(--jas-color-primary-hover, #c79cda);
+    border-color: var(--jas-color-primary-hover, #c79cda);
+    color: var(--jas-color-background, #1b1a1f);
+}
+
+/* Secondary variant */
+.jas-btn--secondary {
+    background: transparent;
+    color: var(--jas-color-text, #f5f2f7);
+    border-color: var(--jas-color-border, rgba(255,255,255,0.08));
+}
+
+.jas-btn--secondary:hover,
+.jas-btn--secondary:focus-visible {
+    background: var(--jas-color-surface, #24212b);
+    border-color: var(--jas-color-text, #f5f2f7);
+    color: var(--jas-color-text, #f5f2f7);
+}
+
+/* Outline variant */
+.jas-btn--outline {
+    background: transparent;
+    color: var(--jas-color-primary, #b78acb);
+    border-color: var(--jas-color-primary, #b78acb);
+}
+
+.jas-btn--outline:hover,
+.jas-btn--outline:focus-visible {
+    background: var(--jas-color-primary, #b78acb);
+    color: var(--jas-color-background, #1b1a1f);
+}
+
+/* ========================================
+   Card Component
+   ======================================== */
+
+.jas-card {
+    background: var(--jas-color-surface, #24212b);
+    border: 1px solid var(--jas-color-border, rgba(255,255,255,0.08));
+    border-radius: var(--jas-radius-md, 0.5rem);
+    padding: var(--jas-space-md, 1.5rem);
+    display: flex;
+    flex-direction: column;
+    transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.jas-card:hover {
+    border-color: var(--jas-color-primary, #b78acb);
+    background: color-mix(in srgb, var(--jas-color-primary, #b78acb) 5%, var(--jas-color-surface, #24212b));
+}
+
+.jas-card__header {
+    margin-bottom: var(--jas-space-sm, 1rem);
+}
+
+.jas-card__title {
+    font-family: "Playfair Display", serif;
+    font-weight: 700;
+    font-size: var(--jas-font-size-lg, 1.125rem);
+    line-height: 1.3;
+    margin: 0;
+    color: var(--jas-color-heading, #f5f2f7);
+}
+
+.jas-card__title a {
+    color: var(--jas-color-heading, #f5f2f7);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.jas-card__title a:hover {
+    color: var(--jas-color-primary, #b78acb);
+}
+
+.jas-card__body {
+    flex: 1;
+    font-size: var(--jas-font-size-sm, 0.875rem);
+    color: var(--jas-color-text, #f5f2f7);
+    line-height: 1.6;
+}
+
+.jas-card__body p {
+    margin-top: 0;
+    margin-bottom: var(--jas-space-xs, 0.5rem);
+}
+
+.jas-card__body p:last-child {
+    margin-bottom: 0;
+}
+
+.jas-card__footer {
+    margin-top: auto;
+    padding-top: var(--jas-space-sm, 1rem);
+    border-top: 1px solid var(--jas-color-border, rgba(255,255,255,0.08));
+    font-size: var(--jas-font-size-xs, 0.75rem);
+    color: var(--jas-color-text, #f5f2f7);
+}
+
+/* ========================================
+   Alert Component
+   ======================================== */
+
+.jas-alert {
+    padding: var(--jas-space-sm, 1rem) var(--jas-space-md, 1.5rem);
+    border: 1px solid var(--jas-color-border, rgba(255,255,255,0.08));
+    border-radius: var(--jas-radius-sm, 0.25rem);
+    border-left-width: 3px;
+    border-left-style: solid;
+    background: var(--jas-color-surface, #24212b);
+}
+
+.jas-alert__message {
+    margin: 0;
+    font-size: var(--jas-font-size-sm, 0.875rem);
+    line-height: 1.6;
+    color: var(--jas-color-text, #f5f2f7);
+}
+
+/* Info type */
+.jas-alert--info {
+    border-left-color: var(--jas-color-primary, #b78acb);
+}
+
+/* Success type */
+.jas-alert--success {
+    border-left-color: #4caf50;
+}
+
+/* Warning type */
+.jas-alert--warning {
+    border-left-color: var(--jas-accent, #f1c95d);
+}
+
+/* Error type */
+.jas-alert--error {
+    border-left-color: #ef5350;
+}
+
+/* ========================================
+   Form Field Component
+   ======================================== */
+
+.jas-form-field {
+    margin-bottom: var(--jas-space-md, 1.5rem);
+}
+
+.jas-form-field__label {
+    display: block;
+    margin-bottom: var(--jas-space-xs, 0.5rem);
+    font-family: var(--jas-font-family, system-ui, sans-serif);
+    font-size: var(--jas-font-size-sm, 0.875rem);
+    font-weight: 500;
+    color: var(--jas-color-heading, #f5f2f7);
+    line-height: 1.4;
+}
+
+.jas-form-field__input {
+    display: block;
+    width: 100%;
+    padding: var(--jas-space-xs, 0.5rem) var(--jas-space-sm, 1rem);
+    font-family: var(--jas-font-family, system-ui, sans-serif);
+    font-size: var(--jas-font-size-sm, 0.875rem);
+    line-height: 1.5;
+    color: var(--jas-color-text, #f5f2f7);
+    background: transparent;
+    border: 1px solid var(--jas-color-border, rgba(255,255,255,0.08));
+    border-radius: var(--jas-radius-sm, 0.25rem);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.jas-form-field__input::placeholder {
+    color: var(--jas-color-text, #f5f2f7);
+    opacity: 0.5;
+}
+
+.jas-form-field__input:focus {
+    outline: none;
+    border-color: var(--jas-color-primary, #b78acb);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--jas-color-primary, #b78acb) 20%, transparent);
+}
+
+/* Textarea specific */
+textarea.jas-form-field__input {
+    min-height: 8rem;
+    resize: vertical;
+}
+
+/* Select specific */
+select.jas-form-field__input {
+    appearance: auto;
+    cursor: pointer;
+}

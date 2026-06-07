@@ -12,6 +12,8 @@ use Jasanika\Admin\SettingsManager;
 use Jasanika\Admin\SettingsPage;
 use Jasanika\Assets\Asset;
 use Jasanika\Assets\AssetManager;
+use Jasanika\Components\ComponentRegistry;
+use Jasanika\Components\ComponentRenderer;
 use Jasanika\Config\ConfigRepository;
 use Jasanika\Container\Container;
 use Jasanika\Core\ThemeRenderer;
@@ -56,12 +58,14 @@ final class Application
     private ThemePresetManager $presetManager;
     private LayoutManager $layoutManager;
     private LayoutRenderer $layoutRenderer;
+    private ComponentRegistry $componentRegistry;
+    private ComponentRenderer $componentRenderer;
 
     public function __construct()
     {
         $this->frameworkInfo = new FrameworkInfo(
             'Jasanika 2',
-            '0.24'
+            '0.25'
         );
 
         $this->container = new Container();
@@ -132,6 +136,11 @@ final class Application
             $this->layoutManager,
             $this->layoutRegionRenderer
         );
+
+        // Initialize component system
+        $this->componentRegistry = new ComponentRegistry();
+        $this->registerComponents();
+        $this->componentRenderer = new ComponentRenderer($this->componentRegistry);
 
         $this->initThemeRenderer();
 
@@ -298,6 +307,20 @@ final class Application
                 return $this->presetManager;
             }
         );
+
+        $this->container->register(
+            ComponentRegistry::class,
+            function (Container $container): ComponentRegistry {
+                return $this->componentRegistry;
+            }
+        );
+
+        $this->container->register(
+            ComponentRenderer::class,
+            function (Container $container): ComponentRenderer {
+                return $this->componentRenderer;
+            }
+        );
     }
 
     /**
@@ -332,7 +355,7 @@ final class Application
         $style = new Asset(
             'jasanika-frontend',
             get_template_directory_uri() . '/assets/css/frontend.css',
-            '0.24'
+            '0.25'
         );
 
         $this->assetManager->registerStyle($style);
@@ -340,15 +363,23 @@ final class Application
         $tokens = new Asset(
             'jasanika-tokens',
             get_template_directory_uri() . '/assets/css/tokens.css',
-            '0.24'
+            '0.25'
         );
 
         $this->assetManager->registerStyle($tokens);
 
+        $components = new Asset(
+            'jasanika-components',
+            get_template_directory_uri() . '/assets/css/components.css',
+            '0.25'
+        );
+
+        $this->assetManager->registerStyle($components);
+
         $script = new Asset(
             'jasanika-frontend',
             get_template_directory_uri() . '/assets/js/frontend.js',
-            '0.24',
+            '0.25',
             [],
             'all',
             true
@@ -375,7 +406,8 @@ final class Application
             $this->layoutRegionRenderer,
             $this->designTokenGenerator,
             $this->layoutManager,
-            $this->layoutRenderer
+            $this->layoutRenderer,
+            $this->componentRenderer
         );
 
         $this->themeRenderer->init();
@@ -491,6 +523,16 @@ final class Application
         return $this->presetManager;
     }
 
+    public function getComponentRegistry(): ComponentRegistry
+    {
+        return $this->componentRegistry;
+    }
+
+    public function getComponentRenderer(): ComponentRenderer
+    {
+        return $this->componentRenderer;
+    }
+
     /**
      * Register all design tokens in the DesignTokenRegistry.
      *
@@ -588,6 +630,57 @@ final class Application
             [
                 // Minimal token overrides will be defined in a future milestone.
             ]
+        );
+    }
+
+    /**
+     * Register all frontend UI components in the ComponentRegistry.
+     *
+     * Each component defines:
+     * - slug        — Component identifier used in templates
+     * - name        — Human-readable name
+     * - description — Component purpose
+     * - template    — Template file path relative to theme root
+     *
+     * Initial components (M25):
+     * - button     — Action button with variant support
+     * - card       - Content presentation card
+     * - alert      — Semantic alert/message banner
+     * - form-field — Standardized form field
+     *
+     * Additional components will be registered in future milestones
+     * (M29 - Component Library Expansion).
+     */
+    private function registerComponents(): void
+    {
+        $r = $this->componentRegistry;
+
+        $r->registerComponent(
+            'button',
+            'Button',
+            'Action button with primary, secondary, and outline variants.',
+            get_template_directory() . '/templates/components/button.php'
+        );
+
+        $r->registerComponent(
+            'card',
+            'Card',
+            'Content presentation card for archives, search results, and widgets.',
+            get_template_directory() . '/templates/components/card.php'
+        );
+
+        $r->registerComponent(
+            'alert',
+            'Alert',
+            'Semantic alert banner with info, success, warning, and error types.',
+            get_template_directory() . '/templates/components/alert.php'
+        );
+
+        $r->registerComponent(
+            'form-field',
+            'Form Field',
+            'Standardized form field with label and input (text, email, search, textarea, select).',
+            get_template_directory() . '/templates/components/form-field.php'
         );
     }
 }

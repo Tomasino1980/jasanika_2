@@ -3,13 +3,17 @@
  * Archive template.
  *
  * Renders archive pages (categories, tags, authors, dates, custom post types)
- * using a unified card layout. Supports all archive types through
- * the same rendering pipeline.
+ * using the unified Card Component for content presentation.
+ * All components consume design tokens — no hardcoded visual values.
  *
  * @package Jasanika
  */
 
 use Jasanika\Core\ContentRenderer;
+use Jasanika\Core\ThemeRenderer;
+
+$renderer = ThemeRenderer::getInstance();
+$componentRenderer = $renderer ? $renderer->getComponentRenderer() : null;
 
 $foundPosts = (int) $wp_query->found_posts;
 $type       = $foundPosts > 0 ? 'default' : 'archive';
@@ -24,7 +28,27 @@ $type       = $foundPosts > 0 ? 'default' : 'archive';
         <?php if (have_posts()) : ?>
             <div class="jas-archive-grid">
                 <?php while (have_posts()) : the_post(); ?>
-                    <?php get_template_part('templates/components/content-card'); ?>
+                    <?php
+                    if ($componentRenderer) {
+                        $title = get_the_title();
+
+                        ob_start();
+                        ContentRenderer::renderExcerpt();
+                        $body = ob_get_clean();
+
+                        ob_start();
+                        ContentRenderer::renderMeta(true);
+                        ContentRenderer::renderReadMoreLink();
+                        $footer = ob_get_clean();
+
+                        $componentRenderer->renderCard(
+                            $title,
+                            $body,
+                            $footer,
+                            ['id' => 'post-' . get_the_ID()]
+                        );
+                    }
+                    ?>
                 <?php endwhile; ?>
             </div>
 

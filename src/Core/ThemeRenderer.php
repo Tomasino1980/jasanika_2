@@ -6,6 +6,7 @@ namespace Jasanika\Core;
 
 use Jasanika\Admin\SettingsManager;
 use Jasanika\Assets\AssetManager;
+use Jasanika\Components\ComponentRenderer;
 use Jasanika\Design\DesignTokenGenerator;
 use Jasanika\Hooks\HookManager;
 use Jasanika\Layout\LayoutManager;
@@ -48,6 +49,7 @@ final class ThemeRenderer
     private DesignTokenGenerator $designTokenGenerator;
     private LayoutManager $layoutManager;
     private LayoutRenderer $layoutRenderer;
+    private ComponentRenderer $componentRenderer;
 
     public function __construct(
         FrameworkInfo $frameworkInfo,
@@ -59,7 +61,8 @@ final class ThemeRenderer
         LayoutRegionRenderer $layoutRegionRenderer,
         DesignTokenGenerator $designTokenGenerator,
         LayoutManager $layoutManager,
-        LayoutRenderer $layoutRenderer
+        LayoutRenderer $layoutRenderer,
+        ComponentRenderer $componentRenderer
     ) {
         $this->frameworkInfo = $frameworkInfo;
         $this->settingsManager = $settingsManager;
@@ -71,6 +74,7 @@ final class ThemeRenderer
         $this->designTokenGenerator = $designTokenGenerator;
         $this->layoutManager = $layoutManager;
         $this->layoutRenderer = $layoutRenderer;
+        $this->componentRenderer = $componentRenderer;
     }
 
     /**
@@ -95,6 +99,9 @@ final class ThemeRenderer
 
         // Add site layout class to WordPress body class
         $this->hookManager->addFilter('body_class', [$this->designTokenGenerator, 'filterBodyClass']);
+
+        // Output component debug information in <head> when WP_DEBUG is enabled
+        $this->hookManager->addAction('wp_head', [$this->componentRenderer->getRegistry(), 'renderDebugComment']);
 
         // Enqueue frontend assets during the wp_enqueue_scripts hook
         $this->hookManager->addAction('wp_enqueue_scripts', [$this, 'enqueueFrontendAssets']);
@@ -137,6 +144,7 @@ final class ThemeRenderer
     {
         $this->assetManager->enqueueStyle('jasanika-frontend');
         $this->assetManager->enqueueStyle('jasanika-tokens');
+        $this->assetManager->enqueueStyle('jasanika-components');
         $this->assetManager->enqueueScript('jasanika-frontend');
     }
 
@@ -162,6 +170,14 @@ final class ThemeRenderer
     public function getLayoutRenderer(): LayoutRenderer
     {
         return $this->layoutRenderer;
+    }
+
+    /**
+     * Get the ComponentRenderer instance.
+     */
+    public function getComponentRenderer(): ComponentRenderer
+    {
+        return $this->componentRenderer;
     }
 
     /**
