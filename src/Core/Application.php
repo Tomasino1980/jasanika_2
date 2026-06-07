@@ -15,6 +15,8 @@ use Jasanika\Assets\AssetManager;
 use Jasanika\Config\ConfigRepository;
 use Jasanika\Container\Container;
 use Jasanika\Core\ThemeRenderer;
+use Jasanika\Design\DesignSettingsManager;
+use Jasanika\Design\DesignTokenGenerator;
 use Jasanika\Hooks\HookManager;
 use Jasanika\Media\MediaManager;
 use Jasanika\Modules\ModuleManager;
@@ -44,12 +46,14 @@ final class Application
     private WidgetAreaManager $widgetAreaManager;
     private LayoutRegionRenderer $layoutRegionRenderer;
     private ThemeRenderer $themeRenderer;
+    private DesignSettingsManager $designSettingsManager;
+    private DesignTokenGenerator $designTokenGenerator;
 
     public function __construct()
     {
         $this->frameworkInfo = new FrameworkInfo(
             'Jasanika 2',
-            '0.21'
+            '0.22'
         );
 
         $this->container = new Container();
@@ -95,6 +99,10 @@ final class Application
         $this->widgetAreaManager = new WidgetAreaManager($this->hookManager);
         $this->widgetAreaManager->register();
         $this->layoutRegionRenderer = new LayoutRegionRenderer($this->widgetAreaManager);
+
+        // Initialize design settings and token generation services
+        $this->designSettingsManager = new DesignSettingsManager($this->settingsManager);
+        $this->designTokenGenerator = new DesignTokenGenerator($this->designSettingsManager);
 
         $this->initThemeRenderer();
 
@@ -219,6 +227,20 @@ final class Application
                 return $this->layoutRegionRenderer;
             }
         );
+
+        $this->container->register(
+            DesignSettingsManager::class,
+            function (Container $container): DesignSettingsManager {
+                return $this->designSettingsManager;
+            }
+        );
+
+        $this->container->register(
+            DesignTokenGenerator::class,
+            function (Container $container): DesignTokenGenerator {
+                return $this->designTokenGenerator;
+            }
+        );
     }
 
     /**
@@ -253,15 +275,23 @@ final class Application
         $style = new Asset(
             'jasanika-frontend',
             get_template_directory_uri() . '/assets/css/frontend.css',
-            '0.21'
+            '0.22'
         );
 
         $this->assetManager->registerStyle($style);
 
+        $tokens = new Asset(
+            'jasanika-tokens',
+            get_template_directory_uri() . '/assets/css/tokens.css',
+            '0.22'
+        );
+
+        $this->assetManager->registerStyle($tokens);
+
         $script = new Asset(
             'jasanika-frontend',
             get_template_directory_uri() . '/assets/js/frontend.js',
-            '0.21',
+            '0.22',
             [],
             'all',
             true
@@ -285,7 +315,8 @@ final class Application
             $this->hookManager,
             $this->navigationManager,
             $this->siteIdentityRenderer,
-            $this->layoutRegionRenderer
+            $this->layoutRegionRenderer,
+            $this->designTokenGenerator
         );
 
         $this->themeRenderer->init();
@@ -369,5 +400,15 @@ final class Application
     public function getLayoutRegionRenderer(): LayoutRegionRenderer
     {
         return $this->layoutRegionRenderer;
+    }
+
+    public function getDesignSettingsManager(): DesignSettingsManager
+    {
+        return $this->designSettingsManager;
+    }
+
+    public function getDesignTokenGenerator(): DesignTokenGenerator
+    {
+        return $this->designTokenGenerator;
     }
 }

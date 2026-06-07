@@ -6,6 +6,7 @@ namespace Jasanika\Core;
 
 use Jasanika\Admin\SettingsManager;
 use Jasanika\Assets\AssetManager;
+use Jasanika\Design\DesignTokenGenerator;
 use Jasanika\Hooks\HookManager;
 use Jasanika\Navigation\NavigationManager;
 
@@ -43,6 +44,7 @@ final class ThemeRenderer
     private NavigationManager $navigationManager;
     private SiteIdentityRenderer $siteIdentityRenderer;
     private LayoutRegionRenderer $layoutRegionRenderer;
+    private DesignTokenGenerator $designTokenGenerator;
 
     public function __construct(
         FrameworkInfo $frameworkInfo,
@@ -51,7 +53,8 @@ final class ThemeRenderer
         HookManager $hookManager,
         NavigationManager $navigationManager,
         SiteIdentityRenderer $siteIdentityRenderer,
-        LayoutRegionRenderer $layoutRegionRenderer
+        LayoutRegionRenderer $layoutRegionRenderer,
+        DesignTokenGenerator $designTokenGenerator
     ) {
         $this->frameworkInfo = $frameworkInfo;
         $this->settingsManager = $settingsManager;
@@ -60,6 +63,7 @@ final class ThemeRenderer
         $this->navigationManager = $navigationManager;
         $this->siteIdentityRenderer = $siteIdentityRenderer;
         $this->layoutRegionRenderer = $layoutRegionRenderer;
+        $this->designTokenGenerator = $designTokenGenerator;
     }
 
     /**
@@ -76,8 +80,14 @@ final class ThemeRenderer
         // Override WordPress template selection with our layout
         $this->hookManager->addFilter('template_include', [$this, 'overrideTemplate']);
 
-        // Output dynamic CSS custom properties in <head>
-        $this->hookManager->addAction('wp_head', [$this, 'renderInlineStyles']);
+        // Output dynamic CSS custom properties in <head> via DesignTokenGenerator
+        $this->hookManager->addAction('wp_head', [$this->designTokenGenerator, 'renderInlineStyles']);
+
+        // Output debug comment in <head> when WP_DEBUG is enabled
+        $this->hookManager->addAction('wp_head', [$this->designTokenGenerator, 'renderDebugComment']);
+
+        // Add site layout class to WordPress body class
+        $this->hookManager->addFilter('body_class', [$this->designTokenGenerator, 'filterBodyClass']);
 
         // Enqueue frontend assets during the wp_enqueue_scripts hook
         $this->hookManager->addAction('wp_enqueue_scripts', [$this, 'enqueueFrontendAssets']);
@@ -119,26 +129,16 @@ final class ThemeRenderer
     public function enqueueFrontendAssets(): void
     {
         $this->assetManager->enqueueStyle('jasanika-frontend');
+        $this->assetManager->enqueueStyle('jasanika-tokens');
         $this->assetManager->enqueueScript('jasanika-frontend');
     }
 
     /**
-     * Render inline CSS custom properties in <head>.
-     *
-     * Reads current settings from SettingsManager and generates
-     * :root-level CSS custom properties for frontend consumption.
+     * Get the DesignTokenGenerator instance.
      */
-    public function renderInlineStyles(): void
+    public function getDesignTokenGenerator(): DesignTokenGenerator
     {
-        $containerWidth = $this->getContainerWidthValue();
-        $fontFamily = $this->getFontFamilyValue();
-
-        echo '<style id="jasanika-custom-properties">' . "\n";
-        echo ':root {' . "\n";
-        echo '  --jas-container-width: ' . esc_attr($containerWidth) . ';' . "\n";
-        echo '  --jas-font-family: ' . esc_attr($fontFamily) . ';' . "\n";
-        echo '}' . "\n";
-        echo '</style>' . "\n";
+        return $this->designTokenGenerator;
     }
 
     /**
@@ -307,34 +307,6 @@ final class ThemeRenderer
         }
 
         $instance->layoutRegionRenderer->renderSidebar();
-    }
-
-    /**
-     * Get the container width as a CSS length value.
-     */
-    private function getContainerWidthValue(): string
-    {
-        $width = $this->settingsManager->get('container_width');
-
-        if (empty($width)) {
-            $width = '1200';
-        }
-
-        return $width . 'px';
-    }
-
-    /**
-     * Get the font-family CSS value based on the typography setting.
-     */
-    private function getFontFamilyValue(): string
-    {
-        $typography = $this->settingsManager->get('typography');
-
-        return match ($typography) {
-            'inter'   => '"Inter", sans-serif',
-            'roboto'  => '"Roboto", sans-serif',
-            default   => 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-        };
     }
 
     /**

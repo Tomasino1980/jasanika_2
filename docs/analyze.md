@@ -6,7 +6,7 @@ Jasanika_2
 
 Modular WordPress Framework
 
-Current Version: 0.21
+Current Version: 0.22
 
 Status: Active Development
 
@@ -14,7 +14,7 @@ Status: Active Development
 
 # Current Milestone
 
-M21 - Widget Areas & Layout Regions Architecture
+M22 - Theme Customizer & Design Settings Integration
 
 Status: Completed
 
@@ -45,12 +45,13 @@ Status: Completed
 - M19 - Content Rendering & Template Architecture
 - M20 - Navigation & Site Identity Architecture
 - M21 - Widget Areas & Layout Regions Architecture
+- M22 - Theme Customizer & Design Settings Integration
 
 ---
 
 # Current Architecture
 
-The project is currently in active development with frontend rendering architecture completed alongside the existing registry-driven settings architecture.
+The project is currently in active development with design settings integration completed alongside the existing frontend rendering and registry-driven settings architecture.
 
 Architecture documents:
 
@@ -122,6 +123,11 @@ Architecture documents:
 - Widget styling (widget titles, lists, forms, responsive layout)
 - Footer widget regions with responsive three-column grid
 - Sidebar template with graceful empty state
+- DesignSettingsManager with centralized frontend design configuration
+- DesignTokenGenerator with CSS custom property generation
+- Design debug panel (HTML comment) in WP_DEBUG mode
+- Site layout body class support (boxed/full-width)
+- tokens.css with primary color and layout token consumption
 
 ---
 

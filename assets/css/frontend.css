@@ -33,6 +33,19 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
+/* Boxed site layout */
+.jas-site--boxed .jas-site-wrapper {
+    max-width: var(--jas-container-width, 1200px);
+    margin-left: auto;
+    margin-right: auto;
+    background: #1b1a1f;
+    box-shadow: 0 0 2rem rgba(0, 0, 0, 0.3);
+}
+
+.jas-site--boxed {
+    background: #24212b;
+}
+
 /* ========================================
    Container
    ======================================== */
@@ -93,12 +106,12 @@ body {
 }
 
 .jas-article__content a {
-    color: #b78acb;
+    color: var(--jas-primary-color, #b78acb);
     text-decoration: none;
 }
 
 .jas-article__content a:hover {
-    color: #c79cda;
+    color: var(--jas-primary-hover, #c79cda);
 }
 
 /* ========================================
@@ -143,13 +156,13 @@ body {
 }
 
 .jas-content__body a {
-    color: #b78acb;
+    color: var(--jas-primary-color, #b78acb);
     text-decoration: none;
     transition: color 0.2s ease;
 }
 
 .jas-content__body a:hover {
-    color: #c79cda;
+    color: var(--jas-primary-hover, #c79cda);
     text-decoration: underline;
 }
 
@@ -174,7 +187,7 @@ body {
 .jas-content__body blockquote {
     margin: 1.5rem 0;
     padding: 1rem 1.5rem;
-    border-left: 3px solid #b78acb;
+    border-left: 3px solid var(--jas-primary-color, #b78acb);
     background: rgba(255,255,255,0.03);
     color: #b9b1c4;
     font-style: italic;
@@ -203,14 +216,14 @@ body {
 .jas-content__read-more {
     display: inline-block;
     font-weight: 600;
-    color: #b78acb;
+    color: var(--jas-primary-color, #b78acb);
 }
 
 .jas-content__home-link {
     display: inline-block;
     margin-top: 1.5rem;
     padding: 0.75rem 1.5rem;
-    background: #b78acb;
+    background: var(--jas-primary-color, #b78acb);
     color: #1b1a1f;
     text-decoration: none;
     border-radius: 0.375rem;
@@ -219,7 +232,7 @@ body {
 }
 
 .jas-content__home-link:hover {
-    background: #c79cda;
+    background: var(--jas-primary-hover, #c79cda);
     color: #1b1a1f;
 }
 
@@ -250,14 +263,14 @@ body {
 }
 
 .jas-content__meta-categories a {
-    color: #b78acb;
+    color: var(--jas-primary-color, #b78acb);
     text-decoration: none;
     font-weight: 500;
     transition: color 0.2s ease;
 }
 
 .jas-content__meta-categories a:hover {
-    color: #c79cda;
+    color: var(--jas-primary-hover, #c79cda);
 }
 
 /* ========================================
@@ -370,13 +383,13 @@ body {
     display: inline-block;
     font-size: 0.875rem;
     font-weight: 600;
-    color: #b78acb;
+    color: var(--jas-primary-color, #b78acb);
     text-decoration: none;
     transition: color 0.2s ease;
 }
 
 .jas-content__read-more-link:hover {
-    color: #c79cda;
+    color: var(--jas-primary-hover, #c79cda);
     text-decoration: underline;
 }
 
@@ -397,7 +410,7 @@ body {
 }
 
 .jas-search-info__query strong {
-    color: #b78acb;
+    color: var(--jas-primary-color, #b78acb);
     font-weight: 600;
 }
 
@@ -451,14 +464,14 @@ body {
 
 .jas-pagination a:hover {
     color: #f5f2f7;
-    border-color: #b78acb;
-    background: rgba(183, 138, 203, 0.1);
+    border-color: var(--jas-primary-color, #b78acb);
+    background: color-mix(in srgb, var(--jas-primary-color, #b78acb) 10%, transparent);
 }
 
 .jas-pagination .current span {
     color: #f5f2f7;
-    background: #b78acb;
-    border-color: #b78acb;
+    background: var(--jas-primary-color, #b78acb);
+    border-color: var(--jas-primary-color, #b78acb);
 }
 
 /* ========================================
@@ -504,7 +517,7 @@ body {
 
 .jas-empty-state .search-form input[type="submit"] {
     padding: 0.625rem 1.25rem;
-    background: #b78acb;
+    background: var(--jas-primary-color, #b78acb);
     color: #1b1a1f;
     border: none;
     border-radius: 0.375rem;
@@ -515,7 +528,7 @@ body {
 }
 
 .jas-empty-state .search-form input[type="submit"]:hover {
-    background: #c79cda;
+    background: var(--jas-primary-hover, #c79cda);
 }
 
 /* ========================================
@@ -609,7 +622,7 @@ body {
 }
 
 .jas-branding__title a:hover {
-    color: #b78acb;
+    color: var(--jas-primary-color, #b78acb);
 }
 
 .jas-branding__logo {
@@ -675,12 +688,12 @@ body {
 .jas-nav__menu .current-menu-item > a,
 .jas-nav__menu .current_page_item > a,
 .jas-nav__menu .current-menu-ancestor > a {
-    color: #b78acb;
+    color: var(--jas-primary-color, #b78acb);
 }
 
 .jas-nav__menu .current-menu-item > a:hover,
 .jas-nav__menu .current_page_item > a:hover {
-    color: #c79cda;
+    color: var(--jas-primary-hover, #c79cda);
 }
 
 /* Sub-menu */
@@ -800,7 +813,7 @@ body {
 }
 
 .jas-footer-nav .jas-nav__menu a:hover {
-    color: #b78acb;
+    color: var(--jas-primary-color, #b78acb);
     background: transparent;
 }
 
@@ -827,7 +840,7 @@ body {
 }
 
 .jas-footer-info__copyright a:hover {
-    color: #b78acb;
+    color: var(--jas-primary-color, #b78acb);
 }
 
 .jas-footer-info__version {
@@ -871,13 +884,13 @@ body {
 }
 
 .jas-widget a {
-    color: #b78acb;
+    color: var(--jas-primary-color, #b78acb);
     text-decoration: none;
     transition: color 0.2s ease;
 }
 
 .jas-widget a:hover {
-    color: #c79cda;
+    color: var(--jas-primary-hover, #c79cda);
     text-decoration: underline;
 }
 
@@ -922,13 +935,13 @@ body {
 .jas-widget input[type="text"]:focus,
 .jas-widget input[type="search"]:focus {
     outline: none;
-    border-color: #b78acb;
+    border-color: var(--jas-primary-color, #b78acb);
 }
 
 .jas-widget input[type="submit"],
 .jas-widget button {
     padding: 0.5rem 1rem;
-    background: #b78acb;
+    background: var(--jas-primary-color, #b78acb);
     color: #1b1a1f;
     border: none;
     border-radius: 0.375rem;
@@ -940,7 +953,7 @@ body {
 
 .jas-widget input[type="submit"]:hover,
 .jas-widget button:hover {
-    background: #c79cda;
+    background: var(--jas-primary-hover, #c79cda);
 }
 
 .jas-widget img {

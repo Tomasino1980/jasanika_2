@@ -639,3 +639,36 @@ Date: 2026-06-07
 ## Fixed
 
 - N/A
+
+---
+
+# M22 - Theme Customizer & Design Settings Integration
+
+Version: 0.22
+
+Date: 2026-06-07
+
+## Added
+
+- DesignSettingsManager — centralized frontend design settings service
+- DesignTokenGenerator — CSS custom property generation and debug output
+- assets/css/tokens.css — design-variable-driven CSS consuming generated tokens
+- --jas-primary-color CSS custom property for primary brand color integration
+- --jas-site-layout CSS custom property for boxed/full-width layout support
+- Design debug panel (HTML comment) visible only in WP_DEBUG mode
+- Site layout body class (jas-site--boxed / jas-site--full-width)
+- jas-site-wrapper container for boxed layout constraint
+
+## Changed
+
+- ThemeRenderer refactored — renderInlineStyles() removed, delegates to DesignTokenGenerator
+- ThemeRenderer constructor now accepts DesignTokenGenerator dependency
+- frontend.css — hardcoded primary colors (#b78acb / #c79cda) replaced with CSS variable references
+- frontend.css — site layout boxed styling added
+- ThemeRenderer now enqueues tokens.css alongside frontend.css
+- Application registers DesignSettingsManager and DesignTokenGenerator in Container
+- Version updated to 0.22 in style.css, config/app.php, FrameworkInfo, docs/analyze.md
+
+## Fixed
+
+- N/A

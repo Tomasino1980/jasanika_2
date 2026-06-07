@@ -13,9 +13,11 @@ use Jasanika\Core\ThemeRenderer;
  */
 
 ThemeRenderer::renderHeader();
+echo '<div class="jas-site-wrapper">' . "\n";
 echo '<div class="jas-content">' . "\n";
 echo '  <div class="jas-container">' . "\n";
 ThemeRenderer::renderContentArea();
 echo '  </div>' . "\n";
 echo '</div>' . "\n";
 ThemeRenderer::renderFooter();
+echo '</div>' . "\n";

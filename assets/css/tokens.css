@@ -1,0 +1,130 @@
+/*
+ * Jasanika 2 Design Tokens
+ *
+ * Modular WordPress Framework
+ * Version 0.22
+ *
+ * Consumes generated design tokens (CSS custom properties) set by
+ * DesignTokenGenerator in the document <head>.
+ *
+ * No duplicated values. All design-driven values reference
+ * CSS custom properties with sensible fallbacks.
+ */
+
+/* ========================================
+   Site Layout
+   ======================================== */
+
+/* Boxed layout: constrain the outer wrapper */
+.jas-site--boxed .jas-site-wrapper {
+    max-width: var(--jas-container-width, 1200px);
+    margin-left: auto;
+    margin-right: auto;
+    background: #1b1a1f;
+    box-shadow: 0 0 2rem rgba(0, 0, 0, 0.3);
+}
+
+.jas-site--boxed body {
+    background: #24212b;
+}
+
+/* ========================================
+   Primary Color Integration
+   ======================================== */
+
+/* Links */
+.jas-article__content a,
+.jas-content__body a,
+.jas-content__read-more,
+.jas-content__read-more-link {
+    color: var(--jas-primary-color, #b78acb);
+}
+
+.jas-article__content a:hover,
+.jas-content__body a:hover,
+.jas-content__read-more-link:hover {
+    color: var(--jas-primary-hover, #c79cda);
+}
+
+/* Content meta category links */
+.jas-content__meta-categories a {
+    color: var(--jas-primary-color, #b78acb);
+}
+
+.jas-content__meta-categories a:hover {
+    color: var(--jas-primary-hover, #c79cda);
+}
+
+/* Blockquote border */
+.jas-content__body blockquote {
+    border-left-color: var(--jas-primary-color, #b78acb);
+}
+
+/* Buttons and interactive elements */
+.jas-content__home-link,
+.jas-empty-state .search-form input[type="submit"],
+.jas-widget input[type="submit"],
+.jas-widget button {
+    background: var(--jas-primary-color, #b78acb);
+    color: #1b1a1f;
+}
+
+.jas-content__home-link:hover,
+.jas-empty-state .search-form input[type="submit"]:hover,
+.jas-widget input[type="submit"]:hover,
+.jas-widget button:hover {
+    background: var(--jas-primary-hover, #c79cda);
+}
+
+/* Widget links */
+.jas-widget a {
+    color: var(--jas-primary-color, #b78acb);
+}
+
+.jas-widget a:hover {
+    color: var(--jas-primary-hover, #c79cda);
+}
+
+/* Widget focus states */
+.jas-widget select:focus,
+.jas-widget input[type="text"]:focus,
+.jas-widget input[type="search"]:focus {
+    border-color: var(--jas-primary-color, #b78acb);
+}
+
+/* Pagination */
+.jas-pagination a:hover {
+    border-color: var(--jas-primary-color, #b78acb);
+    background: color-mix(in srgb, var(--jas-primary-color, #b78acb) 10%, transparent);
+}
+
+.jas-pagination .current span {
+    background: var(--jas-primary-color, #b78acb);
+    border-color: var(--jas-primary-color, #b78acb);
+}
+
+/* Navigation */
+.jas-nav__menu .current-menu-item > a,
+.jas-nav__menu .current_page_item > a,
+.jas-nav__menu .current-menu-ancestor > a {
+    color: var(--jas-primary-color, #b78acb);
+}
+
+.jas-nav__menu .current-menu-item > a:hover,
+.jas-nav__menu .current_page_item > a:hover {
+    color: var(--jas-primary-hover, #c79cda);
+}
+
+.jas-branding__title a:hover {
+    color: var(--jas-primary-color, #b78acb);
+}
+
+.jas-footer-nav .jas-nav__menu a:hover,
+.jas-footer-info__copyright a:hover {
+    color: var(--jas-primary-color, #b78acb);
+}
+
+/* Search info query highlight */
+.jas-search-info__query strong {
+    color: var(--jas-primary-color, #b78acb);
+}
