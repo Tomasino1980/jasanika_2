@@ -33,6 +33,24 @@ use Jasanika\Navigation\NavigationManager;
  * Layout rendering is delegated to LayoutRenderer.
  * No direct layout conditionals in this class.
  * No frontend rendering logic in Application.
+ *
+ * Dependencies:
+ * - All builder systems (Header, Footer, Hero)
+ * - All rendering services (Layout, Component, Design, Navigation, Site Identity)
+ *
+ * Used by:
+ * - Application (constructor via initThemeRenderer)
+ * - Template files (via getInstance() static accessor)
+ *
+ * Introduced:
+ * - M18 (Frontend Foundation & Theme Rendering)
+ * - M26 (Header, Footer, Hero delegation)
+ * - M28 (Header CSS/JS enqueuing)
+ *
+ * @todo M30+: Consider replacing the static singleton pattern with
+ *       explicit dependency injection in template files. The static
+ *       instance was introduced to avoid modifying the WordPress
+ *       template hierarchy.
  */
 final class ThemeRenderer
 {

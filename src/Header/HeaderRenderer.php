@@ -37,6 +37,25 @@ use Jasanika\Navigation\NavigationManager;
  * - ThemeRenderer delegates rendering
  * - ComponentRenderer renders CTA button
  * - Design Tokens own styling via CSS custom properties
+ *
+ * Dependencies:
+ * - HeaderManager (settings access)
+ * - SiteIdentityRenderer (branding fallback)
+ * - NavigationManager (menu rendering)
+ * - ComponentRenderer (CTA button)
+ * - MobileMenu (mobile navigation state)
+ *
+ * Used by:
+ * - ThemeRenderer (delegated rendering from templates/header.php)
+ *
+ * Introduced:
+ * - M26 (basic header rendering)
+ * - M28 (dynamic layouts, sticky, search toggle, CTA, top bar, logo V3)
+ *
+ * @todo M30+: Consider extracting zone rendering into dedicated
+ *       layout template files instead of switch/if in PHP.
+ * @todo M30+: Add aria attributes for improved accessibility
+ *       across all header components.
  */
 final class HeaderRenderer
 {

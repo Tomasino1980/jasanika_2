@@ -171,3 +171,36 @@ Date: 2026-06-07
 ## Changed
 
 - Application.php — Component System initialization moved before Header Builder, all section comments replaced with consistent separator format
+
+---
+
+# M28.2 - Bootstrap Documentation & Architecture Cleanup
+
+Version: 0.28
+
+Date: 2026-06-07
+
+## Added
+
+- Architecture map PHPDoc block at top of Application.php showing the complete system hierarchy (Core → Settings → Admin → Navigation → Site Identity → Widgets → Design → Layout → Components → Header → Footer → Hero)
+- Constructor divided into 16 architectural sections with standardized separator blocks (CORE SERVICES, SETTINGS SYSTEM, ADMIN SYSTEM, NAVIGATION SYSTEM, SITE IDENTITY SYSTEM, WIDGET SYSTEM, DESIGN TOKEN SYSTEM, LAYOUT SYSTEM, COMPONENT SYSTEM, HEADER BUILDER, FOOTER BUILDER, HERO BUILDER, THEME RENDERER, SETTINGS UI, ADMIN DASHBOARD, CONTAINER REGISTRATION)
+- Dependency documentation above each section (Depends on / Provides)
+- Milestone ownership comments throughout (M1-M28 references)
+- Future bootstrap planning TODO notes for M30+ extraction
+- Properties organized into logical groups with section headers (CORE, SETTINGS, ADMIN, NAVIGATION, SITE IDENTITY, WIDGETS, DESIGN, LAYOUT, COMPONENTS, HEADER, FOOTER, HERO)
+- Section separator blocks in method areas (SETTINGS REGISTRATION, SETTINGS CATEGORIES, ASSET REGISTRATION, THEME RENDERER INITIALIZATION, CONTAINER SERVICES, DESIGN TOKEN REGISTRATION, THEME PRESETS REGISTRATION, COMPONENTS REGISTRATION, BOOT & PUBLIC ACCESSORS)
+- FrameworkInfo.php — expanded PHPDoc with Responsibilities, Dependencies, Used by, Introduced, @todo
+- ThemeRenderer.php — expanded class PHPDoc with Dependencies, Used by, Introduced sections, @todo for singleton pattern
+- HeaderRenderer.php — expanded class PHPDoc with Dependencies, Used by, Introduced sections, @todo for zone extraction
+- FooterRenderer.php — expanded class PHPDoc with Responsibilities, Rendering pipeline, Dependencies, Used by, Introduced sections, @todo tags
+- HeroRenderer.php — expanded class PHPDoc with Responsibilities, Rendering modes, Dependencies, Used by, Introduced sections, @todo tags
+
+## Changed
+
+- Application.php — all private method PHPDoc blocks upgraded to include Responsibilities, Dependencies, Used by, and Introduced sections
+- Application.php — method order reorganized into logical groups (registerDesignTokens, registerThemePresets, registerComponents moved to dedicated sections with section headers)
+- Application.php — boot() method PHPDoc added with @todo for future M30+ separation of construction and boot phases
+
+## Fixed
+
+- N/A

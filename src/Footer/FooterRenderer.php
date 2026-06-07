@@ -14,11 +14,34 @@ use Jasanika\Navigation\NavigationManager;
  * Owns all footer rendering logic. Uses FooterManager for configuration
  * values and delegates navigation/widget rendering to dedicated services.
  *
- * Produces:
- * - Footer widget regions (column layout, skipped for landing-page)
- * - Footer navigation (optional)
- * - Copyright text (optional)
- * - Social icons (optional, placeholder)
+ * Responsibilities:
+ * - Render footer widget regions (column layout, skipped for landing-page)
+ * - Render footer navigation (optional)
+ * - Render copyright text (optional, with dynamic tag replacement)
+ * - Render social icons (optional, placeholder)
+ *
+ * Rendering pipeline:
+ * 1. Footer widget columns (if not landing-page)
+ * 2. Footer navigation (if enabled)
+ * 3. Copyright text (with {year} and {sitename} tag support)
+ * 4. Social icons (if enabled)
+ *
+ * Dependencies:
+ * - FooterManager (settings access)
+ * - NavigationManager (footer menu rendering)
+ * - LayoutRegionRenderer (widget region rendering)
+ * - LayoutManager (layout detection for landing-page)
+ *
+ * Used by:
+ * - ThemeRenderer (delegated rendering from templates/footer.php)
+ *
+ * Introduced:
+ * - M26 (Site Builder Foundation)
+ *
+ * @todo M30+: Replace hardcoded {year} / {sitename} tag replacement
+ *       with a proper shortcode or filter system.
+ * @todo M30+: Implement proper social icon management with URL settings
+ *       and configurable icon set.
  */
 final class FooterRenderer
 {

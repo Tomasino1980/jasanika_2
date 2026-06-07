@@ -12,10 +12,29 @@ use Jasanika\Components\ComponentRenderer;
  * Owns all hero rendering logic. Uses HeroManager for configuration
  * values and ComponentRenderer for button rendering.
  *
- * Produces:
- * - Static hero with title, subtitle, background, overlay, and CTA button
- * - Slider hero with multiple slides
- * - No output when hero is disabled
+ * Responsibilities:
+ * - Render static hero with title, subtitle, background, overlay, and CTA button
+ * - Render slider hero with multiple slides (stacked, no carousel JS yet)
+ * - Skip output when hero is disabled
+ *
+ * Rendering modes:
+ * - Static: Single hero with optional background image and overlay
+ * - Slider: Multiple slides with per-slide content, background, and CTA
+ *
+ * Dependencies:
+ * - HeroManager (settings access, slide data)
+ * - ComponentRenderer (CTA button rendering)
+ *
+ * Used by:
+ * - ThemeRenderer (delegated rendering from templates/layout.php)
+ *
+ * Introduced:
+ * - M26 (Site Builder Foundation)
+ *
+ * @todo M30+: Add slider navigation (arrows, dots) and autoplay support.
+ *       Current implementation renders slides stacked for foundation only.
+ * @todo M30+: Consider extracting slide rendering into a dedicated
+ *       HeroSlideRenderer for Single Responsibility compliance.
  */
 final class HeroRenderer
 {

@@ -12,7 +12,7 @@ Current Version: 0.28
 
 # Current Milestone
 
-M28.1 - Constructor Dependency Order Fix
+M28.2 - Bootstrap Documentation & Architecture Cleanup
 
 Status: Completed
 
@@ -51,6 +51,7 @@ Status: Completed
 - M27 - Theme Presets & Settings UX Framework
 - M28 - Dynamic Header Builder
 - M28.1 - Constructor Dependency Order Fix
+- M28.2 - Bootstrap Documentation & Architecture Cleanup
 
 ---
 

@@ -18,7 +18,6 @@ use Jasanika\Components\ComponentRegistry;
 use Jasanika\Components\ComponentRenderer;
 use Jasanika\Config\ConfigRepository;
 use Jasanika\Container\Container;
-use Jasanika\Core\ThemeRenderer;
 use Jasanika\Design\DesignSettingsManager;
 use Jasanika\Design\DesignTokenGenerator;
 use Jasanika\Design\DesignTokenRegistry;
@@ -46,42 +45,167 @@ use Jasanika\Settings\SiteLayoutSetting;
 use Jasanika\Settings\TypographySetting;
 use Jasanika\Widgets\WidgetAreaManager;
 
+/**
+ * Jasanika Framework Bootstrap
+ *
+ * Central bootstrap class for the entire framework.
+ * All systems are initialized here in dependency order.
+ *
+ * Architecture:
+ *
+ * Core
+ * ├─ Settings
+ * │   └─ SettingsRegistry
+ * ├─ Admin
+ * │   ├─ AdminMenu
+ * │   ├─ SettingsPage
+ * │   └─ AppearanceDashboard
+ * ├─ Navigation
+ * ├─ Site Identity
+ * ├─ Widgets
+ * ├─ Design
+ * │   ├─ DesignTokenRegistry
+ * │   ├─ ThemePresetManager
+ * │   ├─ DesignSettingsManager
+ * │   └─ DesignTokenGenerator
+ * ├─ Layout
+ * ├─ Components
+ * │   ├─ ComponentRegistry
+ * │   └─ ComponentRenderer
+ * ├─ Header
+ * │   ├─ HeaderLayout
+ * │   ├─ MobileMenu
+ * │   ├─ HeaderManager
+ * │   └─ HeaderRenderer
+ * ├─ Footer
+ * │   ├─ FooterManager
+ * │   └─ FooterRenderer
+ * └─ Hero
+ *     ├─ HeroManager
+ *     └─ HeroRenderer
+ *
+ * Current Version:
+ * 0.28
+ *
+ * @see FrameworkInfo
+ * @see ThemeRenderer
+ */
 final class Application
 {
+    // ============================================================
+    // CORE
+    // ============================================================
+
     private Container $container;
     private ModuleManager $moduleManager;
     private ConfigRepository $configRepository;
     private HookManager $hookManager;
     private AssetManager $assetManager;
     private MediaManager $mediaManager;
+    private FrameworkInfo $frameworkInfo;
+
+    // ============================================================
+    // SETTINGS
+    // ============================================================
+
     private SettingsRegistry $settingsRegistry;
     private SettingsManager $settingsManager;
+
+    // ============================================================
+    // ADMIN
+    // ============================================================
+
     private AdminMenu $adminMenu;
-    private FrameworkInfo $frameworkInfo;
+
+    // ============================================================
+    // NAVIGATION
+    // ============================================================
+
     private NavigationManager $navigationManager;
+
+    // ============================================================
+    // SITE IDENTITY
+    // ============================================================
+
     private SiteIdentityRenderer $siteIdentityRenderer;
+
+    // ============================================================
+    // WIDGETS
+    // ============================================================
+
     private WidgetAreaManager $widgetAreaManager;
     private LayoutRegionRenderer $layoutRegionRenderer;
-    private ThemeRenderer $themeRenderer;
+
+    // ============================================================
+    // DESIGN
+    // ============================================================
+
     private DesignSettingsManager $designSettingsManager;
-    private DesignTokenGenerator $designTokenGenerator;
     private DesignTokenRegistry $tokenRegistry;
     private ThemePresetManager $presetManager;
+    private DesignTokenGenerator $designTokenGenerator;
+
+    // ============================================================
+    // LAYOUT
+    // ============================================================
+
     private LayoutManager $layoutManager;
     private LayoutRenderer $layoutRenderer;
+    private ThemeRenderer $themeRenderer;
+
+    // ============================================================
+    // COMPONENTS
+    // ============================================================
+
     private ComponentRegistry $componentRegistry;
     private ComponentRenderer $componentRenderer;
-    private HeaderManager $headerManager;
-    private HeaderRenderer $headerRenderer;
+
+    // ============================================================
+    // HEADER
+    // ============================================================
+
     private HeaderLayout $headerLayout;
     private MobileMenu $mobileMenu;
+    private HeaderManager $headerManager;
+    private HeaderRenderer $headerRenderer;
+
+    // ============================================================
+    // FOOTER
+    // ============================================================
+
     private FooterManager $footerManager;
     private FooterRenderer $footerRenderer;
+
+    // ============================================================
+    // HERO
+    // ============================================================
+
     private HeroManager $heroManager;
     private HeroRenderer $heroRenderer;
 
     public function __construct()
     {
+        // ============================================================
+        // CORE SERVICES
+        // ============================================================
+        //
+        // Depends on:
+        // - Nothing (foundation layer)
+        //
+        // Provides:
+        // - Container
+        // - ModuleManager
+        // - ConfigRepository
+        // - HookManager
+        // - AssetManager
+        // - MediaManager
+        // - FrameworkInfo
+        //
+        // These are framework prerequisites required by all other systems.
+        //
+        // M1 — Core Foundation
+        // M2 — Service Container
+
         $this->frameworkInfo = new FrameworkInfo(
             'Jasanika 2',
             '0.28'
@@ -94,9 +218,28 @@ final class Application
         $this->assetManager = new AssetManager();
         $this->mediaManager = new MediaManager();
 
-        // ===========================================================
-        // SETTINGS REGISTRY
-        // ===========================================================
+        // ============================================================
+        // SETTINGS SYSTEM
+        // ============================================================
+        //
+        // Depends on:
+        // - Container (via property storage)
+        //
+        // Provides:
+        // - SettingsRegistry
+        // - SettingsManager
+        // - HeaderLayout
+        // - MobileMenu
+        //
+        // Settings must be registered before SettingsManager is created
+        // because SettingsManager reads from the registry at construction.
+        //
+        // M9-M11 — Settings Foundation
+        // M14 — Registry Driven Settings
+        // M26 — Site Builder Settings (Logo V2, Header, Footer, Hero, Layout)
+        // M27 — Color Scheme Builder settings
+        // M28 — Dynamic Header Builder settings
+
         $this->settingsRegistry = new SettingsRegistry();
 
         $this->headerLayout = new HeaderLayout();
@@ -105,9 +248,25 @@ final class Application
 
         $this->settingsManager = new SettingsManager($this->settingsRegistry);
 
-        // ===========================================================
-        // ADMIN MENU
-        // ===========================================================
+        // ============================================================
+        // ADMIN SYSTEM
+        // ============================================================
+        //
+        // Depends on:
+        // - FrameworkInfo
+        // - HookManager
+        //
+        // Provides:
+        // - AdminMenu
+        // - Dashboard admin page
+        //
+        // Registers the framework admin menu structure and asset enqueuing
+        // hooks. Asset definitions are registered here but enqueued later
+        // via WordPress hooks.
+        //
+        // M7 — Admin Foundation
+        // M8 — Admin Menu
+
         $this->adminMenu = new AdminMenu();
 
         $dashboardPage = new DashboardPage($this->frameworkInfo);
@@ -125,63 +284,155 @@ final class Application
         $this->registerAdminAssets();
         $this->registerFrontendAssets();
 
-        // ===========================================================
-        // NAVIGATION & SITE IDENTITY
-        // ===========================================================
+        // ============================================================
+        // NAVIGATION SYSTEM
+        // ============================================================
+        //
+        // Depends on:
+        // - HookManager
+        //
+        // Provides:
+        // - NavigationManager
+        //
+        // M20 — Navigation & Site Identity Architecture
+
         $this->navigationManager = new NavigationManager($this->hookManager);
+
+        // ============================================================
+        // SITE IDENTITY SYSTEM
+        // ============================================================
+        //
+        // Depends on:
+        // - SettingsManager
+        // - MediaManager
+        //
+        // Provides:
+        // - SiteIdentityRenderer
+        //
+        // M20 — Navigation & Site Identity Architecture
+
         $this->siteIdentityRenderer = new SiteIdentityRenderer(
             $this->settingsManager,
             $this->mediaManager
         );
 
-        // ===========================================================
-        // WIDGET AREAS & LAYOUT REGIONS
-        // ===========================================================
+        // ============================================================
+        // WIDGET SYSTEM
+        // ============================================================
+        //
+        // Depends on:
+        // - HookManager
+        //
+        // Provides:
+        // - WidgetAreaManager
+        // - LayoutRegionRenderer
+        //
+        // M21 — Widget Areas & Layout Regions
+
         $this->widgetAreaManager = new WidgetAreaManager($this->hookManager);
         $this->widgetAreaManager->register();
         $this->layoutRegionRenderer = new LayoutRegionRenderer($this->widgetAreaManager);
 
-        // ===========================================================
-        // DESIGN SETTINGS & TOKEN SYSTEM
-        // ===========================================================
+        // ============================================================
+        // DESIGN TOKEN SYSTEM
+        // ============================================================
+        //
+        // Depends on:
+        // - SettingsManager
+        //
+        // Provides:
+        // - DesignSettingsManager
+        // - DesignTokenRegistry
+        // - ThemePresetManager
+        // - DesignTokenGenerator
+        //
+        // Init order matters:
+        // 1. DesignSettingsManager wraps SettingsManager
+        // 2. DesignTokenRegistry defines all available tokens
+        // 3. ThemePresetManager registers presets
+        // 4. DesignTokenGenerator combines settings + tokens + presets
+        //
+        // M24 — Design Token Engine & Theme Preset Foundation
+        // M27 — Color Scheme Builder tokens
+        // M28 — Header CSS custom property token
+
         $this->designSettingsManager = new DesignSettingsManager($this->settingsManager);
 
-        // Design Token Registry — single source of truth for token definitions
         $this->tokenRegistry = new DesignTokenRegistry();
         $this->registerDesignTokens();
 
-        // Theme Preset Manager — preset registration and resolution
         $this->presetManager = new ThemePresetManager();
         $this->registerThemePresets();
 
-        // DesignTokenGenerator with expanded dependencies
         $this->designTokenGenerator = new DesignTokenGenerator(
             $this->designSettingsManager,
             $this->tokenRegistry,
             $this->presetManager
         );
 
-        // ===========================================================
+        // ============================================================
         // LAYOUT SYSTEM
-        // ===========================================================
+        // ============================================================
+        //
+        // Depends on:
+        // - DesignSettingsManager
+        // - LayoutRegionRenderer
+        //
+        // Provides:
+        // - LayoutManager
+        // - LayoutRenderer
+        //
+        // M23 — Dynamic Layout System
+
         $this->layoutManager = new LayoutManager($this->designSettingsManager);
         $this->layoutRenderer = new LayoutRenderer(
             $this->layoutManager,
             $this->layoutRegionRenderer
         );
 
-        // ===========================================================
+        // ============================================================
         // COMPONENT SYSTEM
-        // ===========================================================
+        // ============================================================
+        //
+        // Depends on:
+        // - Nothing (standalone registry)
+        //
+        // Provides:
+        // - ComponentRegistry
+        // - ComponentRenderer
+        //
+        // Components must be registered before ComponentRenderer is created.
+        //
+        // M25 — Component Styling Framework
+
         $this->componentRegistry = new ComponentRegistry();
         $this->registerComponents();
         $this->componentRenderer = new ComponentRenderer(
             $this->componentRegistry
         );
 
-        // ===========================================================
+        // ============================================================
         // HEADER BUILDER
-        // ===========================================================
+        // ============================================================
+        //
+        // Depends on:
+        // - SettingsManager
+        // - HeaderLayout
+        // - SiteIdentityRenderer
+        // - NavigationManager
+        // - ComponentRenderer
+        // - MobileMenu
+        //
+        // Provides:
+        // - HeaderManager
+        // - HeaderRenderer
+        //
+        // HeaderManager reads settings. HeaderRenderer composes all
+        // header output from sub-renderers.
+        //
+        // M26 — Site Builder Foundation (basic header)
+        // M28 — Dynamic Header Builder (layouts, sticky, search, CTA, top bar)
+
         $this->headerManager = new HeaderManager($this->settingsManager, $this->headerLayout);
         $this->headerRenderer = new HeaderRenderer(
             $this->headerManager,
@@ -191,9 +442,22 @@ final class Application
             $this->mobileMenu
         );
 
-        // ===========================================================
+        // ============================================================
         // FOOTER BUILDER
-        // ===========================================================
+        // ============================================================
+        //
+        // Depends on:
+        // - SettingsManager
+        // - NavigationManager
+        // - LayoutRegionRenderer
+        // - LayoutManager
+        //
+        // Provides:
+        // - FooterManager
+        // - FooterRenderer
+        //
+        // M26 — Site Builder Foundation
+
         $this->footerManager = new FooterManager($this->settingsManager);
         $this->footerRenderer = new FooterRenderer(
             $this->footerManager,
@@ -202,21 +466,70 @@ final class Application
             $this->layoutManager
         );
 
-        // ===========================================================
+        // ============================================================
         // HERO BUILDER
-        // ===========================================================
+        // ============================================================
+        //
+        // Depends on:
+        // - SettingsManager
+        // - MediaManager
+        // - ComponentRenderer
+        //
+        // Provides:
+        // - HeroManager
+        // - HeroRenderer
+        //
+        // M26 — Site Builder Foundation
+
         $this->heroManager = new HeroManager($this->settingsManager, $this->mediaManager);
         $this->heroRenderer = new HeroRenderer($this->heroManager, $this->componentRenderer);
 
+        // ============================================================
+        // THEME RENDERER
+        // ============================================================
+        //
+        // Depends on:
+        // - All preceding services
+        //
+        // Provides:
+        // - ThemeRenderer (frontend rendering entry point)
+        //
+        // Must be initialized after all builder systems (Header, Footer, Hero).
+        // ThemeRenderer owns the frontend rendering pipeline and delegates
+        // to specific renderers.
+        //
+        // M18 — Frontend Foundation & Theme Rendering
+
         $this->initThemeRenderer();
 
-        // Register asset lifecycle hooks.
+        // Register asset lifecycle hooks for both admin and frontend.
+        // These must be registered after ThemeRenderer is initialized.
         $this->hookManager->addAction('admin_enqueue_scripts', [$this->assetManager, 'registerWordPressAssets']);
         $this->hookManager->addAction('wp_enqueue_scripts', [$this->assetManager, 'registerWordPressAssets']);
 
-        // ===========================================================
-        // SETTINGS PAGE
-        // ===========================================================
+        // ============================================================
+        // SETTINGS UI
+        // ============================================================
+        //
+        // Depends on:
+        // - FrameworkInfo
+        // - SettingsRegistry
+        // - SettingsManager
+        // - AssetManager
+        // - ComponentRenderer
+        // - ThemePresetManager
+        //
+        // Provides:
+        // - SettingsPage (admin sub-page for all framework settings)
+        // - FieldFactory
+        //
+        // Settings UI uses the Component Framework for consistent rendering.
+        // Categories and sections define the tabbed settings organization.
+        //
+        // M9 — Settings Page Foundation
+        // M26 — Site Builder Settings UI (tabbed categories)
+        // M27 — Settings UX Framework (search, collapsible panels, presets)
+
         $fieldFactory = new FieldFactory($this->settingsManager, $this->assetManager);
 
         $settingsPage = new SettingsPage(
@@ -239,9 +552,27 @@ final class Application
 
         $this->adminMenu->registerSubPage($settingsSubPage);
 
-        // ===========================================================
-        // APPEARANCE DASHBOARD
-        // ===========================================================
+        // ============================================================
+        // ADMIN DASHBOARD
+        // ============================================================
+        //
+        // Depends on:
+        // - ThemePresetManager
+        // - DesignSettingsManager
+        // - ComponentRenderer
+        // - HeaderManager
+        // - FooterManager
+        // - HeroManager
+        // - LayoutManager
+        // - SettingsManager
+        //
+        // Provides:
+        // - AppearanceDashboard (Appearance → Overview)
+        //
+        // Read-only card-based view of the current theme configuration.
+        //
+        // M27 — Theme Presets & Settings UX Framework
+
         $appearanceDashboard = new AppearanceDashboard(
             $this->presetManager,
             $this->designSettingsManager,
@@ -261,16 +592,50 @@ final class Application
 
         $this->adminMenu->registerSubPage($appearanceSubPage);
 
-        // ===========================================================
-        // CONTAINER SERVICES
-        // ===========================================================
+        // ============================================================
+        // CONTAINER REGISTRATION
+        // ============================================================
+        //
+        // Depends on:
+        // - All previously initialized services
+        //
+        // Provides:
+        // - DI Container with all services registered
+        //
+        // Must be the last initialization step so all services exist
+        // before being registered in the container.
+        //
+        // M2 — Service Container
+
         $this->registerContainerServices();
     }
 
+    // ============================================================
+    // SETTINGS REGISTRATION
+    // ============================================================
+
     /**
-     * Register all settings in the SettingsRegistry.
+     * Register all framework settings in the SettingsRegistry.
      *
-     * M26 adds Logo V2, Header, Footer, Hero, Slider, and Layout Control settings.
+     * Responsibilities:
+     * - Register foundational settings (SiteLayout, Logo, PrimaryColor, Typography, ContainerWidth)
+     * - Register Logo V2 settings (desktop, mobile, retina logos with size/position)
+     * - Register M28 Dynamic Header Builder settings (layout, heights, CTA, top bar)
+     * - Register M26 legacy header settings (height, colors, sticky, search, top bar toggle)
+     * - Register M26 footer settings (layout, colors, copyright, menu, social)
+     * - Register M26 hero settings (type, content, background, slides)
+     * - Register M26 layout control settings (widths, padding, margin)
+     * - Register M27 theme preset and color scheme builder settings
+     *
+     * Dependencies:
+     * - Uses $this->settingsRegistry (must be initialized before call)
+     * - Uses $this->headerLayout for dynamic layout options
+     *
+     * Introduced:
+     * - M9 (foundational settings)
+     * - M26 (Logo V2, Header, Footer, Hero, Layout Control settings)
+     * - M27 (Theme Preset, Color Scheme Builder settings)
+     * - M28 (Dynamic Header Builder: layout, heights, CTA, top bar)
      */
     private function registerSettings(): void
     {
@@ -408,10 +773,28 @@ final class Application
         $r->register(new Setting('border_color', 'rgba(255,255,255,0.08)', 'Border Color', 'text'));
     }
 
+    // ============================================================
+    // SETTINGS CATEGORIES & SECTIONS
+    // ============================================================
+
     /**
      * Register settings categories and sections on the SettingsPage.
      *
-     * Organizes all settings into tabbed categories with grouped sections.
+     * Responsibilities:
+     * - Organize all settings into tabbed categories (General, Appearance, Content, Marketing, Advanced)
+     * - Define Section groups with field references within each category
+     * - Configure section labels, descriptions, and field membership
+     *
+     * Dependencies:
+     * - Uses $this->settingsRegistry (registered settings must exist)
+     *
+     * Used by:
+     * - SettingsPage (section rendering in admin)
+     *
+     * Introduced:
+     * - M26 (tabbed categories with sections)
+     * - M27 (Presets, Color Scheme, Typography sections)
+     * - M28 (CTA Button, Top Bar sections)
      */
     private function registerSettingsCategories(SettingsPage $settingsPage): void
     {
@@ -549,8 +932,25 @@ final class Application
         ));
     }
 
+    // ============================================================
+    // ASSET REGISTRATION
+    // ============================================================
+
     /**
      * Register the media-field.js asset definition.
+     *
+     * Responsibilities:
+     * - Define the media-field.js script for WordPress Media Library integration
+     * - Script is enqueued by MediaField when rendering on settings pages
+     *
+     * Dependencies:
+     * - Uses $this->assetManager (must be initialized)
+     *
+     * Used by:
+     * - MediaField (admin field rendering)
+     *
+     * Introduced:
+     * - M17 (Media Infrastructure)
      */
     private function registerMediaFieldAsset(): void
     {
@@ -567,10 +967,19 @@ final class Application
     }
 
     /**
-     * Register admin CSS asset for settings UI styling.
+     * Register admin CSS assets for settings UI styling.
      *
-     * M27: New admin.css with preset cards, collapsible panels,
-     * search field, and appearance dashboard styles.
+     * Responsibilities:
+     * - Register admin.css (settings UI, preset cards, collapsible panels, search, dashboard)
+     * - Enqueue admin CSS and component CSS on Jasanika admin pages
+     *
+     * Dependencies:
+     * - Uses $this->assetManager (must be initialized)
+     * - Uses $this->hookManager (for admin_enqueue_scripts action)
+     *
+     * Introduced:
+     * - M9 (basic admin styles)
+     * - M27 (admin.css with settings UX framework styles)
      */
     private function registerAdminAssets(): void
     {
@@ -595,6 +1004,26 @@ final class Application
 
     /**
      * Register frontend CSS and JavaScript asset definitions.
+     *
+     * Responsibilities:
+     * - Register frontend.css (core frontend styles)
+     * - Register tokens.css (CSS custom properties)
+     * - Register components.css (component styles)
+     * - Register header.css (header and navigation styles)
+     * - Register header.js (sticky header, search overlay, mobile nav)
+     * - Register frontend.js (general frontend behavior)
+     *
+     * Dependencies:
+     * - Uses $this->assetManager (must be initialized)
+     *
+     * Used by:
+     * - ThemeRenderer::enqueueFrontendAssets() (wp_enqueue_scripts hook)
+     *
+     * Introduced:
+     * - M18 (frontend.css, frontend.js)
+     * - M24 (tokens.css)
+     * - M25 (components.css)
+     * - M28 (header.css, header.js)
      */
     private function registerFrontendAssets(): void
     {
@@ -655,8 +1084,26 @@ final class Application
         $this->assetManager->registerScript($script);
     }
 
+    // ============================================================
+    // THEME RENDERER INITIALIZATION
+    // ============================================================
+
     /**
      * Initialize the ThemeRenderer for frontend rendering.
+     *
+     * Responsibilities:
+     * - Create ThemeRenderer with all required service dependencies
+     * - Call init() to register WordPress hooks and set the template pipeline
+     *
+     * Dependencies:
+     * - All builder systems must be initialized first (Header, Footer, Hero)
+     * - All rendering services must exist (Layout, Component, Design, Navigation)
+     *
+     * Used by:
+     * - Application constructor (orchestration)
+     *
+     * Introduced:
+     * - M18 (Frontend Foundation & Theme Rendering)
      */
     private function initThemeRenderer(): void
     {
@@ -680,8 +1127,28 @@ final class Application
         $this->themeRenderer->init();
     }
 
+    // ============================================================
+    // CONTAINER SERVICES REGISTRATION
+    // ============================================================
+
     /**
-     * Register all services in the DI Container.
+     * Register all framework services in the DI Container.
+     *
+     * Responsibilities:
+     * - Map every service class to its corresponding property on this instance
+     * - Register lazy-loading closures that return the already-initialized instance
+     *
+     * Dependencies:
+     * - All services must be initialized before this method is called
+     *
+     * Used by:
+     * - External code that resolves services via Container::get()
+     *
+     * Introduced:
+     * - M2 (Service Container)
+     *
+     * @todo M30+: Consider splitting container registration into per-module
+     *       service providers for better separation of concerns.
      */
     private function registerContainerServices(): void
     {
@@ -728,6 +1195,222 @@ final class Application
         }
     }
 
+    // ============================================================
+    // DESIGN TOKEN REGISTRATION
+    // ============================================================
+
+    /**
+     * Register all design tokens in the DesignTokenRegistry.
+     *
+     * Responsibilities:
+     * - Color tokens (primary, secondary, accent, background, surface, text, heading, border)
+     * - Legacy backward compatibility tokens (--jas-primary-color, --jas-primary-hover)
+     * - Typography tokens (font family, font size scale xs-2xl)
+     * - Spacing tokens (xs-xl rhythm scale)
+     * - Layout tokens (container, header, content, sidebar, footer widths, section spacing)
+     * - Border Radius tokens (sm, md, lg)
+     *
+     * Dependencies:
+     * - Uses $this->tokenRegistry (must be initialized before call)
+     *
+     * Used by:
+     * - DesignTokenGenerator (preset-aware token generation)
+     *
+     * Introduced:
+     * - M24 (Design Token Engine)
+     * - M26 (layout control tokens)
+     * - M27 (secondary, accent, background, surface, text, heading, border, heading font tokens)
+     * - M28 (--jas-header-bg token)
+     */
+    private function registerDesignTokens(): void
+    {
+        $r = $this->tokenRegistry;
+
+        // --- Color tokens ---
+        $r->registerToken('--jas-color-primary',       'Color', '#b78acb', 'Primary brand color');
+        $r->registerToken('--jas-color-primary-hover', 'Color', '#c79cda', 'Primary brand color hover state');
+        $r->registerToken('--jas-color-secondary',     'Color', '#24212b', 'Secondary brand color');
+        $r->registerToken('--jas-color-accent',        'Color', '#f1c95d', 'Accent brand color');
+        $r->registerToken('--jas-color-text',          'Color', '#f5f2f7', 'Body text color');
+        $r->registerToken('--jas-color-heading',       'Color', '#f5f2f7', 'Heading text color');
+        $r->registerToken('--jas-color-background',    'Color', '#1b1a1f', 'Main background color');
+        $r->registerToken('--jas-color-surface',       'Color', '#24212b', 'Surface / secondary background color');
+        $r->registerToken('--jas-color-border',        'Color', 'rgba(255,255,255,0.08)', 'Border and divider color');
+
+        // --- Legacy backward compatibility tokens ---
+        $r->registerToken('--jas-primary-color',       'Color', '#b78acb', 'Legacy primary color (use --jas-color-primary)');
+        $r->registerToken('--jas-primary-hover',       'Color', '#c79cda', 'Legacy primary hover (use --jas-color-primary-hover)');
+
+        // --- Typography tokens ---
+        $r->registerToken('--jas-font-family',     'Typography', "'Inter', sans-serif", 'Body font family');
+        $r->registerToken('--jas-font-family-heading', 'Typography', "'Playfair Display', serif", 'Heading font family');
+        $r->registerToken('--jas-font-size-xs',    'Typography', '0.75rem', 'Extra small font size');
+        $r->registerToken('--jas-font-size-sm',    'Typography', '0.875rem', 'Small font size');
+        $r->registerToken('--jas-font-size-md',    'Typography', '1rem', 'Medium / base font size');
+        $r->registerToken('--jas-font-size-lg',    'Typography', '1.125rem', 'Large font size');
+        $r->registerToken('--jas-font-size-xl',    'Typography', '1.25rem', 'Extra large font size');
+        $r->registerToken('--jas-font-size-2xl',   'Typography', '1.5rem', '2x large font size');
+
+        // --- Spacing tokens ---
+        $r->registerToken('--jas-space-xs', 'Spacing', '0.5rem', 'Extra small spacing');
+        $r->registerToken('--jas-space-sm', 'Spacing', '1rem', 'Small spacing');
+        $r->registerToken('--jas-space-md', 'Spacing', '1.5rem', 'Medium spacing');
+        $r->registerToken('--jas-space-lg', 'Spacing', '2rem', 'Large spacing');
+        $r->registerToken('--jas-space-xl', 'Spacing', '3rem', 'Extra large spacing');
+
+        // --- Layout tokens ---
+        $r->registerToken('--jas-container-width', 'Layout', '1200px', 'Maximum content container width');
+        $r->registerToken('--jas-site-layout',     'Layout', 'full-width', 'Site layout mode (boxed or full-width)');
+        $r->registerToken('--jas-header-width',    'Layout', '1200px', 'Header content width');
+        $r->registerToken('--jas-content-width',   'Layout', '1200px', 'Main content area width');
+        $r->registerToken('--jas-sidebar-width',   'Layout', '320px', 'Sidebar column width');
+        $r->registerToken('--jas-footer-width',    'Layout', '1200px', 'Footer content width');
+        $r->registerToken('--jas-section-padding', 'Layout', '2rem', 'Section padding');
+        $r->registerToken('--jas-section-margin',  'Layout', '1.5rem', 'Section margin');
+
+        // --- Border Radius tokens ---
+        $r->registerToken('--jas-radius-sm', 'Border Radius', '0.25rem', 'Small border radius');
+        $r->registerToken('--jas-radius-md', 'Border Radius', '0.5rem', 'Medium border radius');
+        $r->registerToken('--jas-radius-lg', 'Border Radius', '0.75rem', 'Large border radius');
+    }
+
+    // ============================================================
+    // THEME PRESETS REGISTRATION
+    // ============================================================
+
+    /**
+     * Register theme presets in the ThemePresetManager.
+     *
+     * Responsibilities:
+     * - Register all available theme presets (Default, Modern, Minimal, Business, Custom)
+     * - Each preset has a slug, label, description, and optional configuration overrides
+     *
+     * Dependencies:
+     * - Uses $this->presetManager (must be initialized before call)
+     *
+     * Used by:
+     * - ThemePresetManager (preset resolution and active preset management)
+     * - SettingsPage (preset selection UI)
+     * - DesignTokenGenerator (preset-aware token generation)
+     *
+     * Introduced:
+     * - M24 (Default, Modern, Minimal presets)
+     * - M27 (Business, Custom presets)
+     */
+    private function registerThemePresets(): void
+    {
+        $this->presetManager->registerPreset(
+            'default',
+            'Default',
+            'Standardni Jasanika design',
+            []
+        );
+
+        $this->presetManager->registerPreset(
+            'modern',
+            'Modern',
+            'Cistsi a soucasnejsi varianta',
+            []
+        );
+
+        $this->presetManager->registerPreset(
+            'minimal',
+            'Minimal',
+            'Redukovana vizualni komplexita',
+            []
+        );
+
+        // --- M27 Presets ---
+        $this->presetManager->registerPreset(
+            'business',
+            'Business',
+            'Professionalni vzhled pro firemni prezentaci',
+            []
+        );
+
+        $this->presetManager->registerPreset(
+            'custom',
+            'Custom',
+            'Uplna kontrola nad kazdym detailem designu',
+            []
+        );
+    }
+
+    // ============================================================
+    // COMPONENTS REGISTRATION
+    // ============================================================
+
+    /**
+     * Register all frontend UI components in the ComponentRegistry.
+     *
+     * Responsibilities:
+     * - Register the Button component (primary, secondary, outline variants)
+     * - Register the Card component (header, body, footer sections)
+     * - Register the Alert component (info, success, warning, error types)
+     * - Register the Form Field component (text, email, search, textarea, select)
+     *
+     * Dependencies:
+     * - Uses $this->componentRegistry (must be initialized before call)
+     *
+     * Used by:
+     * - ComponentRenderer (component rendering in templates)
+     * - SettingsPage (component-driven settings UI)
+     * - HeaderRenderer (CTA button)
+     * - HeroRenderer (hero button)
+     *
+     * Introduced:
+     * - M25 (Component Styling Framework)
+     *
+     * @todo M30+: Consider extracting component registration into a dedicated
+     *       ComponentServiceProvider when the number of components grows.
+     */
+    private function registerComponents(): void
+    {
+        $r = $this->componentRegistry;
+
+        $r->registerComponent(
+            'button',
+            'Button',
+            'Action button with primary, secondary, and outline variants.',
+            get_template_directory() . '/templates/components/button.php'
+        );
+
+        $r->registerComponent(
+            'card',
+            'Card',
+            'Content presentation card for archives, search results, and widgets.',
+            get_template_directory() . '/templates/components/card.php'
+        );
+
+        $r->registerComponent(
+            'alert',
+            'Alert',
+            'Semantic alert banner with info, success, warning, and error types.',
+            get_template_directory() . '/templates/components/alert.php'
+        );
+
+        $r->registerComponent(
+            'form-field',
+            'Form Field',
+            'Standardized form field with label and input (text, email, search, textarea, select).',
+            get_template_directory() . '/templates/components/form-field.php'
+        );
+    }
+
+    // ============================================================
+    // BOOT & PUBLIC ACCESSORS
+    // ============================================================
+
+    /**
+     * Boot the framework.
+     *
+     * Currently reserved for post-construction initialization.
+     * No logic is executed here yet.
+     *
+     * @todo M30+: Consider moving hook registration and post-init
+     *       logic here for clearer separation between construction
+     *       and boot phases.
+     */
     public function boot(): void
     {
         // Configuration system initialized
@@ -876,147 +1559,5 @@ final class Application
     public function getHeroRenderer(): HeroRenderer
     {
         return $this->heroRenderer;
-    }
-
-    /**
-     * Register all design tokens in the DesignTokenRegistry.
-     *
-     * Tokens are organized by category:
-     * - Color          — Semantic color tokens
-     * - Typography     — Font family and size scale
-     * - Spacing        — Spacing rhythm scale
-     * - Layout         — Container width, site layout
-     * - Border Radius  — Border radius scale
-     *
-     * M26 adds layout control tokens.
-     */
-    private function registerDesignTokens(): void
-    {
-        $r = $this->tokenRegistry;
-
-        // --- Color tokens ---
-        $r->registerToken('--jas-color-primary',       'Color', '#b78acb', 'Primary brand color');
-        $r->registerToken('--jas-color-primary-hover', 'Color', '#c79cda', 'Primary brand color hover state');
-        $r->registerToken('--jas-color-secondary',     'Color', '#24212b', 'Secondary brand color');
-        $r->registerToken('--jas-color-accent',        'Color', '#f1c95d', 'Accent brand color');
-        $r->registerToken('--jas-color-text',          'Color', '#f5f2f7', 'Body text color');
-        $r->registerToken('--jas-color-heading',       'Color', '#f5f2f7', 'Heading text color');
-        $r->registerToken('--jas-color-background',    'Color', '#1b1a1f', 'Main background color');
-        $r->registerToken('--jas-color-surface',       'Color', '#24212b', 'Surface / secondary background color');
-        $r->registerToken('--jas-color-border',        'Color', 'rgba(255,255,255,0.08)', 'Border and divider color');
-
-        // --- Legacy backward compatibility tokens ---
-        $r->registerToken('--jas-primary-color',       'Color', '#b78acb', 'Legacy primary color (use --jas-color-primary)');
-        $r->registerToken('--jas-primary-hover',       'Color', '#c79cda', 'Legacy primary hover (use --jas-color-primary-hover)');
-
-        // --- Typography tokens ---
-        $r->registerToken('--jas-font-family',     'Typography', "'Inter', sans-serif", 'Body font family');
-        $r->registerToken('--jas-font-family-heading', 'Typography', "'Playfair Display', serif", 'Heading font family');
-        $r->registerToken('--jas-font-size-xs',    'Typography', '0.75rem', 'Extra small font size');
-        $r->registerToken('--jas-font-size-sm',    'Typography', '0.875rem', 'Small font size');
-        $r->registerToken('--jas-font-size-md',    'Typography', '1rem', 'Medium / base font size');
-        $r->registerToken('--jas-font-size-lg',    'Typography', '1.125rem', 'Large font size');
-        $r->registerToken('--jas-font-size-xl',    'Typography', '1.25rem', 'Extra large font size');
-        $r->registerToken('--jas-font-size-2xl',   'Typography', '1.5rem', '2x large font size');
-
-        // --- Spacing tokens ---
-        $r->registerToken('--jas-space-xs', 'Spacing', '0.5rem', 'Extra small spacing');
-        $r->registerToken('--jas-space-sm', 'Spacing', '1rem', 'Small spacing');
-        $r->registerToken('--jas-space-md', 'Spacing', '1.5rem', 'Medium spacing');
-        $r->registerToken('--jas-space-lg', 'Spacing', '2rem', 'Large spacing');
-        $r->registerToken('--jas-space-xl', 'Spacing', '3rem', 'Extra large spacing');
-
-        // --- Layout tokens ---
-        $r->registerToken('--jas-container-width', 'Layout', '1200px', 'Maximum content container width');
-        $r->registerToken('--jas-site-layout',     'Layout', 'full-width', 'Site layout mode (boxed or full-width)');
-        $r->registerToken('--jas-header-width',    'Layout', '1200px', 'Header content width');
-        $r->registerToken('--jas-content-width',   'Layout', '1200px', 'Main content area width');
-        $r->registerToken('--jas-sidebar-width',   'Layout', '320px', 'Sidebar column width');
-        $r->registerToken('--jas-footer-width',    'Layout', '1200px', 'Footer content width');
-        $r->registerToken('--jas-section-padding', 'Layout', '2rem', 'Section padding');
-        $r->registerToken('--jas-section-margin',  'Layout', '1.5rem', 'Section margin');
-
-        // --- Border Radius tokens ---
-        $r->registerToken('--jas-radius-sm', 'Border Radius', '0.25rem', 'Small border radius');
-        $r->registerToken('--jas-radius-md', 'Border Radius', '0.5rem', 'Medium border radius');
-        $r->registerToken('--jas-radius-lg', 'Border Radius', '0.75rem', 'Large border radius');
-    }
-
-    /**
-     * Register theme presets in the ThemePresetManager.
-     */
-    private function registerThemePresets(): void
-    {
-        $this->presetManager->registerPreset(
-            'default',
-            'Default',
-            'Standardni Jasanika design',
-            []
-        );
-
-        $this->presetManager->registerPreset(
-            'modern',
-            'Modern',
-            'Cistsi a soucasnejsi varianta',
-            []
-        );
-
-        $this->presetManager->registerPreset(
-            'minimal',
-            'Minimal',
-            'Redukovana vizualni komplexita',
-            []
-        );
-
-        // --- M27 Presets ---
-        $this->presetManager->registerPreset(
-            'business',
-            'Business',
-            'Professionalni vzhled pro firemni prezentaci',
-            []
-        );
-
-        $this->presetManager->registerPreset(
-            'custom',
-            'Custom',
-            'Uplna kontrola nad kazdym detailem designu',
-            []
-        );
-    }
-
-    /**
-     * Register all frontend UI components in the ComponentRegistry.
-     */
-    private function registerComponents(): void
-    {
-        $r = $this->componentRegistry;
-
-        $r->registerComponent(
-            'button',
-            'Button',
-            'Action button with primary, secondary, and outline variants.',
-            get_template_directory() . '/templates/components/button.php'
-        );
-
-        $r->registerComponent(
-            'card',
-            'Card',
-            'Content presentation card for archives, search results, and widgets.',
-            get_template_directory() . '/templates/components/card.php'
-        );
-
-        $r->registerComponent(
-            'alert',
-            'Alert',
-            'Semantic alert banner with info, success, warning, and error types.',
-            get_template_directory() . '/templates/components/alert.php'
-        );
-
-        $r->registerComponent(
-            'form-field',
-            'Form Field',
-            'Standardized form field with label and input (text, email, search, textarea, select).',
-            get_template_directory() . '/templates/components/form-field.php'
-        );
     }
 }
