@@ -30,6 +30,7 @@ use Jasanika\Header\HeaderLayout;
 use Jasanika\Header\HeaderManager;
 use Jasanika\Header\HeaderRenderer;
 use Jasanika\Header\MobileMenu;
+use Jasanika\Hero\HeroLayout;
 use Jasanika\Hero\HeroManager;
 use Jasanika\Hero\HeroRenderer;
 use Jasanika\Hooks\HookManager;
@@ -83,17 +84,17 @@ use Jasanika\Widgets\WidgetAreaManager;
  * ├─ Footer
  * │   ├─ FooterManager
  * │   └─ FooterRenderer
- * └─ Hero
+* └─ Hero
  *     ├─ HeroManager
+ *     ├─ HeroLayout
  *     └─ HeroRenderer
  *
-* Current Version:
- * 0.31
+ * Current Version:
+ * 0.33
  *
- * M29 — Settings UI Refactor & Design System
- * M30 — Admin UI Dark Card Layout
  * M31 — Dynamic Theme Settings Engine
  * M32 — Modern Color Picker & Theme Designer
+ * M33 — Hero Builder V2
  *
  * @see FrameworkInfo
  * @see ThemeRenderer
@@ -219,7 +220,7 @@ final class Application
 
         $this->frameworkInfo = new FrameworkInfo(
             'Jasanika 2',
-            '0.32'
+            '0.33'
         );
 
         $this->container = new Container();
@@ -776,7 +777,7 @@ final class Application
             'no'  => 'Hide',
         ]));
 
-        // --- Hero Settings (M26) ---
+        // --- Hero Settings (M26/M33) ---
         $r->register(new Setting('hero_enabled', 'no', 'Enable Hero', 'select', [
             'yes' => 'Enabled',
             'no'  => 'Disabled',
@@ -786,12 +787,56 @@ final class Application
             'slider' => 'Slider',
         ]));
         $r->register(new Setting('hero_height', '400px', 'Hero Height', 'text'));
+
+        // M33: Hero Content
         $r->register(new Setting('hero_title', '', 'Hero Title', 'text'));
         $r->register(new Setting('hero_subtitle', '', 'Hero Subtitle', 'text'));
+        $r->register(new Setting('hero_description', '', 'Hero Description', 'text'));
+
+        // M33: Hero Layout
+        $r->register(new Setting('hero_layout', 'centered', 'Hero Layout', 'select', HeroLayout::getOptions()));
+
+        // M33: Hero Height Mode
+        $r->register(new Setting('hero_height_mode', 'medium', 'Hero Height Mode', 'select', [
+            'auto'       => 'Auto',
+            'medium'     => 'Medium',
+            'large'      => 'Large',
+            'fullscreen' => 'Fullscreen',
+        ]));
+
+        // M33: Hero Background
+        $r->register(new Setting('hero_bg_type', 'color', 'Background Type', 'select', [
+            'color'    => 'Color',
+            'image'    => 'Image',
+            'gradient' => 'Gradient',
+        ]));
+        $r->register(new Setting('hero_bg_color', '#1b1a1f', 'Background Color', 'color'));
         $r->register(new Setting('hero_background_image', '', 'Background Image', 'media'));
+        $r->register(new Setting('hero_gradient_start', '#b78acb', 'Gradient Start', 'color'));
+        $r->register(new Setting('hero_gradient_end', '#24212b', 'Gradient End', 'color'));
+
+        // M33: Hero Overlay
+        $r->register(new Setting('hero_overlay_enabled', 'yes', 'Enable Overlay', 'select', [
+            'yes' => 'Enabled',
+            'no'  => 'Disabled',
+        ]));
+        $r->register(new Setting('hero_overlay_color', '#1b1a1f', 'Overlay Color', 'color'));
         $r->register(new Setting('hero_overlay_opacity', '0.3', 'Overlay Opacity', 'text'));
-        $r->register(new Setting('hero_button_text', '', 'Button Text', 'text'));
-        $r->register(new Setting('hero_button_url', '', 'Button URL', 'text'));
+
+        // M33: Hero Buttons
+        $r->register(new Setting('hero_button_style', 'primary', 'Button Style', 'select', [
+            'primary'   => 'Primary',
+            'secondary' => 'Secondary',
+            'outline'   => 'Outline',
+        ]));
+        $r->register(new Setting('hero_btn_primary_label', '', 'Primary Button Label', 'text'));
+        $r->register(new Setting('hero_btn_primary_url', '', 'Primary Button URL', 'text'));
+        $r->register(new Setting('hero_btn_secondary_label', '', 'Secondary Button Label', 'text'));
+        $r->register(new Setting('hero_btn_secondary_url', '', 'Secondary Button URL', 'text'));
+
+        // Backward compatibility: map old button fields to new
+        $r->register(new Setting('hero_button_text', '', 'Button Text (legacy)', 'text'));
+        $r->register(new Setting('hero_button_url', '', 'Button URL (legacy)', 'text'));
 
         // --- Hero Slides (M26) ---
         for ($i = 1; $i <= 3; $i++) {
@@ -933,11 +978,15 @@ final class Application
         $settingsPage->registerSection(new Section(
             'appearance_hero',
             'Hero',
-            'Hero section configuration including type, content, background, and slides.',
+            'Hero section configuration including layout, content, background, overlay, and buttons.',
             'appearance',
             [
-                'hero_enabled', 'hero_type', 'hero_height', 'hero_title', 'hero_subtitle',
-                'hero_background_image', 'hero_overlay_opacity', 'hero_button_text', 'hero_button_url',
+                'hero_enabled', 'hero_type', 'hero_layout', 'hero_height_mode', 'hero_height',
+                'hero_title', 'hero_subtitle', 'hero_description',
+                'hero_bg_type', 'hero_bg_color', 'hero_background_image', 'hero_gradient_start', 'hero_gradient_end',
+                'hero_overlay_enabled', 'hero_overlay_color', 'hero_overlay_opacity',
+                'hero_button_style', 'hero_btn_primary_label', 'hero_btn_primary_url',
+                'hero_btn_secondary_label', 'hero_btn_secondary_url',
                 'hero_slide_1_title', 'hero_slide_1_subtitle', 'hero_slide_1_image',
                 'hero_slide_1_button_text', 'hero_slide_1_button_url',
                 'hero_slide_2_title', 'hero_slide_2_subtitle', 'hero_slide_2_image',
@@ -1088,7 +1137,7 @@ final class Application
         $script = new Asset(
             'jasanika-media-field',
             get_template_directory_uri() . '/assets/admin/js/media-field.js',
-            '0.32',
+            '0.33',
             ['jquery'],
             'all',
             true
@@ -1134,7 +1183,7 @@ final class Application
         $colorPickerScript = new Asset(
             'jasanika-color-picker',
             get_template_directory_uri() . '/assets/js/admin-color-picker.js',
-            '0.32',
+            '0.33',
             [],
             'all',
             true
@@ -1213,11 +1262,20 @@ final class Application
 
         $this->assetManager->registerStyle($headerStyle);
 
+        // M33: Hero CSS
+        $heroStyle = new Asset(
+            'jasanika-hero',
+            get_template_directory_uri() . '/assets/css/hero.css',
+            '0.33'
+        );
+
+        $this->assetManager->registerStyle($heroStyle);
+
         // M28: Header JS
         $headerScript = new Asset(
             'jasanika-header',
             get_template_directory_uri() . '/assets/js/header.js',
-            '0.32',
+            '0.33',
             [],
             'all',
             true
@@ -1228,7 +1286,7 @@ final class Application
         $script = new Asset(
             'jasanika-frontend',
             get_template_directory_uri() . '/assets/js/frontend.js',
-            '0.32',
+            '0.33',
             [],
             'all',
             true

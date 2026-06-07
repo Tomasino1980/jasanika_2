@@ -6,11 +6,11 @@ Jasanika_2 — Modular WordPress Framework
 
 ## Current Version
 
-0.32
+0.33
 
 ## Current Milestone
 
-M32 - Modern Color Picker & Theme Designer
+M33 - Hero Builder V2
 
 Status: Completed
 
@@ -43,6 +43,7 @@ M0 through M32 (all milestones completed)
 - Dynamic Header Builder (HeaderManager, HeaderRenderer, HeaderLayout, MobileMenu)
 - Footer Builder (FooterManager, FooterRenderer)
 - Hero Builder (HeroManager, HeroRenderer, HeroSlide)
+- Hero Layout Presets (HeroLayout — M33)
 - Color Picker Component (ColorPicker — M32)
 - Modern Color Picker UI (admin-color-picker.js — M32)
 

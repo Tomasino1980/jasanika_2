@@ -6,13 +6,13 @@ Jasanika_2
 
 Modular WordPress Framework
 
-Current Version: 0.32
+Current Version: 0.33
 
 ---
 
 # Current Milestone
 
-M32 - Modern Color Picker & Theme Designer
+M33 - Hero Builder V2
 
 Status: Completed
 
@@ -56,6 +56,7 @@ Status: Completed
 - M30 - Admin UI Dark Card Layout
 - M31 - Dynamic Theme Settings Engine
 - M32 - Modern Color Picker & Theme Designer
+- M33 - Hero Builder V2
 
 ---
 
@@ -477,6 +478,88 @@ Status: Completed
 - config/app.php — version updated to 0.32
 - style.css — version updated to 0.32
 - docs/analyze.md — version 0.32, M32 completed, M32 architecture section
+
+## Fixed
+
+- N/A
+
+---
+
+# M33 — Hero Builder V2
+
+Version: 0.33
+
+Status: Completed
+
+## Added
+
+**HeroLayout (HeroLayout.php):**
+- Static layout registry with 5 layout presets: centered, left-aligned, split, minimal, fullscreen
+- Each layout defines: label, alignment (center/left), CSS class, description
+- Helper methods: get(), getClass(), getAlignment(), getAll(), getOptions(), getDefault()
+- Select options compatible with Settings Framework
+
+**Hero Content System:**
+- Hero Title (existing), Hero Subtitle (existing), Hero Description (new — M33)
+- Description rendered via wp_kses_post and wpautop for safe HTML rendering
+- All content fields properly escaped
+
+**Hero Buttons V2:**
+- Primary Button (label + URL) with backward compatibility for old hero_button_text/url
+- Secondary Button (label + URL) — new M33
+- Button Style selector (primary, secondary, outline)
+- Secondary button auto-adopts outline style when primary is used
+- Rendered via Component Framework Button component
+
+**Hero Background System:**
+- Background Type selector: Color, Image, Gradient
+- Background Color setting for solid color backgrounds
+- Background Image (existing, via Media Manager)
+- Gradient Start + Gradient End color settings for diagonal gradient
+- Builder method getBackgroundCss() returns ready-to-use inline CSS
+
+**Hero Overlay System:**
+- Overlay Enable/Disable toggle
+- Overlay Color setting (default: #1b1a1f)
+- Overlay Opacity (existing, 0.0-1.0)
+- Builder method getOverlayCss() returns combined color+opacity inline CSS
+
+**Hero Height Modes:**
+- Auto — content-based height
+- Medium — 400px (default)
+- Large — 600px
+- Fullscreen — 100vh
+- Backward compatible with existing hero_height setting
+
+**HeroRenderer V2:**
+- Full layout-driven rendering with layout-specific markup
+- Standard content layout: centered or left-aligned content block
+- Split layout: two-column grid with content left, media placeholder right
+- Minimal layout: reduced padding and font sizes
+- Fullscreen layout: full viewport height
+- Overlay rendered only when enabled
+- Dual button support with Component Framework
+- Debug output in WP_DEBUG mode showing layout, height, background type, overlay, buttons
+- Hero section uses inline CSS for background (color/image/gradient) and min-height
+
+**Hero CSS (hero.css):**
+- Dedicated CSS file for all hero-related styles
+- Token-driven: all colors reference --jas-color-* variables
+- Layout-specific classes: --centered, --left, --split, --minimal, --fullscreen
+- Split layout: CSS grid two-column, responsive stack on mobile
+- Button actions: flex row on desktop, stacked column on mobile
+- Responsive breakpoints: 767px (mobile), 768-1023px (tablet)
+- No hardcoded color values
+
+## Changed
+
+- Application.php — version 0.33, HeroLayout import, expanded hero settings (layout, height mode, background type, gradient, overlay control, dual buttons), hero.css registration, hero section settings updated
+- HeroManager.php — full rewrite with new settings accessors (layout, height mode, bg type, bg color, gradient, overlay enabled/color, dual buttons), backward compatibility for old settings, getBackgroundCss(), getOverlayCss(), updated getDebugInfo()
+- HeroRenderer.php — full rewrite with layout-driven rendering, standard/split content modes, overlay control, dual button support, updated debug output
+- ThemeRenderer.php — enqueues jasanika-hero stylesheet
+- frontend.css — hero section removed (moved to assets/css/hero.css)
+- config/app.php — version updated to 0.33
+- style.css — version updated to 0.33
 
 ## Fixed
 

@@ -188,6 +188,7 @@ final class ThemeRenderer
         $this->assetManager->enqueueStyle('jasanika-tokens');
         $this->assetManager->enqueueStyle('jasanika-components');
         $this->assetManager->enqueueStyle('jasanika-header');
+        $this->assetManager->enqueueStyle('jasanika-hero');
         $this->assetManager->enqueueScript('jasanika-frontend');
         $this->assetManager->enqueueScript('jasanika-header');
     }

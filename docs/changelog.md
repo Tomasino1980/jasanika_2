@@ -65,11 +65,32 @@ Date: 2026-06-07
 
 ---
 
-# M32 - Modern Color Picker & Theme Designer
+# M33 - Hero Builder V2
 
-Version: 0.32
+Version: 0.33
 
 Date: 2026-06-07
+
+## Added
+
+- HeroLayout class with 5 layout presets (centered, left-aligned, split, minimal, fullscreen)
+- Hero Description setting for longer descriptive text
+- Hero Background System: type selector (color/image/gradient), bg color, gradient start/end colors
+- Hero Overlay System: enable/disable toggle, overlay color setting
+- Hero Buttons V2: primary and secondary buttons with label, URL, and style selector
+- Hero Height Modes: auto, medium (400px), large (600px), fullscreen (100vh)
+- HeroRenderer V2: full layout-driven rendering with standard, split, and content block modes
+- Hero CSS (hero.css): dedicated file, token-driven, responsive, layout-specific classes
+- Debug output for WP_DEBUG with layout, height, background, overlay, buttons info
+
+## Changed
+
+- Application.php — version 0.33, HeroLayout import, expanded hero settings (18 new settings), hero.css registration
+- HeroManager.php — full rewrite with layout, background, overlay, dual button accessors, backward compatibility
+- HeroRenderer.php — full rewrite with layout-driven rendering, dual buttons, overlay control, updated debug
+- ThemeRenderer.php — enqueues jasanika-hero stylesheet
+- frontend.css — hero section removed (moved to hero.css)
+- config/app.php, style.css — version 0.33
 
 ## Added
 

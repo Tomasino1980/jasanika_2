@@ -12,6 +12,7 @@ jasanika_2/
 │   │   ├── components.css
 │   │   ├── frontend.css
 │   │   ├── header.css
+│   │   ├── hero.css
 │   │   └── tokens.css
 │   └── js/
 │       ├── admin-color-picker.js
@@ -145,6 +146,7 @@ src/
 │   ├── FooterManager.php
 │   └── FooterRenderer.php
 ├── Hero/
+│   ├── HeroLayout.php
 │   ├── HeroManager.php
 │   ├── HeroRenderer.php
 │   └── HeroSlide.php
