@@ -93,6 +93,7 @@ use Jasanika\Widgets\WidgetAreaManager;
  * M29 — Settings UI Refactor & Design System
  * M30 — Admin UI Dark Card Layout
  * M31 — Dynamic Theme Settings Engine
+ * M32 — Modern Color Picker & Theme Designer
  *
  * @see FrameworkInfo
  * @see ThemeRenderer
@@ -218,7 +219,7 @@ final class Application
 
         $this->frameworkInfo = new FrameworkInfo(
             'Jasanika 2',
-            '0.31'
+            '0.32'
         );
 
         $this->container = new Container();
@@ -1087,7 +1088,7 @@ final class Application
         $script = new Asset(
             'jasanika-media-field',
             get_template_directory_uri() . '/assets/admin/js/media-field.js',
-            '0.31',
+            '0.32',
             ['jquery'],
             'all',
             true
@@ -1116,10 +1117,30 @@ final class Application
         $adminCss = new Asset(
             'jasanika-admin',
             get_template_directory_uri() . '/assets/css/admin.css',
-            '0.31'
+            '0.32'
         );
 
         $this->assetManager->registerStyle($adminCss);
+
+        // M32: Register color picker CSS and JS assets
+        $colorPickerCss = new Asset(
+            'jasanika-color-picker',
+            get_template_directory_uri() . '/assets/css/admin-color-picker.css',
+            '0.32'
+        );
+
+        $this->assetManager->registerStyle($colorPickerCss);
+
+        $colorPickerScript = new Asset(
+            'jasanika-color-picker',
+            get_template_directory_uri() . '/assets/js/admin-color-picker.js',
+            '0.32',
+            [],
+            'all',
+            true
+        );
+
+        $this->assetManager->registerScript($colorPickerScript);
 
         // M29: Enqueue admin CSS on Jasanika admin pages
         $this->hookManager->addAction('admin_enqueue_scripts', function (): void {
@@ -1128,6 +1149,8 @@ final class Application
             if ($screen && str_starts_with($screen->id, 'jasanika')) {
                 $this->assetManager->enqueueStyle('jasanika-admin');
                 $this->assetManager->enqueueStyle('jasanika-components');
+                $this->assetManager->enqueueStyle('jasanika-color-picker');
+                $this->assetManager->enqueueScript('jasanika-color-picker');
             }
         });
     }
@@ -1160,7 +1183,7 @@ final class Application
         $style = new Asset(
             'jasanika-frontend',
             get_template_directory_uri() . '/assets/css/frontend.css',
-            '0.31'
+            '0.32'
         );
 
         $this->assetManager->registerStyle($style);
@@ -1168,7 +1191,7 @@ final class Application
         $tokens = new Asset(
             'jasanika-tokens',
             get_template_directory_uri() . '/assets/css/tokens.css',
-            '0.31'
+            '0.32'
         );
 
         $this->assetManager->registerStyle($tokens);
@@ -1176,7 +1199,7 @@ final class Application
         $components = new Asset(
             'jasanika-components',
             get_template_directory_uri() . '/assets/css/components.css',
-            '0.31'
+            '0.32'
         );
 
         $this->assetManager->registerStyle($components);
@@ -1185,7 +1208,7 @@ final class Application
         $headerStyle = new Asset(
             'jasanika-header',
             get_template_directory_uri() . '/assets/css/header.css',
-            '0.31'
+            '0.32'
         );
 
         $this->assetManager->registerStyle($headerStyle);
@@ -1194,7 +1217,7 @@ final class Application
         $headerScript = new Asset(
             'jasanika-header',
             get_template_directory_uri() . '/assets/js/header.js',
-            '0.31',
+            '0.32',
             [],
             'all',
             true
@@ -1205,7 +1228,7 @@ final class Application
         $script = new Asset(
             'jasanika-frontend',
             get_template_directory_uri() . '/assets/js/frontend.js',
-            '0.31',
+            '0.32',
             [],
             'all',
             true

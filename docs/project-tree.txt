@@ -4,14 +4,17 @@ jasanika_2/
 ├── assets/
 │   ├── admin/
 │   │   └── js/
+│   │       ├── admin-color-picker.js
 │   │       └── media-field.js
 │   ├── css/
 │   │   ├── admin.css
+│   │   ├── admin-color-picker.css
 │   │   ├── components.css
 │   │   ├── frontend.css
 │   │   ├── header.css
 │   │   └── tokens.css
 │   └── js/
+│       ├── admin-color-picker.js
 │       ├── frontend.js
 │       └── header.js
 ├── config/
@@ -121,6 +124,7 @@ src/
 │   ├── Search/
 │   │   └── SettingsSearch.php
 │   ├── Components/
+│   │   ├── ColorPicker.php
 │   │   ├── CollapsiblePanel.php
 │   │   └── PresetCard.php
 │   ├── Dashboard/

@@ -6,13 +6,13 @@ Jasanika_2
 
 Modular WordPress Framework
 
-Current Version: 0.31
+Current Version: 0.32
 
 ---
 
 # Current Milestone
 
-M31 - Dynamic Theme Settings Engine
+M32 - Modern Color Picker & Theme Designer
 
 Status: Completed
 
@@ -55,6 +55,7 @@ Status: Completed
 - M29 - Settings UI Refactor & Design System
 - M30 - Admin UI Dark Card Layout
 - M31 - Dynamic Theme Settings Engine
+- M32 - Modern Color Picker & Theme Designer
 
 ---
 
@@ -405,6 +406,77 @@ Status: Completed
 - tokens.css — all hardcoded color values replaced with CSS custom properties, renamed from --jas-primary-color to --jas-color-primary, version 0.31
 - config/app.php — version updated to 0.31
 - style.css — version updated to 0.31
+
+## Fixed
+
+- N/A
+
+---
+
+# M32 — Modern Color Picker & Theme Designer
+
+Version: 0.32
+
+Status: Completed
+
+## Added
+
+**ColorPicker Component (ColorPicker.php):**
+- PHP component that renders modern color picker fields with swatch preview and HEX input
+- render() method outputs swatch + HEX input combo enhanced by JS into floating picker panel
+- renderPalettes() method displays 8 palette preset buttons (Default, Modern, Minimal, Business, Dark, Light, Warm, Cold)
+- renderPreview() method renders a live theme preview card with header, buttons, card, and typography samples
+- No WordPress default color picker, no jQuery dependency
+
+**Modern Color Picker UI (admin-color-picker.js):**
+- Vanilla JavaScript floating color picker panel
+- Saturation/Lightness square (200×160 canvas) with drag cursor
+- Hue slider (linear gradient) with thumb
+- Opacity slider with checkerboard background
+- HEX input field with 6-char validation
+- RGB input fields (R, G, B) with min/max constraints
+- Live preview: swatch, HEX field, and hidden field update immediately on drag
+- HSV color conversion utilities (hsvToHex, hsvToRgb, rgbToHsv, hexToRgb)
+- Color contrast calculation (getContrast) for text on colored backgrounds
+
+**Color Palette System (admin-color-picker.js):**
+- 8 palette definitions: default, modern, minimal, business, dark, light, warm, cold
+- Each palette defines all 8 color scheme values
+- One-click apply updates all color picker fields on the page
+- Active palette button visual indicator
+
+**Theme Preview Card (ColorPicker.php + admin-color-picker.js):**
+- Live card rendering in the Color Scheme settings section
+- Shows: header bar, primary button, accent button, card with header/body, typography preview
+- All elements update in real-time as color values change
+- Uses current unsaved field values (local preview only, save required for persistence)
+
+**Appearance Grid Layout:**
+- Color scheme fields rendered in two-column grid (2×4 layout)
+- Each field in a bordered card with uppercase label
+- Consistent spacing and equal field heights
+- Responsive: single column on mobile
+
+**Frost Glass Styling (admin-color-picker.css):**
+- Color picker panel: rgba(36,33,43,0.92) with backdrop-filter blur(16px)
+- Theme preview card: rgba(36,33,43,0.75) with backdrop-filter blur(12px)
+- Border: 1px solid rgba(255,255,255,0.08-0.1)
+- Border-radius: 2px (inputs), 4px (panel)
+- Minimal, elegant framework-consistent design
+
+**ColorField Update (M32):**
+- ColorField::render() now delegates to ColorPicker::render()
+- Outputs modern color picker with swatch + HEX input
+- Hidden field for WordPress Settings API submission
+
+## Changed
+
+- Application.php — version 0.32, admin-color-picker.css and admin-color-picker.js asset registration, enqueued on Jasanika admin pages
+- ColorField.php — render() rewritten to use ColorPicker component with hidden+hex fields
+- SettingsPage.php — renderColorSchemeSection() with palette presets, theme preview card, two-column grid
+- config/app.php — version updated to 0.32
+- style.css — version updated to 0.32
+- docs/analyze.md — version 0.32, M32 completed, M32 architecture section
 
 ## Fixed
 

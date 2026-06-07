@@ -65,11 +65,34 @@ Date: 2026-06-07
 
 ---
 
-# M31 - Dynamic Theme Settings Engine
+# M32 - Modern Color Picker & Theme Designer
 
-Version: 0.31
+Version: 0.32
 
 Date: 2026-06-07
+
+## Added
+
+- ColorPicker Component (ColorPicker.php) — PHP component that renders modern color picker fields with swatch preview and HEX input
+- Modern Color Picker UI (admin-color-picker.js) — Vanilla JavaScript floating color picker with saturation square, hue slider, opacity slider, HEX/RGB inputs
+- Color Palette System — 8 palette definitions (Default, Modern, Minimal, Business, Dark, Light, Warm, Cold) with one-click apply
+- Theme Preview Card — live preview of header, buttons, card, and typography in Color Scheme section
+- Appearance Grid Layout — two-column grid for color scheme fields with responsive single-column fallback
+- Frost Glass Styling — rgba(36,33,43,0.92) panels with backdrop-filter blur, minimal border system
+- ColorField render() rewritten to use ColorPicker component with hidden field for Settings API submission
+
+## Changed
+
+- Application.php — version 0.32, admin-color-picker.css/admin-color-picker.js asset registration, enqueued on Jasanika admin pages
+- ColorField.php — render() delegates to ColorPicker::render() with hidden+hex field
+- SettingsPage.php — renderColorSchemeSection() with palette presets, theme preview card, two-column grid
+- config/app.php — version updated to 0.32
+- style.css — version updated to 0.32
+- docs/analyze.md — version 0.32, M32 completed
+
+## Fixed
+
+- N/A
 
 ## Added
 

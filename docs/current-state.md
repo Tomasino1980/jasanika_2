@@ -6,17 +6,17 @@ Jasanika_2 — Modular WordPress Framework
 
 ## Current Version
 
-0.31
+0.32
 
 ## Current Milestone
 
-M31 - Dynamic Theme Settings Engine
+M32 - Modern Color Picker & Theme Designer
 
 Status: Completed
 
 ## Completed Milestones
 
-M0 through M31 (all milestones completed)
+M0 through M32 (all milestones completed)
 
 ## Active Systems
 
@@ -36,13 +36,15 @@ M0 through M31 (all milestones completed)
 - Widget System (WidgetAreaManager, LayoutRegionRenderer)
 - Design Token System (DesignTokenRegistry, DesignSettingsManager, DesignTokenGenerator)
 - Theme Presets (ThemePresetManager with actual token definitions)
-- Theme Settings Compiler (ThemeSettingsCompiler — M31)
+- Theme Settings Compiler (ThemeSettingsCompiler)
 - Layout System (LayoutManager, LayoutRenderer)
 - Component Framework (ComponentRegistry, ComponentRenderer)
 - Content Renderer (ContentRenderer with template hierarchy)
 - Dynamic Header Builder (HeaderManager, HeaderRenderer, HeaderLayout, MobileMenu)
 - Footer Builder (FooterManager, FooterRenderer)
 - Hero Builder (HeroManager, HeroRenderer, HeroSlide)
+- Color Picker Component (ColorPicker — M32)
+- Modern Color Picker UI (admin-color-picker.js — M32)
 
 ## Frontend Capabilities
 
@@ -61,6 +63,14 @@ M0 through M31 (all milestones completed)
 - Hero section (static and slider modes)
 - Content+Sidebar layout support
 
+## Admin Capabilities
+
+- Modern Color Picker with floating panel (saturation square, hue slider, HEX/RGB)
+- Color Palette Presets (Default, Modern, Minimal, Business, Dark, Light, Warm, Cold)
+- Theme Preview Card (live preview of header, buttons, card, typography)
+- Two-column color scheme grid layout
+- Frost glass styling on picker panels
+
 ## Pending Systems
 
 - Content sub-sections (Blog, Search, Archives, Single Post) — architecture ready, no settings
@@ -70,7 +80,7 @@ M0 through M31 (all milestones completed)
 
 ## Next Planned Milestone
 
-M32 - Advanced Color System
+M33 - Content Architecture & Settings
 
 ## Known Issues
 

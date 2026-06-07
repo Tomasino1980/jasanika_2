@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Jasanika\Admin;
 
+use Jasanika\Admin\Components\ColorPicker;
 use Jasanika\Admin\Components\CollapsiblePanel;
 use Jasanika\Admin\Components\PresetCard;
 use Jasanika\Admin\Fields\FieldFactory;
@@ -305,7 +306,11 @@ final class SettingsPage
         $settingsKeys = $section->getSettingKeys();
         $isLargeSection = count($settingsKeys) > 6;
 
-        if ($isLargeSection) {
+        if ($section->getSlug() === 'appearance_color_scheme') {
+            // M32: Color scheme section gets palette presets, theme preview, and grid layout
+            $this->renderColorSchemeSection($section, $sectionSlug);
+
+        } elseif ($isLargeSection) {
             // M29: Large sections use collapsible groups
             $this->renderLargeSectionCard($section, $sectionSlug);
         } else {
@@ -493,6 +498,33 @@ final class SettingsPage
         echo '<div style="display:none;">';
         do_settings_fields('jasanika_settings', $sectionSlug);
         echo '</div>';
+    }
+
+    /**
+     * Render the Color Scheme section with palette presets, theme preview,
+     * and a two-column grid layout for the color fields.
+     *
+     * M32 — Modern Color Picker & Theme Designer.
+     */
+    private function renderColorSchemeSection(Section $section, string $sectionSlug): void
+    {
+        $card = new SettingsCard($section->getName(), $section->getDescription());
+        $card->start();
+
+        // Palette preset selector
+        echo '<div class="jas-color-scheme-section">';
+        ColorPicker::renderPalettes();
+
+        // Theme preview card
+        ColorPicker::renderPreview();
+
+        // Color fields in two-column grid
+        echo '<div class="jas-color-scheme-grid">';
+        do_settings_fields('jasanika_settings', $sectionSlug);
+        echo '</div>';
+        echo '</div>';
+
+        $card->end();
     }
 
     /**
