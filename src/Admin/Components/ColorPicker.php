@@ -125,7 +125,21 @@ final class ColorPicker
     public static function renderPreview(): void
     {
         echo '<div class="jas-theme-preview">';
-        echo '<h4 class="jas-theme-preview__title">' . esc_html__('Theme Preview', 'jasanika') . '</h4>';
+
+        // Collapsible toggle header (default collapsed)
+        echo '<button type="button" class="jas-theme-preview__toggle" aria-expanded="false" onclick="';
+        echo 'var b=this.nextElementSibling,n=this.querySelector(\'.jas-theme-preview__toggle-icon\');';
+        echo 'if(b){var o=b.classList.contains(\'jas-theme-preview__body--open\');';
+        echo 'b.classList.toggle(\'jas-theme-preview__body--open\');';
+        echo 'this.setAttribute(\'aria-expanded\',!o);';
+        echo 'n.style.transform=o?\'rotate(-90deg)\':\'rotate(0deg)\';}';
+        echo '">';
+        echo '<span class="jas-theme-preview__toggle-icon">&#9660;</span>';
+        echo esc_html__('Theme Preview', 'jasanika');
+        echo '</button>';
+
+        // Preview body (hidden by default)
+        echo '<div class="jas-theme-preview__body">';
 
         // Header preview
         echo '<div class="jas-theme-preview__header">';
@@ -158,9 +172,10 @@ final class ColorPicker
         // Typography preview
         echo '<div class="jas-theme-preview__typo">';
         echo '<div class="jas-theme-preview__heading">' . esc_html__('Heading Typography', 'jasanika') . '</div>';
-        echo '<p class="jas-theme-preview__body">' . esc_html__('Body text sample demonstrating the selected font family, color, and line height in a realistic reading context.', 'jasanika') . '</p>';
+        echo '<p class="jas-theme-preview__body-text">' . esc_html__('Body text sample demonstrating the selected font family, color, and line height in a realistic reading context.', 'jasanika') . '</p>';
         echo '</div>';
 
-        echo '</div>';
+        echo '</div>'; // .jas-theme-preview__body
+        echo '</div>'; // .jas-theme-preview
     }
 }

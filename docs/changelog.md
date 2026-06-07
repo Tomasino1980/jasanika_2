@@ -418,3 +418,45 @@ Date: 2026-06-07
 
 - Color picker field now fills full width of its grid cell (flex: 1 on hex input)
 - Color scheme grid labels consistently uppercase with uniform letter-spacing
+
+---
+
+# M37 - Compact Settings Layout
+
+Version: 0.37
+
+Date: 2026-06-07
+
+## Changed
+
+- Form rows: grid 200px | 1fr, padding 4px, gap 6px (were 240px, 5px, 8px)
+- Form section headers: padding 8px 8px 4px, title font-size 0.8125rem (were 16px, 0.875rem)
+- Form section content: padding 8px (was 16px)
+- Form section margin: 4px (was 8px)
+- Tabs: padding 0.5rem 1rem, font-size 0.8125rem (were 0.75rem, 0.875rem)
+- Sub-tabs: padding 0.25rem 0.625rem, font-size 0.75rem
+- Container form/search padding: 8px (was 16px)
+- Search input: compact height, 0.375rem vertical padding
+- Collapsible toggle: padding 0.375rem 0.5rem, body padding 4px
+- Settings page header: 8px bottom margin, 8px gap (were 16px)
+- Preset cards: reduced padding and min-height
+- Settings page: no bottom padding (was 32px)
+
+## Changed (Color Picker)
+
+- Theme Preview: now collapsible (default collapsed), toggle button with arrow icon
+- Theme Preview body: compact padding 12px, smaller font sizes (10-12px)
+- Color scheme grid: gap 6px, cell padding 4px 8px, label font 9px
+- Palette swatches: 30×30px (were 36×36px), gap 4px (was 6px)
+- Color picker gap: 4px (was 6px), hex max-width 96px
+- Removed duplicate .jas-cp__swatch and .jas-cp__hex CSS blocks
+- All preview sections: reduced padding and font sizes for higher density
+
+## Fixed
+
+- Theme Preview JS selector updated for renamed body-text class
+- Removed duplicate CSS definitions in admin-color-picker.css
+
+## Removed
+
+- ~100 lines of duplicate CSS (old M32 swatch/hex definitions)

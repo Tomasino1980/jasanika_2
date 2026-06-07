@@ -665,14 +665,14 @@
         }
 
         // Update preview text colors
-        var allHeading = preview.querySelectorAll('.jas-theme-preview__heading, .jas-theme-preview__card-header, .jas-theme-preview__title');
+        var allHeading = preview.querySelectorAll('.jas-theme-preview__heading, .jas-theme-preview__card-header, .jas-theme-preview__toggle');
         if (colors['heading-color']) {
             allHeading.forEach(function (el) {
                 el.style.color = colors['heading-color'];
             });
         }
 
-        var allBody = preview.querySelectorAll('.jas-theme-preview__body, .jas-theme-preview__card-body p');
+        var allBody = preview.querySelectorAll('.jas-theme-preview__body-text, .jas-theme-preview__card-body p');
         if (colors['text-color']) {
             allBody.forEach(function (el) {
                 el.style.color = colors['text-color'];
