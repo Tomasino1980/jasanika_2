@@ -8,6 +8,7 @@ use Jasanika\Admin\AdminMenu;
 use Jasanika\Admin\AdminPage;
 use Jasanika\Admin\Fields\FieldFactory;
 use Jasanika\Admin\Pages\DashboardPage;
+use Jasanika\Admin\Dashboard\AppearanceDashboard;
 use Jasanika\Admin\Sections\Section;
 use Jasanika\Admin\SettingsManager;
 use Jasanika\Admin\SettingsPage;
@@ -79,7 +80,7 @@ final class Application
     {
         $this->frameworkInfo = new FrameworkInfo(
             'Jasanika 2',
-            '0.26'
+            '0.27'
         );
 
         $this->container = new Container();
@@ -109,6 +110,7 @@ final class Application
         $this->adminMenu->register($this->hookManager);
 
         $this->registerMediaFieldAsset();
+        $this->registerAdminAssets();
         $this->registerFrontendAssets();
 
         // --- Initialize navigation and site identity services ---
@@ -187,7 +189,8 @@ final class Application
             $this->frameworkInfo,
             $this->settingsRegistry,
             $fieldFactory,
-            $this->componentRenderer
+            $this->componentRenderer,
+            $this->presetManager
         );
 
         $this->registerSettingsCategories($settingsPage);
@@ -201,6 +204,26 @@ final class Application
         );
 
         $this->adminMenu->registerSubPage($settingsSubPage);
+
+        // --- Register Appearance Dashboard ---
+        $appearanceDashboard = new AppearanceDashboard(
+            $this->presetManager,
+            $this->designSettingsManager,
+            $this->componentRenderer,
+            $this->headerManager,
+            $this->footerManager,
+            $this->heroManager,
+            $this->layoutManager,
+            $this->settingsManager
+        );
+
+        $appearanceSubPage = new AdminPage(
+            'Appearance Overview',
+            'jasanika-appearance',
+            [$appearanceDashboard, 'render']
+        );
+
+        $this->adminMenu->registerSubPage($appearanceSubPage);
 
         // --- Register services in Container ---
         $this->registerContainerServices();
@@ -303,6 +326,24 @@ final class Application
         $r->register(new Setting('layout_footer_width', '1200px', 'Footer Width', 'text'));
         $r->register(new Setting('layout_section_padding', '2rem', 'Section Padding', 'text'));
         $r->register(new Setting('layout_section_margin', '1.5rem', 'Section Margin', 'text'));
+
+        // --- M27: Theme Preset ---
+        $r->register(new Setting('active_preset', 'default', 'Active Theme Preset', 'select', [
+            'default' => 'Default',
+            'modern'  => 'Modern',
+            'minimal' => 'Minimal',
+            'business'=> 'Business',
+            'custom'  => 'Custom',
+        ]));
+
+        // --- M27: Color Scheme Builder ---
+        $r->register(new Setting('secondary_color', '#24212b', 'Secondary Color', 'color'));
+        $r->register(new Setting('accent_color', '#f1c95d', 'Accent Color', 'color'));
+        $r->register(new Setting('background_color', '#1b1a1f', 'Background Color', 'color'));
+        $r->register(new Setting('surface_color', '#24212b', 'Surface Color', 'color'));
+        $r->register(new Setting('text_color', '#f5f2f7', 'Text Color', 'color'));
+        $r->register(new Setting('heading_color', '#f5f2f7', 'Heading Color', 'color'));
+        $r->register(new Setting('border_color', 'rgba(255,255,255,0.08)', 'Border Color', 'text'));
     }
 
     /**
@@ -318,7 +359,7 @@ final class Application
             'Site Identity',
             'Site title, tagline, and basic site information.',
             'general',
-            ['site_layout', 'primary_color', 'typography', 'container_width']
+            ['site_layout', 'container_width']
         ));
 
         $settingsPage->registerSection(new Section(
@@ -330,6 +371,30 @@ final class Application
         ));
 
         // --- Appearance Category ---
+        $settingsPage->registerSection(new Section(
+            'appearance_presets',
+            'Presets',
+            'Select a theme preset or switch to Custom mode for full control.',
+            'appearance',
+            ['active_preset']
+        ));
+
+        $settingsPage->registerSection(new Section(
+            'appearance_color_scheme',
+            'Color Scheme',
+            'Primary, secondary, accent, background, text, and border colors.',
+            'appearance',
+            ['primary_color', 'secondary_color', 'accent_color', 'background_color', 'surface_color', 'text_color', 'heading_color', 'border_color']
+        ));
+
+        $settingsPage->registerSection(new Section(
+            'appearance_typography',
+            'Typography',
+            'Font family selection and heading font configuration.',
+            'appearance',
+            ['typography']
+        ));
+
         $settingsPage->registerSection(new Section(
             'appearance_header',
             'Header',
@@ -407,13 +472,40 @@ final class Application
         $script = new Asset(
             'jasanika-media-field',
             get_template_directory_uri() . '/assets/admin/js/media-field.js',
-            '0.26',
+            '0.27',
             ['jquery'],
             'all',
             true
         );
 
         $this->assetManager->registerScript($script);
+    }
+
+    /**
+     * Register admin CSS asset for settings UI styling.
+     *
+     * M27: New admin.css with preset cards, collapsible panels,
+     * search field, and appearance dashboard styles.
+     */
+    private function registerAdminAssets(): void
+    {
+        $adminCss = new Asset(
+            'jasanika-admin',
+            get_template_directory_uri() . '/assets/css/admin.css',
+            '0.27'
+        );
+
+        $this->assetManager->registerStyle($adminCss);
+
+        // Enqueue admin CSS on Jasanika admin pages
+        $this->hookManager->addAction('admin_enqueue_scripts', function (): void {
+            $screen = get_current_screen();
+
+            if ($screen && str_starts_with($screen->id, 'jasanika')) {
+                $this->assetManager->enqueueStyle('jasanika-admin');
+                $this->assetManager->enqueueStyle('jasanika-components');
+            }
+        });
     }
 
     /**
@@ -424,7 +516,7 @@ final class Application
         $style = new Asset(
             'jasanika-frontend',
             get_template_directory_uri() . '/assets/css/frontend.css',
-            '0.26'
+            '0.27'
         );
 
         $this->assetManager->registerStyle($style);
@@ -432,7 +524,7 @@ final class Application
         $tokens = new Asset(
             'jasanika-tokens',
             get_template_directory_uri() . '/assets/css/tokens.css',
-            '0.26'
+            '0.27'
         );
 
         $this->assetManager->registerStyle($tokens);
@@ -440,7 +532,7 @@ final class Application
         $components = new Asset(
             'jasanika-components',
             get_template_directory_uri() . '/assets/css/components.css',
-            '0.26'
+            '0.27'
         );
 
         $this->assetManager->registerStyle($components);
@@ -697,6 +789,8 @@ final class Application
         // --- Color tokens ---
         $r->registerToken('--jas-color-primary',       'Color', '#b78acb', 'Primary brand color');
         $r->registerToken('--jas-color-primary-hover', 'Color', '#c79cda', 'Primary brand color hover state');
+        $r->registerToken('--jas-color-secondary',     'Color', '#24212b', 'Secondary brand color');
+        $r->registerToken('--jas-color-accent',        'Color', '#f1c95d', 'Accent brand color');
         $r->registerToken('--jas-color-text',          'Color', '#f5f2f7', 'Body text color');
         $r->registerToken('--jas-color-heading',       'Color', '#f5f2f7', 'Heading text color');
         $r->registerToken('--jas-color-background',    'Color', '#1b1a1f', 'Main background color');
@@ -708,13 +802,14 @@ final class Application
         $r->registerToken('--jas-primary-hover',       'Color', '#c79cda', 'Legacy primary hover (use --jas-color-primary-hover)');
 
         // --- Typography tokens ---
-        $r->registerToken('--jas-font-family',  'Typography', "'Inter', sans-serif", 'Body font family');
-        $r->registerToken('--jas-font-size-xs', 'Typography', '0.75rem', 'Extra small font size');
-        $r->registerToken('--jas-font-size-sm', 'Typography', '0.875rem', 'Small font size');
-        $r->registerToken('--jas-font-size-md', 'Typography', '1rem', 'Medium / base font size');
-        $r->registerToken('--jas-font-size-lg', 'Typography', '1.125rem', 'Large font size');
-        $r->registerToken('--jas-font-size-xl', 'Typography', '1.25rem', 'Extra large font size');
-        $r->registerToken('--jas-font-size-2xl', 'Typography', '1.5rem', '2x large font size');
+        $r->registerToken('--jas-font-family',     'Typography', "'Inter', sans-serif", 'Body font family');
+        $r->registerToken('--jas-font-family-heading', 'Typography', "'Playfair Display', serif", 'Heading font family');
+        $r->registerToken('--jas-font-size-xs',    'Typography', '0.75rem', 'Extra small font size');
+        $r->registerToken('--jas-font-size-sm',    'Typography', '0.875rem', 'Small font size');
+        $r->registerToken('--jas-font-size-md',    'Typography', '1rem', 'Medium / base font size');
+        $r->registerToken('--jas-font-size-lg',    'Typography', '1.125rem', 'Large font size');
+        $r->registerToken('--jas-font-size-xl',    'Typography', '1.25rem', 'Extra large font size');
+        $r->registerToken('--jas-font-size-2xl',   'Typography', '1.5rem', '2x large font size');
 
         // --- Spacing tokens ---
         $r->registerToken('--jas-space-xs', 'Spacing', '0.5rem', 'Extra small spacing');
@@ -762,6 +857,21 @@ final class Application
             'minimal',
             'Minimal',
             'Redukovana vizualni komplexita',
+            []
+        );
+
+        // --- M27 Presets ---
+        $this->presetManager->registerPreset(
+            'business',
+            'Business',
+            'Professionalni vzhled pro firemni prezentaci',
+            []
+        );
+
+        $this->presetManager->registerPreset(
+            'custom',
+            'Custom',
+            'Uplna kontrola nad kazdym detailem designu',
             []
         );
     }

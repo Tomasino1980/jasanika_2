@@ -62,3 +62,51 @@ Date: 2026-06-07
 ## Fixed
 
 - N/A
+
+---
+
+# M27 - Theme Presets & Settings UX Framework
+
+Version: 0.27
+
+Date: 2026-06-07
+
+## Added
+
+- Theme Presets UI — visual preset selection cards (Default, Modern, Minimal, Business, Custom)
+- PresetCard component — radio button-based visual preset selector
+- Custom Preset Mode — enables full editing when Custom preset is active
+- Appearance Dashboard — card-based read-only overview page (Appearance → Overview)
+- Settings Search — client-side real-time filtering with result highlighting
+- Collapsible Sections — toggle-able panels with sessionStorage state persistence
+- Color Scheme Builder — 8 color settings (primary, secondary, accent, background, surface, text, heading, border)
+- Expanded Typography — 6 font options (System, Inter, Roboto, Poppins, Montserrat, Open Sans)
+- CollapsiblePanel component — reusable accessible collapsible section
+- SettingsSearch class — settings search field and inline JS filtering
+- AppearanceDashboard class — appearance overview with 8 info cards
+- FrontendRefreshEvent value object — preview architecture foundation for M28
+- Admin CSS (admin.css) — dedicated styles for all new M27 UI components
+- Secondary and accent color tokens (--jas-color-secondary, --jas-color-accent)
+- Heading font family token (--jas-font-family-heading)
+- DesignTokenRegistry — secondary/accent color token definitions
+- DesignSettingsManager — getters for all 8 color scheme values
+
+## Changed
+
+- Application.php — version 0.27, 8 new color scheme settings, Business/Custom presets, expanded typography, Appearance Dashboard page registration, admin CSS enqueue
+- SettingsPage — V3 with search bar, collapsible panels, visual preset cards, restructured settings categories (Presets, Color Scheme, Typography sections)
+- ThemePresetManager — getActivePresetLabel(), getActivePresetDescription(), isCustomMode()
+- DesignTokenGenerator — generates all 8 color scheme tokens, heading font token
+- DesignSettingsManager — getFontFamily() expanded with 6 fonts, getSecondaryColor() through getBorderColor() getters
+- TypographySetting — expanded options to 6 fonts with key-value pairs
+- config/settings.php — added active_preset and 7 color scheme defaults
+- config/app.php — version updated to 0.27
+- style.css — version updated to 0.27
+- assets/css/admin.css — created with settings UI, preset cards, collapsible panel, search, dashboard styles
+- assets/css/components.css — version bump
+
+## Fixed
+
+- Settings UI rendering inconsistencies — form table layout with proper spacing and labels
+- Section grouping — split Site Identity and Color Scheme into dedicated sections
+- Typography select options — now shows full font names instead of keys

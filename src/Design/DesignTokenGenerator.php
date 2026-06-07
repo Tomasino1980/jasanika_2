@@ -67,6 +67,9 @@ final class DesignTokenGenerator
      * 4. Layout control tokens from SettingsManager
      * 5. Preset overrides
      *
+     * M27: Added color scheme tokens (secondary, accent, background,
+     * surface, text, heading, border) and heading font family token.
+     *
      * @return array<string, string> Token name → CSS value.
      */
     public function getAllTokens(): array
@@ -75,13 +78,20 @@ final class DesignTokenGenerator
         $tokens = $this->tokenRegistry->getDefaults();
 
         // 2. Override with dynamic design settings
-        $tokens['--jas-primary-color']   = $this->designSettingsManager->getPrimaryColor();
-        $tokens['--jas-color-primary']   = $this->designSettingsManager->getPrimaryColor();
-        $tokens['--jas-primary-hover']   = $this->designSettingsManager->getPrimaryColorHover();
+        $tokens['--jas-primary-color']       = $this->designSettingsManager->getPrimaryColor();
+        $tokens['--jas-color-primary']       = $this->designSettingsManager->getPrimaryColor();
+        $tokens['--jas-primary-hover']       = $this->designSettingsManager->getPrimaryColorHover();
         $tokens['--jas-color-primary-hover'] = $this->designSettingsManager->getPrimaryColorHover();
-        $tokens['--jas-font-family']     = $this->designSettingsManager->getFontFamily();
-        $tokens['--jas-container-width'] = $this->designSettingsManager->getContainerWidth();
-        $tokens['--jas-site-layout']     = $this->designSettingsManager->getSiteLayout();
+        $tokens['--jas-color-secondary']     = $this->designSettingsManager->getSecondaryColor();
+        $tokens['--jas-color-accent']        = $this->designSettingsManager->getAccentColor();
+        $tokens['--jas-color-background']    = $this->designSettingsManager->getBackgroundColor();
+        $tokens['--jas-color-surface']       = $this->designSettingsManager->getSurfaceColor();
+        $tokens['--jas-color-text']          = $this->designSettingsManager->getTextColor();
+        $tokens['--jas-color-heading']       = $this->designSettingsManager->getHeadingColor();
+        $tokens['--jas-color-border']        = $this->designSettingsManager->getBorderColor();
+        $tokens['--jas-font-family']         = $this->designSettingsManager->getFontFamily();
+        $tokens['--jas-container-width']     = $this->designSettingsManager->getContainerWidth();
+        $tokens['--jas-site-layout']         = $this->designSettingsManager->getSiteLayout();
 
         // 3. Compute semantic color values
         // For now, design-system-fixed values are the defaults in the registry.

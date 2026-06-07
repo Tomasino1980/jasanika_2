@@ -23,7 +23,8 @@ namespace Jasanika\Design;
  * No admin UI exists yet — this is the foundation layer.
  * The active preset is always 'default' by default.
  *
- * @todo M26 - Theme Presets UI: Admin interface for preset selection.
+ * M27: Added Business preset, Custom preset mode support, and
+ * display helper methods for the Appearance Dashboard.
  */
 final class ThemePresetManager
 {
@@ -124,5 +125,33 @@ final class ThemePresetManager
     public function getAllPresets(): array
     {
         return $this->presets;
+    }
+
+    /**
+     * Get the human-readable label of the active preset.
+     */
+    public function getActivePresetLabel(): string
+    {
+        $data = $this->getActivePresetData();
+
+        return $data['label'] ?? ucfirst($this->activePreset);
+    }
+
+    /**
+     * Get the description of the active preset.
+     */
+    public function getActivePresetDescription(): string
+    {
+        $data = $this->getActivePresetData();
+
+        return $data['description'] ?? '';
+    }
+
+    /**
+     * Check whether the active preset is the Custom mode.
+     */
+    public function isCustomMode(): bool
+    {
+        return $this->activePreset === 'custom';
     }
 }

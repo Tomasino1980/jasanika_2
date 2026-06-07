@@ -1,0 +1,382 @@
+/*
+ * Jasanika 2 Admin Styles
+ *
+ * Modular WordPress Framework
+ * Version 0.27
+ * M27 — Theme Presets & Settings UX Framework
+ *
+ * Admin UI components:
+ * - Settings Search
+ * - Collapsible Panels
+ * - Preset Cards
+ * - Settings Cards
+ * - Appearance Dashboard
+ * - Color Scheme Builder
+ *
+ * Consumes design tokens via --jas-* CSS custom properties
+ * when available in the admin context.
+ */
+
+/* ========================================
+   Settings Search
+   ======================================== */
+
+.jas-settings-search {
+    position: relative;
+    margin-bottom: 1.5rem;
+    max-width: 480px;
+}
+
+.jas-settings-search__input {
+    width: 100%;
+    padding: 0.625rem 1rem 0.625rem 2.5rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: #32373c;
+    background: #fff;
+    border: 1px solid #8c8f94;
+    border-radius: 0.25rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.jas-settings-search__input:focus {
+    border-color: #2271b1;
+    box-shadow: 0 0 0 1px #2271b1;
+    outline: none;
+}
+
+.jas-settings-search__input::placeholder {
+    color: #8c8f94;
+}
+
+.jas-settings-search__icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1rem;
+    color: #8c8f94;
+    pointer-events: none;
+}
+
+.jas-settings-search__count {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.75rem;
+    color: #8c8f94;
+}
+
+.jas-search-highlight {
+    background: #ffeb3b;
+    padding: 0 0.125rem;
+    border-radius: 0.125rem;
+}
+
+/* ========================================
+   Collapsible Panels
+   ======================================== */
+
+.jas-collapsible {
+    margin-bottom: 0.75rem;
+    border: 1px solid #dcdcde;
+    border-radius: 0.375rem;
+    background: #f6f7f7;
+    overflow: hidden;
+}
+
+.jas-collapsible__toggle {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #1d2327;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.15s ease;
+    gap: 0.5rem;
+}
+
+.jas-collapsible__toggle:hover {
+    background: rgba(0, 0, 0, 0.03);
+}
+
+.jas-collapsible__toggle:focus {
+    box-shadow: inset 0 0 0 1px #2271b1;
+    outline: none;
+}
+
+.jas-collapsible__icon {
+    font-size: 0.625rem;
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+}
+
+.jas-collapsible__toggle[aria-expanded="false"] .jas-collapsible__icon {
+    transform: rotate(-90deg);
+}
+
+.jas-collapsible__title {
+    flex: 1;
+}
+
+.jas-collapsible__badge {
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: #8c8f94;
+    background: #dcdcde;
+    padding: 0.125rem 0.5rem;
+    border-radius: 0.75rem;
+}
+
+.jas-collapsible__body {
+    border-top: 1px solid #dcdcde;
+    background: #fff;
+    padding: 1rem;
+}
+
+/* ========================================
+   Preset Cards
+   ======================================== */
+
+.jas-presets-section {
+    margin-bottom: 1.5rem;
+}
+
+.jas-presets-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.jas-preset-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 1.25rem;
+    background: #fff;
+    border: 2px solid #dcdcde;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    min-height: 120px;
+}
+
+.jas-preset-card:hover {
+    border-color: #2271b1;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.jas-preset-card--active {
+    border-color: #2271b1;
+    box-shadow: 0 0 0 1px #2271b1, 0 1px 4px rgba(0, 0, 0, 0.1);
+    background: #f0f6fc;
+}
+
+.jas-preset-card__input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.jas-preset-card__indicator {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid #dcdcde;
+    border-radius: 50%;
+    transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.jas-preset-card--active .jas-preset-card__indicator {
+    border-color: #2271b1;
+    background: #2271b1;
+    box-shadow: inset 0 0 0 3px #f0f6fc;
+}
+
+.jas-preset-card__content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+}
+
+.jas-preset-card__label {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1d2327;
+}
+
+.jas-preset-card__desc {
+    font-size: 0.8125rem;
+    color: #8c8f94;
+    line-height: 1.4;
+}
+
+/* ========================================
+   Settings Cards (within Collapsible panels)
+   ======================================== */
+
+.jas-settings__section {
+    margin-bottom: 0.5rem;
+}
+
+.jas-settings__section .jas-card {
+    background: #fff;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    box-shadow: none;
+}
+
+.jas-settings__section .jas-card:hover {
+    border-color: transparent;
+    background: #fff;
+}
+
+.jas-settings__section .jas-card__header {
+    display: none;
+}
+
+.jas-settings__section .jas-card__body {
+    color: #3c434a;
+    font-size: 0.875rem;
+}
+
+/* ========================================
+   Appearance Dashboard
+   ======================================== */
+
+.jas-appearance-dashboard {
+    max-width: 100%;
+}
+
+.jas-appearance-dashboard__subtitle {
+    color: #8c8f94;
+    font-size: 0.875rem;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+}
+
+.jas-appearance-dashboard__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.25rem;
+}
+
+.jas-appearance-dashboard .jas-card {
+    height: 100%;
+}
+
+.jas-appearance-dashboard .jas-card__body {
+    font-size: 0.875rem;
+    color: #3c434a;
+}
+
+.jas-dashboard__list {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.5rem 1rem;
+    margin: 0;
+}
+
+.jas-dashboard__list dt {
+    font-weight: 600;
+    color: #1d2327;
+    font-size: 0.8125rem;
+}
+
+.jas-dashboard__list dd {
+    margin: 0;
+    color: #50575e;
+    font-size: 0.875rem;
+}
+
+.jas-dashboard__swatch {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 0.25rem;
+    vertical-align: middle;
+    border: 1px solid #dcdcde;
+    margin-right: 0.375rem;
+}
+
+/* ========================================
+   Settings Page General
+   ======================================== */
+
+.jas-settings__form {
+    margin-top: 1rem;
+}
+
+.jas-settings__form .submit {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #dcdcde;
+}
+
+.jas-section__description {
+    color: #8c8f94;
+    font-size: 0.8125rem;
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+
+.jas-settings__version {
+    color: #8c8f94;
+    font-size: 0.8125rem;
+}
+
+/* Override WordPress default form-table for better spacing */
+.jas-settings .form-table th {
+    width: 200px;
+    padding: 0.75rem 1rem 0.75rem 0;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #1d2327;
+}
+
+.jas-settings .form-table td {
+    padding: 0.5rem 0;
+}
+
+.jas-settings .form-table tr {
+    border-bottom: 1px solid #f0f0f1;
+}
+
+.jas-settings .form-table tr:last-child {
+    border-bottom: none;
+}
+
+.jas-settings .form-table input[type="text"],
+.jas-settings .form-table input[type="number"],
+.jas-settings .form-table select {
+    width: 100%;
+    max-width: 400px;
+}
+
+.jas-settings .form-table input[type="color"] {
+    width: 60px;
+    height: 36px;
+    padding: 2px;
+    cursor: pointer;
+}
+
+/* Collapsible panel JS for toggling */
+@media (prefers-reduced-motion: reduce) {
+    .jas-collapsible__icon {
+        transition: none;
+    }
+    .jas-collapsible__body {
+        transition: none;
+    }
+}

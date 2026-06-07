@@ -4,30 +4,38 @@ declare(strict_types=1);
 
 namespace Jasanika\Admin;
 
+use Jasanika\Admin\Components\CollapsiblePanel;
+use Jasanika\Admin\Components\PresetCard;
 use Jasanika\Admin\Fields\FieldFactory;
 use Jasanika\Admin\Sections\Section;
+use Jasanika\Admin\Search\SettingsSearch;
 use Jasanika\Components\ComponentRenderer;
 use Jasanika\Core\FrameworkInfo;
+use Jasanika\Design\ThemePresetManager;
 use Jasanika\Settings\SettingsRegistry;
 
 /**
- * Settings page coordinator — V2 (Site Builder UI).
+ * Settings page coordinator — V3 (Theme Presets & Settings UX Framework).
+ *
+ * M27: Added Search, Collapsible Sections, Preset UI, Color Scheme Builder,
+ * Appearance Dashboard integration, and rendering cleanup.
  *
  * Tabbed settings interface with category-based organization.
  * Uses the ComponentRenderer from M25 for consistent UI rendering.
  *
  * Categories:
  * - General     — Site identity, logo, basic info
- * - Appearance  — Header, Footer, Hero, Colors, Typography, Layout
+ * - Appearance  — Presets, Color Scheme, Typography, Header, Footer, Hero, Layout
  * - Content     — Blog, archive, post settings (future)
  * - Marketing   — Social, SEO, analytics (future)
  * - Advanced    — Development, performance, code (future)
  *
  * Rendering flow:
- * 1. Render tab navigation (ComponentRenderer Tabs)
+ * 1. Render tab navigation
  * 2. Determine active tab from URL parameter
- * 3. Render sections for active category
- * 4. Each section renders its settings fields
+ * 3. Render search bar
+ * 4. Render sections for active category
+ * 5. Each section renders its settings fields inside collapsible panels
  */
 final class SettingsPage
 {
@@ -35,6 +43,7 @@ final class SettingsPage
     private SettingsRegistry $settingsRegistry;
     private FieldFactory $fieldFactory;
     private ComponentRenderer $componentRenderer;
+    private ThemePresetManager $presetManager;
     /** @var array<string, array{name: string, sections: Section[]}> */
     private array $categories = [];
     /** @var array<string, Section> */
@@ -44,12 +53,14 @@ final class SettingsPage
         FrameworkInfo $frameworkInfo,
         SettingsRegistry $settingsRegistry,
         FieldFactory $fieldFactory,
-        ComponentRenderer $componentRenderer
+        ComponentRenderer $componentRenderer,
+        ThemePresetManager $presetManager
     ) {
         $this->frameworkInfo = $frameworkInfo;
         $this->settingsRegistry = $settingsRegistry;
         $this->fieldFactory = $fieldFactory;
         $this->componentRenderer = $componentRenderer;
+        $this->presetManager = $presetManager;
     }
 
     /**
@@ -164,6 +175,12 @@ final class SettingsPage
         // Tab navigation
         $this->renderTabs($activeTab);
 
+        // M27: Settings search bar
+        SettingsSearch::render();
+
+        // M27: Collapsible panel initialization
+        CollapsiblePanel::renderScript();
+
         echo '<form action="options.php" method="post" class="jas-settings__form">';
 
         settings_fields('jasanika_settings');
@@ -178,7 +195,7 @@ final class SettingsPage
     }
 
     /**
-     * Render tab navigation using ComponentRenderer.
+     * Render tab navigation.
      */
     private function renderTabs(string $activeTab): void
     {
@@ -203,8 +220,8 @@ final class SettingsPage
     /**
      * Render sections for the active category.
      *
-     * Groups settings fields under section headings and uses
-     * ComponentRenderer Card component for each section.
+     * M27: Uses collapsible panels, preset cards for the presets section,
+     * and consistent card-based field grouping for all other sections.
      */
     private function renderActiveSections(string $activeTab): void
     {
@@ -223,20 +240,100 @@ final class SettingsPage
         foreach ($category['sections'] as $section) {
             $sectionSlug = 'jasanika_section_' . $section->getSlug();
 
-            echo '<div class="jas-settings__section">';
+            echo '<div class="jas-settings__section" data-section="' . esc_attr($section->getSlug()) . '">';
 
-            // Use card component for section wrapping
-            ob_start();
-            do_settings_fields('jasanika_settings', $sectionSlug);
-            $fieldsHtml = ob_get_clean();
+            if ($section->getSlug() === 'appearance_presets') {
+                // M27: Custom preset card UI instead of standard select field
+                $this->renderPresetsSection($section, $sectionSlug);
+            } else {
+                // M27: Standard section rendered inside collapsible panel
+                $panel = new CollapsiblePanel(
+                    $section->getSlug(),
+                    $section->getName(),
+                    true,
+                    (string) count($section->getSettingKeys())
+                );
 
-            $this->componentRenderer->renderCard(
-                $section->getName(),
-                $fieldsHtml
-            );
+                $panel->start();
+
+                ob_start();
+                do_settings_fields('jasanika_settings', $sectionSlug);
+                $fieldsHtml = ob_get_clean();
+
+                $this->componentRenderer->renderCard(
+                    $section->getName(),
+                    $fieldsHtml
+                );
+
+                $panel->end();
+            }
 
             echo '</div>';
         }
+    }
+
+    /**
+     * Render the Presets section with custom preset card UI.
+     *
+     * M27: Replaces standard select field with visual PresetCard components.
+     */
+    private function renderPresetsSection(Section $section, string $sectionSlug): void
+    {
+        $activePreset  = $this->presetManager->getActivePreset();
+        $allPresets    = $this->presetManager->getAllPresets();
+        $currentValue  = get_option('active_preset', 'default');
+
+        echo '<div class="jas-presets-section">';
+
+        echo '<p class="jas-section__description">' . esc_html($section->getDescription()) . '</p>';
+        echo '<div class="jas-presets-grid">';
+
+        foreach ($allPresets as $name => $preset) {
+            $isActive = ($name === $currentValue);
+            $card = new PresetCard(
+                $name,
+                $preset['label'],
+                $preset['description'],
+                $isActive
+            );
+            $card->render();
+        }
+
+        echo '</div>'; // .jas-presets-grid
+
+        // Hidden field to submit via WordPress Settings API
+        echo '<input type="hidden" name="active_preset" id="jas-active-preset-hidden" value="' . esc_attr($currentValue) . '">';
+
+        echo '</div>'; // .jas-presets-section
+
+        // M27: Inline JS to sync preset radio selection with hidden field
+        ?>
+<script>
+(function() {
+    var radios = document.querySelectorAll('.jas-preset-card__input');
+    var hidden = document.getElementById('jas-active-preset-hidden');
+    if (!radios.length || !hidden) return;
+
+    radios.forEach(function(radio) {
+        radio.addEventListener('change', function() {
+            if (this.checked) {
+                hidden.value = this.value;
+                // Update visual active state
+                document.querySelectorAll('.jas-preset-card').forEach(function(card) {
+                    card.classList.remove('jas-preset-card--active');
+                });
+                this.closest('.jas-preset-card').classList.add('jas-preset-card--active');
+            }
+        });
+    });
+})();
+</script>
+        <?php
+
+        // Render WordPress Settings API fields (hidden via CSS, kept for compatibility)
+        echo '<div style="display:none;">';
+        do_settings_fields('jasanika_settings', $sectionSlug);
+        echo '</div>';
     }
 
     /**

@@ -6,6 +6,7 @@ jasanika_2/
 │   │   └── js/
 │   │       └── media-field.js
 │   ├── css/
+│   │   ├── admin.css
 │   │   ├── components.css
 │   │   ├── frontend.css
 │   │   └── tokens.css
@@ -114,6 +115,13 @@ src/
 │   │   ├── SelectField.php
 │   │   ├── ColorField.php
 │   │   └── NumberField.php
+│   ├── Search/
+│   │   └── SettingsSearch.php
+│   ├── Components/
+│   │   ├── CollapsiblePanel.php
+│   │   └── PresetCard.php
+│   ├── Dashboard/
+│   │   └── AppearanceDashboard.php
 │   ├── AdminMenu.php
 │   ├── AdminPage.php
 │   ├── SettingsManager.php
@@ -135,6 +143,8 @@ src/
 │   └── NavigationManager.php
 ├── Widgets/
 │   └── WidgetAreaManager.php
+├── Events/
+│   └── FrontendRefreshEvent.php
 ├── Support/
 
 ---

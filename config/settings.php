@@ -70,5 +70,17 @@ return [
         'layout_footer_width'  => '1200px',
         'layout_section_padding' => '2rem',
         'layout_section_margin'  => '1.5rem',
+
+        // --- M27: Theme Preset ---
+        'active_preset'    => 'default',
+
+        // --- M27: Color Scheme ---
+        'secondary_color'  => '#24212b',
+        'accent_color'     => '#f1c95d',
+        'background_color' => '#1b1a1f',
+        'surface_color'    => '#24212b',
+        'text_color'       => '#f5f2f7',
+        'heading_color'    => '#f5f2f7',
+        'border_color'     => 'rgba(255,255,255,0.08)',
     ],
 ];

@@ -6,7 +6,7 @@ Jasanika_2
 
 Modular WordPress Framework
 
-Current Version: 0.26
+Current Version: 0.27
 
 Status: Active Development
 
@@ -14,7 +14,7 @@ Status: Active Development
 
 # Current Milestone
 
-M26 - Site Builder & Settings UI Framework
+M27 - Theme Presets & Settings UX Framework
 
 Status: Completed
 
@@ -50,64 +50,73 @@ Status: Completed
 - M24 - Design Token Engine & Theme Preset Foundation
 - M25 - Component Styling Framework
 - M26 - Site Builder & Settings UI Framework
+- M27 - Theme Presets & Settings UX Framework
 
 ---
 
 # Current Architecture
 
-The project has been transformed from a framework foundation into the first generation of a configurable Site Builder (M26).
+The project has been transformed into a configurable Site Builder with a user-friendly Settings UI Framework (M27).
 
-**Settings UI Framework V2:**
-- Tabbed settings interface with categories: General, Appearance, Content, Marketing, Advanced
-- Section system (Section.php) for grouping related settings within categories
-- URL-safe tab state via GET parameter
-- Component-driven settings UI using M25 components (Card, form fields)
-- Category/section expansion support for future milestones
+**Theme Presets UI (M27):**
+- Visual preset selection cards in Appearance → Presets section
+- Available presets: Default, Modern, Minimal, Business, Custom
+- PresetCard component for visual preset selection with radio buttons
+- Preset switching integrated with ThemePresetManager
+- Custom mode enables full editing of Color Scheme and Typography
 
-**Header Builder:**
-- HeaderManager owns all header configuration (logo V2, height, colors, sticky, search, top bar)
-- HeaderRenderer owns all header rendering with config-aware output
-- Logo V2 support: desktop, mobile, retina logos with width/height/position controls
-- Sticky header, search toggle, top bar support
+**Appearance Dashboard (M27):**
+- New Appearance Overview admin sub-page
+- Card-based read-only summary of current theme configuration
+- Shows: active preset, color scheme, typography, header/hero/footer status, layout, logo
+- Uses Component Framework Card components for consistent rendering
 
-**Footer Builder:**
-- FooterManager owns all footer configuration (layout, colors, copyright, menu, social)
-- FooterRenderer owns all footer rendering with landing-page layout awareness
-- Configurable column layouts (1-4 columns)
-- Copyright text with {year} and {sitename} dynamic tags
-- Social icons placeholder (foundation for future milestones)
+**Settings UI Framework V3 (M27):**
+- Settings Search: client-side real-time filtering with result highlighting
+- Collapsible Sections: toggle-able panels with sessionStorage state persistence
+- Settings Cards: improved grouping with consistent spacing and labels
+- Color Scheme Builder: 8 color settings (primary, secondary, accent, background, surface, text, heading, border)
+- Expanded Typography: 6 font options (System, Inter, Roboto, Poppins, Montserrat, Open Sans)
+- Admin CSS with dedicated styles for all new UI components
+- Fixed rendering inconsistencies in form table layout
 
-**Hero Builder:**
-- HeroManager owns all hero configuration (type, height, title, subtitle, background, slides)
-- HeroRenderer owns all hero rendering with static and slider modes
-- HeroSlide value object for slider foundation
-- Overlay support with configurable opacity
-- CTA button integration via ComponentRenderer
+**Collapsible Panel:**
+- Reusable CollapsiblePanel component
+- Accessible toggle with aria-expanded, aria-controls
+- State preserved across tab navigation via sessionStorage
+- Badge support for field count display
 
-**Slider Foundation:**
-- 3 slides stored in Settings Framework (no CPT, no Gutenberg, no Visual Builder)
-- Each slide: title, subtitle, image, button text, button URL
+**Settings Search:**
+- SettingsSearch class with search input and inline JS
+- Real-time client-side filtering of settings sections
+- Search matches field labels, descriptions, and categories
+- Highlighted matching results
+- Result count display
 
-**Layout Controls:**
-- Settings for header width, content width, sidebar width, footer width, section padding/margin
-- Token-compatible via --jas-* CSS custom properties
-- DesignTokenGenerator integration
+**Color Scheme Builder:**
+- 8 color settings: primary, secondary, accent, background, surface, text, heading, border
+- New DesignTokenRegistry tokens for all color settings
+- DesignTokenGenerator outputs all color tokens
+- Token-driven color management via DesignSettingsManager getters
 
-**Logo System V2:**
-- Desktop Logo, Mobile Logo, Retina Logo
-- Logo Width, Logo Height, Logo Position (left/center/right)
+**Typography Expansion:**
+- TypographySetting expanded to 6 font options
+- DesignSettingsManager getFontFamily() supports all fonts
+- Heading font family token (--jas-font-family-heading) registered
 
-**Debug Support:**
-- Site Builder debug comment in WP_DEBUG mode showing Header/Footer/Hero status
+**Preview Architecture Foundation (M27):**
+- FrontendRefreshEvent value object for future M28 Live Preview
+- Event-driven architecture: setting change → refresh event → frontend refresh
+- shouldRefresh() method filters appearance-related settings
 
-Architecture documents:
-* project-rules.md
-* folder-structure.md
-* roadmap.md
-* ai-workflow.md
-* design-system.md
-* typography.md
-* architecture-rules.md
+**Architecture documents:**
+- project-rules.md
+- folder-structure.md
+- roadmap.md
+- ai-workflow.md
+- design-system.md
+- typography.md
+- architecture-rules.md
 
 ---
 
@@ -181,9 +190,10 @@ Architecture documents:
 - Layout CSS classes (jas-layout, jas-layout--sidebar, jas-layout--full-width, jas-layout--landing)
 - Landing page layout (no sidebar, no footer widgets)
 - DesignTokenRegistry with token definitions (Color, Typography, Spacing, Layout, Border Radius)
-- ThemePresetManager with preset registration (default, modern, minimal)
-- Semantic color tokens (--jas-color-primary, --jas-color-text, --jas-color-background, --jas-color-surface, --jas-color-border, --jas-color-heading)
+- ThemePresetManager with preset registration (default, modern, minimal, business, custom)
+- Semantic color tokens (--jas-color-primary through --jas-color-heading, --jas-color-secondary, --jas-color-accent)
 - Typography scale tokens (--jas-font-size-xs through --jas-font-size-2xl)
+- Heading font token (--jas-font-family-heading)
 - Spacing system tokens (--jas-space-xs through --jas-space-xl)
 - Border radius tokens (--jas-radius-sm, --jas-radius-md, --jas-radius-lg)
 - Extended design token debug output with preset and token count
@@ -207,6 +217,15 @@ Architecture documents:
 - Layout controls (header/content/sidebar/footer width, section padding/margin)
 - Site Builder debug output in WP_DEBUG mode
 - Desktop, Mobile, Retina logo support with position/size controls
+- **M27 NEW:** Theme Presets UI with visual PresetCard component
+- **M27 NEW:** Custom Preset Mode
+- **M27 NEW:** Appearance Dashboard with card-based overview
+- **M27 NEW:** Settings Search with client-side filtering
+- **M27 NEW:** Collapsible Sections with state persistence
+- **M27 NEW:** Color Scheme Builder (8 color settings)
+- **M27 NEW:** Expanded Typography (6 font options)
+- **M27 NEW:** Admin CSS for all new UI components
+- **M27 NEW:** FrontendRefreshEvent for future Live Preview (M28)
 
 ---
 
@@ -242,7 +261,7 @@ None
 
 # Next Planned Milestone
 
-M27 - Theme Presets UI
+M28 - Live Preview System
 
 ---
 

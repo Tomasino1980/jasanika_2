@@ -21,9 +21,19 @@ use Jasanika\Admin\SettingsManager;
  *
  * Managed settings:
  * - Primary Color
+ * - Secondary Color
+ * - Accent Color
+ * - Background Color
+ * - Surface Color
+ * - Text Color
+ * - Heading Color
+ * - Border Color
  * - Typography
  * - Container Width
  * - Site Layout
+ *
+ * M27: Added color scheme settings (secondary, accent, background,
+ * surface, text, heading, border) and expanded typography options.
  *
  * No direct settings lookups should occur outside this class.
  */
@@ -54,20 +64,27 @@ final class DesignSettingsManager
 
     /**
      * Get the font-family CSS value based on the typography setting.
+     *
+     * M27: Expanded font options — Inter, Roboto, Poppins, Montserrat, Open Sans.
      */
     public function getFontFamily(): string
     {
         $typography = $this->settingsManager->get('typography');
 
         return match ($typography) {
-            'inter'   => '"Inter", sans-serif',
-            'roboto'  => '"Roboto", sans-serif',
-            default   => 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+            'inter'      => '"Inter", sans-serif',
+            'roboto'     => '"Roboto", sans-serif',
+            'poppins'    => '"Poppins", sans-serif',
+            'montserrat' => '"Montserrat", sans-serif',
+            'open-sans'  => '"Open Sans", sans-serif',
+            default      => 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
         };
     }
 
     /**
-     * Get the raw typography key (system, inter, roboto).
+     * Get the raw typography key (system, inter, roboto, poppins, montserrat, open-sans).
+     *
+     * M27: Returns lowercase key for all supported fonts.
      */
     public function getTypographyKey(): string
     {
@@ -77,7 +94,9 @@ final class DesignSettingsManager
             return 'system';
         }
 
-        return $typography;
+        $valid = ['system', 'inter', 'roboto', 'poppins', 'montserrat', 'open-sans'];
+
+        return in_array($typography, $valid, true) ? $typography : 'system';
     }
 
     /**
@@ -106,6 +125,118 @@ final class DesignSettingsManager
         }
 
         return $layout;
+    }
+
+    /**
+     * Get the secondary color hex value.
+     *
+     * M27: New color scheme setting. Falls back to #24212b.
+     */
+    public function getSecondaryColor(): string
+    {
+        $color = $this->settingsManager->get('secondary_color');
+
+        if (empty($color) || !is_string($color)) {
+            return '#24212b';
+        }
+
+        return $color;
+    }
+
+    /**
+     * Get the accent color hex value.
+     *
+     * M27: New color scheme setting. Falls back to #f1c95d.
+     */
+    public function getAccentColor(): string
+    {
+        $color = $this->settingsManager->get('accent_color');
+
+        if (empty($color) || !is_string($color)) {
+            return '#f1c95d';
+        }
+
+        return $color;
+    }
+
+    /**
+     * Get the background color hex value.
+     *
+     * M27: New color scheme setting. Falls back to #1b1a1f.
+     */
+    public function getBackgroundColor(): string
+    {
+        $color = $this->settingsManager->get('background_color');
+
+        if (empty($color) || !is_string($color)) {
+            return '#1b1a1f';
+        }
+
+        return $color;
+    }
+
+    /**
+     * Get the surface color hex value.
+     *
+     * M27: New color scheme setting. Falls back to #24212b.
+     */
+    public function getSurfaceColor(): string
+    {
+        $color = $this->settingsManager->get('surface_color');
+
+        if (empty($color) || !is_string($color)) {
+            return '#24212b';
+        }
+
+        return $color;
+    }
+
+    /**
+     * Get the text color hex value.
+     *
+     * M27: New color scheme setting. Falls back to #f5f2f7.
+     */
+    public function getTextColor(): string
+    {
+        $color = $this->settingsManager->get('text_color');
+
+        if (empty($color) || !is_string($color)) {
+            return '#f5f2f7';
+        }
+
+        return $color;
+    }
+
+    /**
+     * Get the heading color hex value.
+     *
+     * M27: New color scheme setting. Falls back to #f5f2f7.
+     */
+    public function getHeadingColor(): string
+    {
+        $color = $this->settingsManager->get('heading_color');
+
+        if (empty($color) || !is_string($color)) {
+            return '#f5f2f7';
+        }
+
+        return $color;
+    }
+
+    /**
+     * Get the border color hex value.
+     *
+     * M27: New color scheme setting. Falls back to rgba(255,255,255,0.08).
+     */
+    public function getBorderColor(): string
+    {
+        $color = $this->settingsManager->get('border_color');
+
+        if (empty($color) || !is_string($color)) {
+            return 'rgba(255,255,255,0.08)';
+        }
+
+        return $color;
     }
 
     /**
@@ -183,6 +314,13 @@ final class DesignSettingsManager
         return [
             '--jas-primary-color'    => $this->getPrimaryColor(),
             '--jas-primary-hover'    => $this->getPrimaryColorHover(),
+            '--jas-secondary-color'  => $this->getSecondaryColor(),
+            '--jas-accent-color'     => $this->getAccentColor(),
+            '--jas-color-background' => $this->getBackgroundColor(),
+            '--jas-color-surface'    => $this->getSurfaceColor(),
+            '--jas-color-text'       => $this->getTextColor(),
+            '--jas-color-heading'    => $this->getHeadingColor(),
+            '--jas-color-border'     => $this->getBorderColor(),
             '--jas-font-family'      => $this->getFontFamily(),
             '--jas-container-width'  => $this->getContainerWidth(),
             '--jas-site-layout'      => $this->getSiteLayout(),
@@ -199,6 +337,13 @@ final class DesignSettingsManager
         return [
             'Primary Color'    => $this->getPrimaryColor(),
             'Primary Hover'    => $this->getPrimaryColorHover(),
+            'Secondary Color'  => $this->getSecondaryColor(),
+            'Accent Color'     => $this->getAccentColor(),
+            'Background Color' => $this->getBackgroundColor(),
+            'Surface Color'    => $this->getSurfaceColor(),
+            'Text Color'       => $this->getTextColor(),
+            'Heading Color'    => $this->getHeadingColor(),
+            'Border Color'     => $this->getBorderColor(),
             'Typography'       => $this->getTypographyKey(),
             'Container Width'  => $this->getContainerWidth(),
             'Layout'           => $this->getSiteLayout(),
