@@ -8,6 +8,7 @@ use Jasanika\Admin\AdminMenu;
 use Jasanika\Admin\AdminPage;
 use Jasanika\Admin\Fields\FieldFactory;
 use Jasanika\Admin\Pages\DashboardPage;
+use Jasanika\Admin\Sections\Section;
 use Jasanika\Admin\SettingsManager;
 use Jasanika\Admin\SettingsPage;
 use Jasanika\Assets\Asset;
@@ -21,19 +22,26 @@ use Jasanika\Design\DesignSettingsManager;
 use Jasanika\Design\DesignTokenGenerator;
 use Jasanika\Design\DesignTokenRegistry;
 use Jasanika\Design\ThemePresetManager;
+use Jasanika\Footer\FooterManager;
+use Jasanika\Footer\FooterRenderer;
+use Jasanika\Header\HeaderManager;
+use Jasanika\Header\HeaderRenderer;
+use Jasanika\Hero\HeroManager;
+use Jasanika\Hero\HeroRenderer;
 use Jasanika\Hooks\HookManager;
 use Jasanika\Layout\LayoutManager;
 use Jasanika\Layout\LayoutRenderer;
 use Jasanika\Media\MediaManager;
 use Jasanika\Modules\ModuleManager;
 use Jasanika\Navigation\NavigationManager;
-use Jasanika\Widgets\WidgetAreaManager;
+use Jasanika\Settings\Setting;
 use Jasanika\Settings\ContainerWidthSetting;
 use Jasanika\Settings\LogoSetting;
 use Jasanika\Settings\PrimaryColorSetting;
 use Jasanika\Settings\SettingsRegistry;
 use Jasanika\Settings\SiteLayoutSetting;
 use Jasanika\Settings\TypographySetting;
+use Jasanika\Widgets\WidgetAreaManager;
 
 final class Application
 {
@@ -60,12 +68,18 @@ final class Application
     private LayoutRenderer $layoutRenderer;
     private ComponentRegistry $componentRegistry;
     private ComponentRenderer $componentRenderer;
+    private HeaderManager $headerManager;
+    private HeaderRenderer $headerRenderer;
+    private FooterManager $footerManager;
+    private FooterRenderer $footerRenderer;
+    private HeroManager $heroManager;
+    private HeroRenderer $heroRenderer;
 
     public function __construct()
     {
         $this->frameworkInfo = new FrameworkInfo(
             'Jasanika 2',
-            '0.25'
+            '0.26'
         );
 
         $this->container = new Container();
@@ -75,12 +89,9 @@ final class Application
         $this->assetManager = new AssetManager();
         $this->mediaManager = new MediaManager();
 
+        // --- Initialize Settings Registry ---
         $this->settingsRegistry = new SettingsRegistry();
-        $this->settingsRegistry->register(new SiteLayoutSetting());
-        $this->settingsRegistry->register(new LogoSetting());
-        $this->settingsRegistry->register(new PrimaryColorSetting());
-        $this->settingsRegistry->register(new TypographySetting());
-        $this->settingsRegistry->register(new ContainerWidthSetting());
+        $this->registerSettings();
 
         $this->settingsManager = new SettingsManager($this->settingsRegistry);
 
@@ -100,19 +111,19 @@ final class Application
         $this->registerMediaFieldAsset();
         $this->registerFrontendAssets();
 
-        // Initialize navigation and site identity services
+        // --- Initialize navigation and site identity services ---
         $this->navigationManager = new NavigationManager($this->hookManager);
         $this->siteIdentityRenderer = new SiteIdentityRenderer(
             $this->settingsManager,
             $this->mediaManager
         );
 
-        // Initialize widget area and layout region services
+        // --- Initialize widget area and layout region services ---
         $this->widgetAreaManager = new WidgetAreaManager($this->hookManager);
         $this->widgetAreaManager->register();
         $this->layoutRegionRenderer = new LayoutRegionRenderer($this->widgetAreaManager);
 
-        // Initialize design settings and token generation services
+        // --- Initialize design settings and token generation services ---
         $this->designSettingsManager = new DesignSettingsManager($this->settingsManager);
 
         // Initialize Design Token Registry — single source of truth for token definitions
@@ -137,26 +148,49 @@ final class Application
             $this->layoutRegionRenderer
         );
 
+        // --- Initialize Header Builder ---
+        $this->headerManager = new HeaderManager($this->settingsManager);
+        $this->headerRenderer = new HeaderRenderer(
+            $this->headerManager,
+            $this->siteIdentityRenderer,
+            $this->navigationManager
+        );
+
+        // --- Initialize Footer Builder ---
+        $this->footerManager = new FooterManager($this->settingsManager);
+        $this->footerRenderer = new FooterRenderer(
+            $this->footerManager,
+            $this->navigationManager,
+            $this->layoutRegionRenderer,
+            $this->layoutManager
+        );
+
         // Initialize component system
         $this->componentRegistry = new ComponentRegistry();
         $this->registerComponents();
         $this->componentRenderer = new ComponentRenderer($this->componentRegistry);
 
+        // --- Initialize Hero Builder (depends on ComponentRenderer) ---
+        $this->heroManager = new HeroManager($this->settingsManager, $this->mediaManager);
+        $this->heroRenderer = new HeroRenderer($this->heroManager, $this->componentRenderer);
+
         $this->initThemeRenderer();
 
         // Register asset lifecycle hooks.
-        // WordPress registration (wp_register_script / wp_register_style)
-        // must happen during proper enqueue hooks, not during framework bootstrap.
         $this->hookManager->addAction('admin_enqueue_scripts', [$this->assetManager, 'registerWordPressAssets']);
         $this->hookManager->addAction('wp_enqueue_scripts', [$this->assetManager, 'registerWordPressAssets']);
 
+        // --- Initialize Settings Page with categories and sections ---
         $fieldFactory = new FieldFactory($this->settingsManager, $this->assetManager);
 
         $settingsPage = new SettingsPage(
             $this->frameworkInfo,
             $this->settingsRegistry,
-            $fieldFactory
+            $fieldFactory,
+            $this->componentRenderer
         );
+
+        $this->registerSettingsCategories($settingsPage);
 
         $this->hookManager->addAction('admin_init', [$settingsPage, 'registerSettings']);
 
@@ -168,174 +202,212 @@ final class Application
 
         $this->adminMenu->registerSubPage($settingsSubPage);
 
-        $this->container->register(
-            ModuleManager::class,
-            function (Container $container): ModuleManager {
-                return $this->moduleManager;
-            }
-        );
+        // --- Register services in Container ---
+        $this->registerContainerServices();
+    }
 
-        $this->container->register(
-            ConfigRepository::class,
-            function (Container $container): ConfigRepository {
-                return $this->configRepository;
-            }
-        );
+    /**
+     * Register all settings in the SettingsRegistry.
+     *
+     * M26 adds Logo V2, Header, Footer, Hero, Slider, and Layout Control settings.
+     */
+    private function registerSettings(): void
+    {
+        $r = $this->settingsRegistry;
 
-        $this->container->register(
-            HookManager::class,
-            function (Container $container): HookManager {
-                return $this->hookManager;
-            }
-        );
+        // --- Original settings (M9-M11) ---
+        $r->register(new SiteLayoutSetting());
+        $r->register(new LogoSetting());
+        $r->register(new PrimaryColorSetting());
+        $r->register(new TypographySetting());
+        $r->register(new ContainerWidthSetting());
 
-        $this->container->register(
-            AssetManager::class,
-            function (Container $container): AssetManager {
-                return $this->assetManager;
-            }
-        );
+        // --- Logo V2 (M26) ---
+        $r->register(new Setting('logo_desktop', '', 'Desktop Logo', 'media'));
+        $r->register(new Setting('logo_mobile', '', 'Mobile Logo', 'media'));
+        $r->register(new Setting('logo_retina', '', 'Retina Logo', 'media'));
+        $r->register(new Setting('logo_width', '200px', 'Logo Width', 'text'));
+        $r->register(new Setting('logo_height', 'auto', 'Logo Height', 'text'));
+        $r->register(new Setting('logo_position', 'left', 'Logo Position', 'select', [
+            'left'   => 'Left',
+            'center' => 'Center',
+            'right'  => 'Right',
+        ]));
 
-        $this->container->register(
-            MediaManager::class,
-            function (Container $container): MediaManager {
-                return $this->mediaManager;
-            }
-        );
+        // --- Header Settings (M26) ---
+        $r->register(new Setting('header_height', '80px', 'Header Height', 'text'));
+        $r->register(new Setting('header_bg_color', '#1b1a1f', 'Header Background Color', 'color'));
+        $r->register(new Setting('header_text_color', '#f5f2f7', 'Header Text Color', 'color'));
+        $r->register(new Setting('header_sticky', 'no', 'Sticky Header', 'select', [
+            'yes' => 'Enabled',
+            'no'  => 'Disabled',
+        ]));
+        $r->register(new Setting('header_show_search', 'no', 'Show Search', 'select', [
+            'yes' => 'Show',
+            'no'  => 'Hide',
+        ]));
+        $r->register(new Setting('header_show_top_bar', 'no', 'Show Top Bar', 'select', [
+            'yes' => 'Show',
+            'no'  => 'Hide',
+        ]));
 
-        $this->container->register(
-            SettingsManager::class,
-            function (Container $container): SettingsManager {
-                return $this->settingsManager;
-            }
-        );
+        // --- Footer Settings (M26) ---
+        $r->register(new Setting('footer_layout', '3', 'Footer Layout', 'select', [
+            '1' => '1 Column',
+            '2' => '2 Columns',
+            '3' => '3 Columns',
+            '4' => '4 Columns',
+        ]));
+        $r->register(new Setting('footer_bg_color', '#1b1a1f', 'Footer Background Color', 'color'));
+        $r->register(new Setting('footer_text_color', '#b9b1c4', 'Footer Text Color', 'color'));
+        $r->register(new Setting('footer_copyright_text', '', 'Copyright Text', 'text'));
+        $r->register(new Setting('footer_show_menu', 'yes', 'Show Footer Menu', 'select', [
+            'yes' => 'Show',
+            'no'  => 'Hide',
+        ]));
+        $r->register(new Setting('footer_show_social', 'no', 'Show Social Icons', 'select', [
+            'yes' => 'Show',
+            'no'  => 'Hide',
+        ]));
 
-        $this->container->register(
-            AdminMenu::class,
-            function (Container $container): AdminMenu {
-                return $this->adminMenu;
-            }
-        );
+        // --- Hero Settings (M26) ---
+        $r->register(new Setting('hero_enabled', 'no', 'Enable Hero', 'select', [
+            'yes' => 'Enabled',
+            'no'  => 'Disabled',
+        ]));
+        $r->register(new Setting('hero_type', 'static', 'Hero Type', 'select', [
+            'static' => 'Static',
+            'slider' => 'Slider',
+        ]));
+        $r->register(new Setting('hero_height', '400px', 'Hero Height', 'text'));
+        $r->register(new Setting('hero_title', '', 'Hero Title', 'text'));
+        $r->register(new Setting('hero_subtitle', '', 'Hero Subtitle', 'text'));
+        $r->register(new Setting('hero_background_image', '', 'Background Image', 'media'));
+        $r->register(new Setting('hero_overlay_opacity', '0.3', 'Overlay Opacity', 'text'));
+        $r->register(new Setting('hero_button_text', '', 'Button Text', 'text'));
+        $r->register(new Setting('hero_button_url', '', 'Button URL', 'text'));
 
-        $this->container->register(
-            SettingsRegistry::class,
-            function (Container $container): SettingsRegistry {
-                return $this->settingsRegistry;
-            }
-        );
+        // --- Hero Slides (M26) ---
+        for ($i = 1; $i <= 3; $i++) {
+            $r->register(new Setting('hero_slide_' . $i . '_title', '', 'Slide ' . $i . ' — Title', 'text'));
+            $r->register(new Setting('hero_slide_' . $i . '_subtitle', '', 'Slide ' . $i . ' — Subtitle', 'text'));
+            $r->register(new Setting('hero_slide_' . $i . '_image', '', 'Slide ' . $i . ' — Image', 'media'));
+            $r->register(new Setting('hero_slide_' . $i . '_button_text', '', 'Slide ' . $i . ' — Button Text', 'text'));
+            $r->register(new Setting('hero_slide_' . $i . '_button_url', '', 'Slide ' . $i . ' — Button URL', 'text'));
+        }
 
-        $this->container->register(
-            FrameworkInfo::class,
-            function (Container $container): FrameworkInfo {
-                return $this->frameworkInfo;
-            }
-        );
+        // --- Layout Controls (M26) ---
+        $r->register(new Setting('layout_header_width', '1200px', 'Header Width', 'text'));
+        $r->register(new Setting('layout_content_width', '1200px', 'Content Width', 'text'));
+        $r->register(new Setting('layout_sidebar_width', '320px', 'Sidebar Width', 'text'));
+        $r->register(new Setting('layout_footer_width', '1200px', 'Footer Width', 'text'));
+        $r->register(new Setting('layout_section_padding', '2rem', 'Section Padding', 'text'));
+        $r->register(new Setting('layout_section_margin', '1.5rem', 'Section Margin', 'text'));
+    }
 
-        $this->container->register(
-            NavigationManager::class,
-            function (Container $container): NavigationManager {
-                return $this->navigationManager;
-            }
-        );
+    /**
+     * Register settings categories and sections on the SettingsPage.
+     *
+     * Organizes all settings into tabbed categories with grouped sections.
+     */
+    private function registerSettingsCategories(SettingsPage $settingsPage): void
+    {
+        // --- General Category ---
+        $settingsPage->registerSection(new Section(
+            'general_site_identity',
+            'Site Identity',
+            'Site title, tagline, and basic site information.',
+            'general',
+            ['site_layout', 'primary_color', 'typography', 'container_width']
+        ));
 
-        $this->container->register(
-            SiteIdentityRenderer::class,
-            function (Container $container): SiteIdentityRenderer {
-                return $this->siteIdentityRenderer;
-            }
-        );
+        $settingsPage->registerSection(new Section(
+            'general_logo',
+            'Logo',
+            'Desktop, mobile, and retina logo variants with size and position controls.',
+            'general',
+            ['logo', 'logo_desktop', 'logo_mobile', 'logo_retina', 'logo_width', 'logo_height', 'logo_position']
+        ));
 
-        $this->container->register(
-            ThemeRenderer::class,
-            function (Container $container): ThemeRenderer {
-                return $this->themeRenderer;
-            }
-        );
+        // --- Appearance Category ---
+        $settingsPage->registerSection(new Section(
+            'appearance_header',
+            'Header',
+            'Header height, background color, text color, and feature toggles.',
+            'appearance',
+            ['header_height', 'header_bg_color', 'header_text_color', 'header_sticky', 'header_show_search', 'header_show_top_bar']
+        ));
 
-        $this->container->register(
-            WidgetAreaManager::class,
-            function (Container $container): WidgetAreaManager {
-                return $this->widgetAreaManager;
-            }
-        );
+        $settingsPage->registerSection(new Section(
+            'appearance_hero',
+            'Hero',
+            'Hero section configuration including type, content, background, and slides.',
+            'appearance',
+            [
+                'hero_enabled', 'hero_type', 'hero_height', 'hero_title', 'hero_subtitle',
+                'hero_background_image', 'hero_overlay_opacity', 'hero_button_text', 'hero_button_url',
+                'hero_slide_1_title', 'hero_slide_1_subtitle', 'hero_slide_1_image',
+                'hero_slide_1_button_text', 'hero_slide_1_button_url',
+                'hero_slide_2_title', 'hero_slide_2_subtitle', 'hero_slide_2_image',
+                'hero_slide_2_button_text', 'hero_slide_2_button_url',
+                'hero_slide_3_title', 'hero_slide_3_subtitle', 'hero_slide_3_image',
+                'hero_slide_3_button_text', 'hero_slide_3_button_url',
+            ]
+        ));
 
-        $this->container->register(
-            LayoutRegionRenderer::class,
-            function (Container $container): LayoutRegionRenderer {
-                return $this->layoutRegionRenderer;
-            }
-        );
+        $settingsPage->registerSection(new Section(
+            'appearance_footer',
+            'Footer',
+            'Footer layout, colors, copyright text, and feature toggles.',
+            'appearance',
+            ['footer_layout', 'footer_bg_color', 'footer_text_color', 'footer_copyright_text', 'footer_show_menu', 'footer_show_social']
+        ));
 
-        $this->container->register(
-            DesignSettingsManager::class,
-            function (Container $container): DesignSettingsManager {
-                return $this->designSettingsManager;
-            }
-        );
+        $settingsPage->registerSection(new Section(
+            'appearance_layout',
+            'Layout',
+            'Width controls for header, content, sidebar, and footer regions.',
+            'appearance',
+            ['layout_header_width', 'layout_content_width', 'layout_sidebar_width', 'layout_footer_width', 'layout_section_padding', 'layout_section_margin']
+        ));
 
-        $this->container->register(
-            DesignTokenGenerator::class,
-            function (Container $container): DesignTokenGenerator {
-                return $this->designTokenGenerator;
-            }
-        );
+        // --- Content Category (placeholder for future milestones) ---
+        $settingsPage->registerSection(new Section(
+            'content_blog',
+            'Blog',
+            'Blog and archive settings. (Coming in a future milestone)',
+            'content',
+            []
+        ));
 
-        $this->container->register(
-            LayoutManager::class,
-            function (Container $container): LayoutManager {
-                return $this->layoutManager;
-            }
-        );
+        // --- Marketing Category (placeholder) ---
+        $settingsPage->registerSection(new Section(
+            'marketing_social',
+            'Social Media',
+            'Social media links and sharing settings. (Coming in a future milestone)',
+            'marketing',
+            []
+        ));
 
-        $this->container->register(
-            LayoutRenderer::class,
-            function (Container $container): LayoutRenderer {
-                return $this->layoutRenderer;
-            }
-        );
-
-        $this->container->register(
-            DesignTokenRegistry::class,
-            function (Container $container): DesignTokenRegistry {
-                return $this->tokenRegistry;
-            }
-        );
-
-        $this->container->register(
-            ThemePresetManager::class,
-            function (Container $container): ThemePresetManager {
-                return $this->presetManager;
-            }
-        );
-
-        $this->container->register(
-            ComponentRegistry::class,
-            function (Container $container): ComponentRegistry {
-                return $this->componentRegistry;
-            }
-        );
-
-        $this->container->register(
-            ComponentRenderer::class,
-            function (Container $container): ComponentRenderer {
-                return $this->componentRenderer;
-            }
-        );
+        // --- Advanced Category (placeholder) ---
+        $settingsPage->registerSection(new Section(
+            'advanced_development',
+            'Development',
+            'Performance, caching, and developer settings. (Coming in a future milestone)',
+            'advanced',
+            []
+        ));
     }
 
     /**
      * Register the media-field.js asset definition.
-     *
-     * Stores the asset only. WordPress registration (wp_register_script)
-     * is deferred to the registerWordPressAssets() call, which runs
-     * during admin_enqueue_scripts / wp_enqueue_scripts hooks.
      */
     private function registerMediaFieldAsset(): void
     {
         $script = new Asset(
             'jasanika-media-field',
             get_template_directory_uri() . '/assets/admin/js/media-field.js',
-            '0.17',
+            '0.26',
             ['jquery'],
             'all',
             true
@@ -346,16 +418,13 @@ final class Application
 
     /**
      * Register frontend CSS and JavaScript asset definitions.
-     *
-     * Stores the assets only. WordPress registration is deferred
-     * to registerWordPressAssets() during the wp_enqueue_scripts hook.
      */
     private function registerFrontendAssets(): void
     {
         $style = new Asset(
             'jasanika-frontend',
             get_template_directory_uri() . '/assets/css/frontend.css',
-            '0.25'
+            '0.26'
         );
 
         $this->assetManager->registerStyle($style);
@@ -363,7 +432,7 @@ final class Application
         $tokens = new Asset(
             'jasanika-tokens',
             get_template_directory_uri() . '/assets/css/tokens.css',
-            '0.25'
+            '0.26'
         );
 
         $this->assetManager->registerStyle($tokens);
@@ -371,7 +440,7 @@ final class Application
         $components = new Asset(
             'jasanika-components',
             get_template_directory_uri() . '/assets/css/components.css',
-            '0.25'
+            '0.26'
         );
 
         $this->assetManager->registerStyle($components);
@@ -379,7 +448,7 @@ final class Application
         $script = new Asset(
             'jasanika-frontend',
             get_template_directory_uri() . '/assets/js/frontend.js',
-            '0.25',
+            '0.26',
             [],
             'all',
             true
@@ -390,9 +459,6 @@ final class Application
 
     /**
      * Initialize the ThemeRenderer for frontend rendering.
-     *
-     * Creates the ThemeRenderer instance with all required dependencies,
-     * registers it in the Container, and calls init() to set up hooks.
      */
     private function initThemeRenderer(): void
     {
@@ -407,10 +473,59 @@ final class Application
             $this->designTokenGenerator,
             $this->layoutManager,
             $this->layoutRenderer,
-            $this->componentRenderer
+            $this->componentRenderer,
+            $this->headerRenderer,
+            $this->footerRenderer,
+            $this->heroRenderer
         );
 
         $this->themeRenderer->init();
+    }
+
+    /**
+     * Register all services in the DI Container.
+     */
+    private function registerContainerServices(): void
+    {
+        $services = [
+            ModuleManager::class       => 'moduleManager',
+            ConfigRepository::class    => 'configRepository',
+            HookManager::class         => 'hookManager',
+            AssetManager::class        => 'assetManager',
+            MediaManager::class        => 'mediaManager',
+            SettingsManager::class     => 'settingsManager',
+            AdminMenu::class           => 'adminMenu',
+            SettingsRegistry::class    => 'settingsRegistry',
+            FrameworkInfo::class       => 'frameworkInfo',
+            NavigationManager::class   => 'navigationManager',
+            SiteIdentityRenderer::class => 'siteIdentityRenderer',
+            ThemeRenderer::class       => 'themeRenderer',
+            WidgetAreaManager::class   => 'widgetAreaManager',
+            LayoutRegionRenderer::class => 'layoutRegionRenderer',
+            DesignSettingsManager::class => 'designSettingsManager',
+            DesignTokenGenerator::class => 'designTokenGenerator',
+            LayoutManager::class       => 'layoutManager',
+            LayoutRenderer::class      => 'layoutRenderer',
+            DesignTokenRegistry::class => 'tokenRegistry',
+            ThemePresetManager::class  => 'presetManager',
+            ComponentRegistry::class   => 'componentRegistry',
+            ComponentRenderer::class   => 'componentRenderer',
+            HeaderManager::class       => 'headerManager',
+            HeaderRenderer::class      => 'headerRenderer',
+            FooterManager::class       => 'footerManager',
+            FooterRenderer::class      => 'footerRenderer',
+            HeroManager::class         => 'heroManager',
+            HeroRenderer::class        => 'heroRenderer',
+        ];
+
+        foreach ($services as $class => $property) {
+            $this->container->register(
+                $class,
+                function (Container $container) use ($property): object {
+                    return $this->$property;
+                }
+            );
+        }
     }
 
     public function boot(): void
@@ -533,6 +648,36 @@ final class Application
         return $this->componentRenderer;
     }
 
+    public function getHeaderManager(): HeaderManager
+    {
+        return $this->headerManager;
+    }
+
+    public function getHeaderRenderer(): HeaderRenderer
+    {
+        return $this->headerRenderer;
+    }
+
+    public function getFooterManager(): FooterManager
+    {
+        return $this->footerManager;
+    }
+
+    public function getFooterRenderer(): FooterRenderer
+    {
+        return $this->footerRenderer;
+    }
+
+    public function getHeroManager(): HeroManager
+    {
+        return $this->heroManager;
+    }
+
+    public function getHeroRenderer(): HeroRenderer
+    {
+        return $this->heroRenderer;
+    }
+
     /**
      * Register all design tokens in the DesignTokenRegistry.
      *
@@ -543,9 +688,7 @@ final class Application
      * - Layout         — Container width, site layout
      * - Border Radius  — Border radius scale
      *
-     * Dynamic values (primary color, font family, etc.) are set at
-     * generation time in DesignTokenGenerator. The registry holds
-     * the default/fallback values.
+     * M26 adds layout control tokens.
      */
     private function registerDesignTokens(): void
     {
@@ -583,6 +726,12 @@ final class Application
         // --- Layout tokens ---
         $r->registerToken('--jas-container-width', 'Layout', '1200px', 'Maximum content container width');
         $r->registerToken('--jas-site-layout',     'Layout', 'full-width', 'Site layout mode (boxed or full-width)');
+        $r->registerToken('--jas-header-width',    'Layout', '1200px', 'Header content width');
+        $r->registerToken('--jas-content-width',   'Layout', '1200px', 'Main content area width');
+        $r->registerToken('--jas-sidebar-width',   'Layout', '320px', 'Sidebar column width');
+        $r->registerToken('--jas-footer-width',    'Layout', '1200px', 'Footer content width');
+        $r->registerToken('--jas-section-padding', 'Layout', '2rem', 'Section padding');
+        $r->registerToken('--jas-section-margin',  'Layout', '1.5rem', 'Section margin');
 
         // --- Border Radius tokens ---
         $r->registerToken('--jas-radius-sm', 'Border Radius', '0.25rem', 'Small border radius');
@@ -592,16 +741,6 @@ final class Application
 
     /**
      * Register theme presets in the ThemePresetManager.
-     *
-     * Each preset defines token overrides. Unspecified tokens fall
-     * through to DesignTokenRegistry defaults and DesignSettingsManager values.
-     *
-     * Initial presets (foundation only, no admin UI):
-     * - default  — Standard Jasanika design
-     * - modern   — Cleaner contemporary variant
-     * - minimal  — Reduced visual complexity
-     *
-     * @todo M26 - Theme Presets UI: Admin interface for preset selection.
      */
     private function registerThemePresets(): void
     {
@@ -609,47 +748,26 @@ final class Application
             'default',
             'Default',
             'Standardni Jasanika design',
-            [
-                // Default preset has no overrides — uses base token values.
-            ]
+            []
         );
 
         $this->presetManager->registerPreset(
             'modern',
             'Modern',
             'Cistsi a soucasnejsi varianta',
-            [
-                // Modern token overrides will be defined in a future milestone.
-            ]
+            []
         );
 
         $this->presetManager->registerPreset(
             'minimal',
             'Minimal',
             'Redukovana vizualni komplexita',
-            [
-                // Minimal token overrides will be defined in a future milestone.
-            ]
+            []
         );
     }
 
     /**
      * Register all frontend UI components in the ComponentRegistry.
-     *
-     * Each component defines:
-     * - slug        — Component identifier used in templates
-     * - name        — Human-readable name
-     * - description — Component purpose
-     * - template    — Template file path relative to theme root
-     *
-     * Initial components (M25):
-     * - button     — Action button with variant support
-     * - card       - Content presentation card
-     * - alert      — Semantic alert/message banner
-     * - form-field — Standardized form field
-     *
-     * Additional components will be registered in future milestones
-     * (M29 - Component Library Expansion).
      */
     private function registerComponents(): void
     {

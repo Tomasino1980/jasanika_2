@@ -29,9 +29,17 @@ namespace Jasanika\Design;
  * - Semantic color tokens  (--jas-color-*)
  * - Typography scale       (--jas-font-size-*)
  * - Spacing system         (--jas-space-*)
- * - Layout tokens          (--jas-container-width, --jas-site-layout)
+ * - Layout tokens          (--jas-container-width, --jas-site-layout, etc.)
  * - Border radius tokens   (--jas-radius-*)
  * - Legacy tokens          (--jas-primary-color, --jas-primary-hover)
+ *
+ * M26 additions:
+ * - --jas-header-width
+ * - --jas-content-width
+ * - --jas-sidebar-width
+ * - --jas-footer-width
+ * - --jas-section-padding
+ * - --jas-section-margin
  */
 final class DesignTokenGenerator
 {
@@ -56,7 +64,8 @@ final class DesignTokenGenerator
      * 1. DesignTokenRegistry defaults
      * 2. Dynamic values from DesignSettingsManager
      * 3. Legacy backward compatibility tokens
-     * 4. Preset overrides
+     * 4. Layout control tokens from SettingsManager
+     * 5. Preset overrides
      *
      * @return array<string, string> Token name → CSS value.
      */
@@ -74,11 +83,28 @@ final class DesignTokenGenerator
         $tokens['--jas-container-width'] = $this->designSettingsManager->getContainerWidth();
         $tokens['--jas-site-layout']     = $this->designSettingsManager->getSiteLayout();
 
-        // 3. Compute semantic color --jas-color-text from --jas-color-primary contrast
+        // 3. Compute semantic color values
         // For now, design-system-fixed values are the defaults in the registry.
         // Dynamic derived color logic will be expanded in future milestones.
 
-        // 4. Apply preset overrides
+        // 4. Apply layout control values from SettingsManager
+        $layoutTokens = [
+            '--jas-header-width'   => 'layout_header_width',
+            '--jas-content-width'  => 'layout_content_width',
+            '--jas-sidebar-width'  => 'layout_sidebar_width',
+            '--jas-footer-width'   => 'layout_footer_width',
+            '--jas-section-padding' => 'layout_section_padding',
+            '--jas-section-margin'  => 'layout_section_margin',
+        ];
+
+        foreach ($layoutTokens as $tokenName => $settingKey) {
+            $value = $this->designSettingsManager->getLayoutSetting($settingKey);
+            if ($value !== '') {
+                $tokens[$tokenName] = $value;
+            }
+        }
+
+        // 5. Apply preset overrides
         $overrides = $this->presetManager->getActiveTokenOverrides();
 
         foreach ($overrides as $name => $value) {

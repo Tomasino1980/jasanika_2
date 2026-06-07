@@ -6,7 +6,7 @@ Jasanika_2
 
 Modular WordPress Framework
 
-Current Version: 0.25
+Current Version: 0.26
 
 Status: Active Development
 
@@ -14,7 +14,7 @@ Status: Active Development
 
 # Current Milestone
 
-M25 - Component Styling Framework
+M26 - Site Builder & Settings UI Framework
 
 Status: Completed
 
@@ -49,15 +49,58 @@ Status: Completed
 - M23 - Dynamic Layout System
 - M24 - Design Token Engine & Theme Preset Foundation
 - M25 - Component Styling Framework
+- M26 - Site Builder & Settings UI Framework
 
 ---
 
 # Current Architecture
 
-The project is currently in active development with the Component Styling Framework completed. The design system is now token-driven with a reusable component architecture (button, card, alert, form-field) consuming CSS custom properties from the Design Token Engine. All components follow the registry-driven pattern (ComponentRegistry + ComponentRenderer) and avoid hardcoded visual values.
+The project has been transformed from a framework foundation into the first generation of a configurable Site Builder (M26).
+
+**Settings UI Framework V2:**
+- Tabbed settings interface with categories: General, Appearance, Content, Marketing, Advanced
+- Section system (Section.php) for grouping related settings within categories
+- URL-safe tab state via GET parameter
+- Component-driven settings UI using M25 components (Card, form fields)
+- Category/section expansion support for future milestones
+
+**Header Builder:**
+- HeaderManager owns all header configuration (logo V2, height, colors, sticky, search, top bar)
+- HeaderRenderer owns all header rendering with config-aware output
+- Logo V2 support: desktop, mobile, retina logos with width/height/position controls
+- Sticky header, search toggle, top bar support
+
+**Footer Builder:**
+- FooterManager owns all footer configuration (layout, colors, copyright, menu, social)
+- FooterRenderer owns all footer rendering with landing-page layout awareness
+- Configurable column layouts (1-4 columns)
+- Copyright text with {year} and {sitename} dynamic tags
+- Social icons placeholder (foundation for future milestones)
+
+**Hero Builder:**
+- HeroManager owns all hero configuration (type, height, title, subtitle, background, slides)
+- HeroRenderer owns all hero rendering with static and slider modes
+- HeroSlide value object for slider foundation
+- Overlay support with configurable opacity
+- CTA button integration via ComponentRenderer
+
+**Slider Foundation:**
+- 3 slides stored in Settings Framework (no CPT, no Gutenberg, no Visual Builder)
+- Each slide: title, subtitle, image, button text, button URL
+
+**Layout Controls:**
+- Settings for header width, content width, sidebar width, footer width, section padding/margin
+- Token-compatible via --jas-* CSS custom properties
+- DesignTokenGenerator integration
+
+**Logo System V2:**
+- Desktop Logo, Mobile Logo, Retina Logo
+- Logo Width, Logo Height, Logo Position (left/center/right)
+
+**Debug Support:**
+- Site Builder debug comment in WP_DEBUG mode showing Header/Footer/Hero status
 
 Architecture documents:
-
 * project-rules.md
 * folder-structure.md
 * roadmap.md
@@ -154,6 +197,16 @@ Architecture documents:
 - Form field component with text, email, search, textarea, select support
 - components.css — token-driven component styling (no hardcoded values)
 - Component debug output in WP_DEBUG mode
+- Generic reusable Setting class for inline setting registration
+- Section system (Section.php) for settings grouping within categories
+- Tabbed Settings UI with URL-safe tab state
+- Header Builder (HeaderManager, HeaderRenderer) with Logo V2 support
+- Footer Builder (FooterManager, FooterRenderer) with column layouts
+- Hero Builder (HeroManager, HeroRenderer, HeroSlide) with static and slider modes
+- Slider foundation (3 slides, Settings Framework storage)
+- Layout controls (header/content/sidebar/footer width, section padding/margin)
+- Site Builder debug output in WP_DEBUG mode
+- Desktop, Mobile, Retina logo support with position/size controls
 
 ---
 
@@ -189,7 +242,7 @@ None
 
 # Next Planned Milestone
 
-M26 - Theme Presets UI
+M27 - Theme Presets UI
 
 ---
 

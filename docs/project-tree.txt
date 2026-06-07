@@ -93,6 +93,7 @@ src/
 ├── Hooks/
 │   └── HookManager.php
 ├── Settings/
+│   ├── Setting.php
 │   ├── SettingsRegistry.php
 │   ├── SiteLayoutSetting.php
 │   ├── LogoSetting.php
@@ -102,6 +103,8 @@ src/
 ├── Admin/
 │   ├── Pages/
 │   │   └── DashboardPage.php
+│   ├── Sections/
+│   │   └── Section.php
 │   ├── Fields/
 │   │   ├── FieldInterface.php
 │   │   ├── AbstractField.php
@@ -115,6 +118,16 @@ src/
 │   ├── AdminPage.php
 │   ├── SettingsManager.php
 │   └── SettingsPage.php
+├── Header/
+│   ├── HeaderManager.php
+│   └── HeaderRenderer.php
+├── Footer/
+│   ├── FooterManager.php
+│   └── FooterRenderer.php
+├── Hero/
+│   ├── HeroManager.php
+│   ├── HeroRenderer.php
+│   └── HeroSlide.php
 ├── WooCommerce/
 ├── Media/
 │   └── MediaManager.php

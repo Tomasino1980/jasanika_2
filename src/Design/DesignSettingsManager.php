@@ -152,6 +152,26 @@ final class DesignSettingsManager
     }
 
     /**
+     * Get a layout control setting value.
+     *
+     * Reads layout-related settings (header width, content width, etc.)
+     * from SettingsManager and returns them as CSS-ready strings.
+     *
+     * @param string $key The setting key (e.g. 'layout_header_width').
+     * @return string The CSS value or empty string if not set.
+     */
+    public function getLayoutSetting(string $key): string
+    {
+        $value = $this->settingsManager->get($key);
+
+        if (empty($value) || !is_string($value)) {
+            return '';
+        }
+
+        return $value;
+    }
+
+    /**
      * Get all design settings as an associative array of token key to value.
      *
      * Returns normalized CSS-ready values suitable for custom property generation.

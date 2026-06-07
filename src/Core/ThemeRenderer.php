@@ -8,6 +8,9 @@ use Jasanika\Admin\SettingsManager;
 use Jasanika\Assets\AssetManager;
 use Jasanika\Components\ComponentRenderer;
 use Jasanika\Design\DesignTokenGenerator;
+use Jasanika\Footer\FooterRenderer;
+use Jasanika\Header\HeaderRenderer;
+use Jasanika\Hero\HeroRenderer;
 use Jasanika\Hooks\HookManager;
 use Jasanika\Layout\LayoutManager;
 use Jasanika\Layout\LayoutRenderer;
@@ -18,8 +21,10 @@ use Jasanika\Navigation\NavigationManager;
  *
  * Responsibilities:
  * - Orchestrate page rendering through LayoutManager and LayoutRenderer
- * - Render header with site branding and navigation
- * - Render footer with navigation and copyright
+ * - Render header via HeaderRenderer
+ * - Render hero via HeroRenderer (optional)
+ * - Render footer via FooterRenderer
+ * - Render content area
  * - Resolve content template based on WordPress hierarchy
  * - Register frontend asset enqueuing
  * - Expose rendering services to templates (orchestration-only)
@@ -28,12 +33,6 @@ use Jasanika\Navigation\NavigationManager;
  * Layout rendering is delegated to LayoutRenderer.
  * No direct layout conditionals in this class.
  * No frontend rendering logic in Application.
- *
- * @todo Template Context Refactor: Current template resolution uses
- *       WordPress conditional tags inside ThemeRenderer. Extract into
- *       a dedicated TemplateResolver service when frontend architecture
- *       stabilizes. Do NOT remove static instance pattern yet —
- *       frontend is still evolving.
  */
 final class ThemeRenderer
 {
@@ -50,6 +49,9 @@ final class ThemeRenderer
     private LayoutManager $layoutManager;
     private LayoutRenderer $layoutRenderer;
     private ComponentRenderer $componentRenderer;
+    private HeaderRenderer $headerRenderer;
+    private FooterRenderer $footerRenderer;
+    private HeroRenderer $heroRenderer;
 
     public function __construct(
         FrameworkInfo $frameworkInfo,
@@ -62,7 +64,10 @@ final class ThemeRenderer
         DesignTokenGenerator $designTokenGenerator,
         LayoutManager $layoutManager,
         LayoutRenderer $layoutRenderer,
-        ComponentRenderer $componentRenderer
+        ComponentRenderer $componentRenderer,
+        HeaderRenderer $headerRenderer,
+        FooterRenderer $footerRenderer,
+        HeroRenderer $heroRenderer
     ) {
         $this->frameworkInfo = $frameworkInfo;
         $this->settingsManager = $settingsManager;
@@ -75,6 +80,9 @@ final class ThemeRenderer
         $this->layoutManager = $layoutManager;
         $this->layoutRenderer = $layoutRenderer;
         $this->componentRenderer = $componentRenderer;
+        $this->headerRenderer = $headerRenderer;
+        $this->footerRenderer = $footerRenderer;
+        $this->heroRenderer = $heroRenderer;
     }
 
     /**
@@ -102,6 +110,9 @@ final class ThemeRenderer
 
         // Output component debug information in <head> when WP_DEBUG is enabled
         $this->hookManager->addAction('wp_head', [$this->componentRenderer->getRegistry(), 'renderDebugComment']);
+
+        // Output Site Builder debug information in <head> when WP_DEBUG is enabled
+        $this->hookManager->addAction('wp_head', [$this, 'renderSiteBuilderDebugComment']);
 
         // Enqueue frontend assets during the wp_enqueue_scripts hook
         $this->hookManager->addAction('wp_enqueue_scripts', [$this, 'enqueueFrontendAssets']);
@@ -181,8 +192,33 @@ final class ThemeRenderer
     }
 
     /**
+     * Get the HeaderRenderer instance.
+     */
+    public function getHeaderRenderer(): HeaderRenderer
+    {
+        return $this->headerRenderer;
+    }
+
+    /**
+     * Get the FooterRenderer instance.
+     */
+    public function getFooterRenderer(): FooterRenderer
+    {
+        return $this->footerRenderer;
+    }
+
+    /**
+     * Get the HeroRenderer instance.
+     */
+    public function getHeroRenderer(): HeroRenderer
+    {
+        return $this->heroRenderer;
+    }
+
+    /**
      * Render the header template.
      *
+     * Delegates to HeaderRenderer for full configuration-aware header output.
      * Called from templates/layout.php via ThemeRenderer::getInstance().
      */
     public static function renderHeader(): void
@@ -197,8 +233,26 @@ final class ThemeRenderer
     }
 
     /**
+     * Render the hero section.
+     *
+     * Delegates to HeroRenderer.
+     * Called from templates/layout.php via ThemeRenderer::getInstance().
+     */
+    public static function renderHero(): void
+    {
+        $instance = self::$instance;
+
+        if (!$instance) {
+            return;
+        }
+
+        $instance->heroRenderer->render();
+    }
+
+    /**
      * Render the footer template.
      *
+     * Delegates to FooterRenderer for full configuration-aware footer output.
      * Called from templates/layout.php via ThemeRenderer::getInstance().
      */
     public static function renderFooter(): void
@@ -219,11 +273,6 @@ final class ThemeRenderer
      * (page, single, archive, search, 404) and includes it.
      *
      * Called from templates/layout.php.
-     *
-     * @todo Template Context Refactor: Extract template resolution into a
-     *       dedicated TemplateResolver service when frontend architecture stabilizes.
-     *       The current static access pattern is intentional to prevent
-     *       architectural churn while frontend is still evolving.
      */
     public static function renderContent(): void
     {
@@ -240,12 +289,6 @@ final class ThemeRenderer
 
     /**
      * Resolve the content template path based on WordPress conditional tags.
-     *
-     * Maps WordPress template hierarchy to framework template files.
-     * Falls back to content.php for uncategorized or future template types.
-     *
-     * @todo Template Context Refactor: Move to dedicated TemplateResolver
-     *       when implementing ThemeRenderer refactor milestone.
      */
     private function resolveContentTemplate(): string
     {
@@ -350,5 +393,31 @@ final class ThemeRenderer
     public function getFrameworkInfo(): FrameworkInfo
     {
         return $this->frameworkInfo;
+    }
+
+    /**
+     * Render Site Builder debug comment when WP_DEBUG is enabled.
+     *
+     * Outputs the status of Header, Footer, Hero builders and active
+     * settings category information.
+     */
+    public function renderSiteBuilderDebugComment(): void
+    {
+        if (!defined('WP_DEBUG') || !WP_DEBUG) {
+            return;
+        }
+
+        $headerEnabled = $this->headerRenderer !== null ? 'Enabled' : 'Disabled';
+        $footerEnabled = $this->footerRenderer !== null ? 'Enabled' : 'Disabled';
+        $heroStatus = $this->heroRenderer !== null && $this->heroRenderer->getManager()->isEnabled()
+            ? 'Enabled'
+            : 'Disabled';
+
+        echo '<!--' . "\n";
+        echo 'Jasanika Site Builder' . "\n";
+        echo 'Header: ' . $headerEnabled . "\n";
+        echo 'Footer: ' . $footerEnabled . "\n";
+        echo 'Hero: ' . $heroStatus . "\n";
+        echo '-->' . "\n";
     }
 }
