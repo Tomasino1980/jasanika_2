@@ -6,13 +6,13 @@ Jasanika_2
 
 Modular WordPress Framework
 
-Current Version: 0.29
+Current Version: 0.30
 
 ---
 
 # Current Milestone
 
-M29 - Settings UI Refactor & Design System
+M30 - Admin UI Dark Card Layout
 
 Status: Completed
 
@@ -53,6 +53,7 @@ Status: Completed
 - M28.1 - Constructor Dependency Order Fix
 - M28.2 - Bootstrap Documentation & Architecture Cleanup
 - M29 - Settings UI Refactor & Design System
+- M30 - Admin UI Dark Card Layout
 
 ---
 
@@ -328,6 +329,16 @@ The project has been transformed into a configurable Site Builder with a user-fr
 - **M29 NEW:** Advanced sub-sections (Performance, Debug, Custom CSS, Custom JS)
 - **M29 NEW:** Responsive admin UI — breakpoints at 1366px, 1024px, 782px, 600px
 - **M29 NEW:** Admin CSS rewritten with --jas-admin-* tokens, card system, subtle borders
+- **M30 NEW:** Dark Card Layout — dark surface (#24212b) for all settings cards
+- **M30 NEW:** Subtle border system — 1px rgba borders, token-driven (--jas-admin-color-border)
+- **M30 NEW:** Standardized radius — cards/buttons 4px, inputs 2px
+- **M30 NEW:** Consistent card padding — 24px card, 16px fields, 8px labels
+- **M30 NEW:** Card header with subtle divider between header/description/body
+- **M30 NEW:** Visual hierarchy — Background → Card → Section → Field → Input
+- **M30 NEW:** Input alignment cleanup — uniform row height, consistent label/input widths
+- **M30 NEW:** Submit button styled with brand accent color
+- **M30 NEW:** Dark navigation bar for top-level tabs
+- **M30 NEW:** Token expansion — surface-hover, input-bg, input-text, header-bg, divider, border-strong
 
 ---
 
@@ -363,7 +374,7 @@ None
 
 # Next Planned Milestone
 
-M30 - Advanced Color System
+M31 - Advanced Color System
 
 ---
 

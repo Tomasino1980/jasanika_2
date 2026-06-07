@@ -65,6 +65,40 @@ Date: 2026-06-07
 
 ---
 
+# M30 - Admin UI Dark Card Layout
+
+Version: 0.30
+
+Date: 2026-06-07
+
+## Added
+
+- Dark Card Layout — dark surface (#24212b) for all settings cards
+- Subtle border system — 1px rgba borders, token-driven (--jas-admin-color-border)
+- Standardized radius — cards/buttons 4px, inputs 2px
+- Consistent card padding — 24px card, 16px fields, 8px labels
+- Card header with subtle divider between header/description/body
+- Visual hierarchy — Background → Card → Section → Field → Input
+- Input alignment cleanup — uniform row height, consistent label/input widths
+- Submit button styled with brand accent color
+- Dark navigation bar for top-level tabs
+- Token expansion — surface-hover, input-bg, input-text, header-bg, divider, border-strong
+
+## Changed
+
+- AdminDesignRegistry — M30 color tokens (dark surface, input colors, header-bg, divider, border-strong), radius MD aliased to SM (4px)
+- admin.css — complete rewrite: dark card layout, dark form inputs, token-driven shadows, improved responsive styles
+- Application.php — version 0.30, all asset versions updated
+- config/app.php — version updated to 0.30
+- style.css — version updated to 0.30
+- docs/analyze.md — version 0.30, M30 completed, M30 implemented components
+
+## Fixed
+
+- N/A
+
+---
+
 # M29 - Settings UI Refactor & Design System
 
 Version: 0.29

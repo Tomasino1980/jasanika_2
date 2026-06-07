@@ -86,14 +86,14 @@ use Jasanika\Widgets\WidgetAreaManager;
  *     ├─ HeroManager
  *     └─ HeroRenderer
  *
- * Current Version:
- * 0.29
-*
- * These are framework prerequisites required by all other systems.
+* Current Version:
+ * 0.30
  *
- * M1 — Core Foundation
- * M2 — Service Container
- * M29 — AdminDesignRegistry, DesignStyleRegistry
+ * M29 — Settings UI Refactor & Design System
+ * M30 — Admin UI Dark Card Layout
+ *
+ * @see FrameworkInfo
+ * @see ThemeRenderer
  */
 
 final class Application
@@ -215,7 +215,7 @@ final class Application
 
         $this->frameworkInfo = new FrameworkInfo(
             'Jasanika 2',
-            '0.29'
+            '0.30'
         );
 
         $this->container = new Container();
@@ -1061,7 +1061,7 @@ final class Application
         $script = new Asset(
             'jasanika-media-field',
             get_template_directory_uri() . '/assets/admin/js/media-field.js',
-            '0.29',
+            '0.30',
             ['jquery'],
             'all',
             true
@@ -1090,7 +1090,7 @@ final class Application
         $adminCss = new Asset(
             'jasanika-admin',
             get_template_directory_uri() . '/assets/css/admin.css',
-            '0.29'
+            '0.30'
         );
 
         $this->assetManager->registerStyle($adminCss);
@@ -1134,7 +1134,7 @@ final class Application
         $style = new Asset(
             'jasanika-frontend',
             get_template_directory_uri() . '/assets/css/frontend.css',
-            '0.29'
+            '0.30'
         );
 
         $this->assetManager->registerStyle($style);
@@ -1142,7 +1142,7 @@ final class Application
         $tokens = new Asset(
             'jasanika-tokens',
             get_template_directory_uri() . '/assets/css/tokens.css',
-            '0.29'
+            '0.30'
         );
 
         $this->assetManager->registerStyle($tokens);
@@ -1150,7 +1150,7 @@ final class Application
         $components = new Asset(
             'jasanika-components',
             get_template_directory_uri() . '/assets/css/components.css',
-            '0.29'
+            '0.30'
         );
 
         $this->assetManager->registerStyle($components);
@@ -1159,7 +1159,7 @@ final class Application
         $headerStyle = new Asset(
             'jasanika-header',
             get_template_directory_uri() . '/assets/css/header.css',
-            '0.29'
+            '0.30'
         );
 
         $this->assetManager->registerStyle($headerStyle);
@@ -1168,7 +1168,7 @@ final class Application
         $headerScript = new Asset(
             'jasanika-header',
             get_template_directory_uri() . '/assets/js/header.js',
-            '0.29',
+            '0.30',
             [],
             'all',
             true
@@ -1179,7 +1179,7 @@ final class Application
         $script = new Asset(
             'jasanika-frontend',
             get_template_directory_uri() . '/assets/js/frontend.js',
-            '0.29',
+            '0.30',
             [],
             'all',
             true

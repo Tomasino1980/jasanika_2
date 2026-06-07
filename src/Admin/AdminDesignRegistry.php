@@ -12,16 +12,23 @@ namespace Jasanika\Admin;
  * all admin UI components for consistent visual design.
  *
  * M29 — Settings UI Refactor & Design System.
+ * M30 — Admin UI Dark Card Layout (dark surface, subtle borders, radius standardization).
  *
  * Token categories:
- * - Radius    — Border radius scale (XS=2px, SM=4px, MD=6px)
+ * - Radius    — Border radius scale (XS=2px inputs, SM=4px cards/buttons)
  * - Spacing   — 8px grid system (xs-xl)
- * - Colors    — Admin theme colors (border, surface, background, text, muted, accent)
+ * - Colors    — Admin theme colors for dark card layout
  * - Shadows   — Minimal box-shadow definitions
  *
+ * Dark Card Layout (M30):
+ * - Surface: #24212b (dark card background)
+ * - Background: #f0f0f1 (WordPress default page background — contrast with dark cards)
+ * - Text: #f5f2f7 (light text on dark cards)
+ * - Input bg: #1b1a1f (dark input fields within cards)
+ * - Borders: rgba(255,255,255,0.08) (subtle)
+ *
  * Usage:
- *   $registry = AdminDesignRegistry::getInstance();
- *   $tokens   = $registry->getAllTokens();
+ *   $tokens = AdminDesignRegistry::getAllTokens();
  */
 final class AdminDesignRegistry
 {
@@ -33,7 +40,7 @@ final class AdminDesignRegistry
     /**
      * Initialize default admin design tokens.
      *
-     * Called automatically on first access via getInstance().
+     * Called automatically on first access via getAllTokens().
      */
     private static function init(): void
     {
@@ -44,38 +51,42 @@ final class AdminDesignRegistry
         self::$initialized = true;
 
         // --- Radius tokens ---
-        self::registerToken('--jas-admin-radius-xs', 'Radius', '2px', 'Extra small border radius');
-        self::registerToken('--jas-admin-radius-sm', 'Radius', '4px', 'Small border radius');
-        self::registerToken('--jas-admin-radius-md', 'Radius', '6px', 'Medium border radius');
+        // XS = 2px (inputs), SM = 4px (cards, buttons)
+        self::registerToken('--jas-admin-radius-xs', 'Radius', '2px', 'Extra small border radius — inputs');
+        self::registerToken('--jas-admin-radius-sm', 'Radius', '4px', 'Small border radius — cards, buttons');
+        self::registerToken('--jas-admin-radius-md', 'Radius', '4px', 'Medium border radius (alias for SM)');
 
         // --- Spacing tokens (8px grid) ---
         self::registerToken('--jas-admin-space-xs', 'Spacing', '4px', 'Extra small spacing (0.5×)');
-        self::registerToken('--jas-admin-space-sm', 'Spacing', '8px', 'Small spacing (1×)');
-        self::registerToken('--jas-admin-space-md', 'Spacing', '16px', 'Medium spacing (2×)');
-        self::registerToken('--jas-admin-space-lg', 'Spacing', '24px', 'Large spacing (3×)');
+        self::registerToken('--jas-admin-space-sm', 'Spacing', '8px', 'Small spacing (1×) — label spacing');
+        self::registerToken('--jas-admin-space-md', 'Spacing', '16px', 'Medium spacing (2×) — field spacing');
+        self::registerToken('--jas-admin-space-lg', 'Spacing', '24px', 'Large spacing (3×) — card padding');
         self::registerToken('--jas-admin-space-xl', 'Spacing', '32px', 'Extra large spacing (4×)');
 
         // --- Color tokens ---
-        self::registerToken('--jas-admin-color-border',     'Color', 'rgba(255,255,255,0.08)', 'Border and divider color');
-        self::registerToken('--jas-admin-color-surface',    'Color', '#ffffff', 'Card and panel surface background');
-        self::registerToken('--jas-admin-color-background', 'Color', '#f0f0f1', 'Page background color');
-        self::registerToken('--jas-admin-color-text',       'Color', '#1d2327', 'Primary text color');
-        self::registerToken('--jas-admin-color-text-muted', 'Color', '#8c8f94', 'Muted/secondary text color');
-        self::registerToken('--jas-admin-color-accent',     'Color', '#b78acb', 'Primary accent (brand purple)');
-        self::registerToken('--jas-admin-color-accent-hover', 'Color', '#c79cda', 'Primary accent hover state');
+        // Dark Card Layout (M30):
+        // Cards use dark surface (#24212b) against WordPress light page background (#f0f0f1).
+        self::registerToken('--jas-admin-color-surface',        'Color', '#24212b', 'Card and panel surface background (dark)');
+        self::registerToken('--jas-admin-color-surface-hover',  'Color', '#2a2733', 'Card surface hover state');
+        self::registerToken('--jas-admin-color-bg',             'Color', '#f0f0f1', 'Page background color (WordPress default)');
+        self::registerToken('--jas-admin-color-border',         'Color', 'rgba(255,255,255,0.08)', 'Border and divider color (subtle)');
+        self::registerToken('--jas-admin-color-border-strong',  'Color', 'rgba(255,255,255,0.12)', 'Stronger border for interactive elements');
+        self::registerToken('--jas-admin-color-text',           'Color', '#f5f2f7', 'Primary text color on dark surface');
+        self::registerToken('--jas-admin-color-text-muted',     'Color', '#b9b1c4', 'Muted/secondary text color');
+        self::registerToken('--jas-admin-color-accent',         'Color', '#b78acb', 'Primary accent (brand purple)');
+        self::registerToken('--jas-admin-color-accent-hover',   'Color', '#c79cda', 'Primary accent hover state');
+        self::registerToken('--jas-admin-color-input-bg',       'Color', '#1b1a1f', 'Input field background within dark cards');
+        self::registerToken('--jas-admin-color-input-text',     'Color', '#f5f2f7', 'Input field text color');
+        self::registerToken('--jas-admin-color-header-bg',      'Color', 'rgba(255,255,255,0.03)', 'Card header background (subtle light overlay)');
+        self::registerToken('--jas-admin-color-divider',        'Color', 'rgba(255,255,255,0.06)', 'Subtle divider between header/body/description');
 
         // --- Shadow tokens ---
-        self::registerToken('--jas-admin-shadow-sm', 'Shadow', '0 1px 2px rgba(0,0,0,0.04)', 'Small shadow');
-        self::registerToken('--jas-admin-shadow-md', 'Shadow', '0 2px 6px rgba(0,0,0,0.06)', 'Medium shadow');
+        self::registerToken('--jas-admin-shadow-sm', 'Shadow', '0 1px 3px rgba(0,0,0,0.12)', 'Small shadow for cards');
+        self::registerToken('--jas-admin-shadow-md', 'Shadow', '0 2px 8px rgba(0,0,0,0.16)', 'Medium shadow for active/pressed states');
     }
 
     /**
      * Register a single admin design token.
-     *
-     * @param string $token       CSS custom property name (e.g. --jas-admin-space-sm).
-     * @param string $category    Token category (Radius, Spacing, Color, Shadow).
-     * @param string $value       CSS value of the token.
-     * @param string $description Human-readable description of the token.
      */
     public static function registerToken(string $token, string $category, string $value, string $description = ''): void
     {
@@ -133,10 +144,6 @@ final class AdminDesignRegistry
 
     /**
      * Generate CSS custom property declarations from all registered tokens.
-     *
-     * Useful for inline style injection when an external CSS file is not preferred.
-     *
-     * @return string CSS declarations (without selector).
      */
     public static function toCss(): string
     {
