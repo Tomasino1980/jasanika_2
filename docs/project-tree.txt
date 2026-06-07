@@ -73,7 +73,9 @@ src/
 │   └── ConfigRepository.php
 ├── Design/
 │   ├── DesignSettingsManager.php
-│   └── DesignTokenGenerator.php
+│   ├── DesignTokenGenerator.php
+│   ├── DesignTokenRegistry.php
+│   └── ThemePresetManager.php
 ├── Layout/
 │   ├── LayoutManager.php
 │   └── LayoutRenderer.php

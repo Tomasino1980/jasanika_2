@@ -109,6 +109,49 @@ final class DesignSettingsManager
     }
 
     /**
+     * Get the primary color hover value.
+     *
+     * Calculates a lightened hover variant from the current primary color.
+     * Uses a predefined lightening factor of 10 % toward white.
+     * Falls back to #c79cda (design system primary hover) when no value is set.
+     */
+    public function getPrimaryColorHover(): string
+    {
+        $color = $this->getPrimaryColor();
+
+        // Match known primary colors for deterministic behavior
+        return match ($color) {
+            '#b78acb' => '#c79cda',
+            default   => $this->lightenColor($color, 0.10),
+        };
+    }
+
+    /**
+     * Lighten a hex color by a given factor toward white.
+     *
+     * @param string $hex     Hex color string (with or without #).
+     * @param float  $factor  Lightening factor (0.0 = no change, 1.0 = white).
+     */
+    private function lightenColor(string $hex, float $factor): string
+    {
+        $hex = ltrim($hex, '#');
+
+        if (strlen($hex) !== 6) {
+            return $hex;
+        }
+
+        $r = (int) hexdec(substr($hex, 0, 2));
+        $g = (int) hexdec(substr($hex, 2, 2));
+        $b = (int) hexdec(substr($hex, 4, 2));
+
+        $r = (int) round($r + (255 - $r) * $factor);
+        $g = (int) round($g + (255 - $g) * $factor);
+        $b = (int) round($b + (255 - $b) * $factor);
+
+        return sprintf('#%02x%02x%02x', min(255, $r), min(255, $g), min(255, $b));
+    }
+
+    /**
      * Get all design settings as an associative array of token key to value.
      *
      * Returns normalized CSS-ready values suitable for custom property generation.
@@ -119,6 +162,7 @@ final class DesignSettingsManager
     {
         return [
             '--jas-primary-color'    => $this->getPrimaryColor(),
+            '--jas-primary-hover'    => $this->getPrimaryColorHover(),
             '--jas-font-family'      => $this->getFontFamily(),
             '--jas-container-width'  => $this->getContainerWidth(),
             '--jas-site-layout'      => $this->getSiteLayout(),
@@ -134,6 +178,7 @@ final class DesignSettingsManager
     {
         return [
             'Primary Color'    => $this->getPrimaryColor(),
+            'Primary Hover'    => $this->getPrimaryColorHover(),
             'Typography'       => $this->getTypographyKey(),
             'Container Width'  => $this->getContainerWidth(),
             'Layout'           => $this->getSiteLayout(),

@@ -5,42 +5,102 @@ declare(strict_types=1);
 namespace Jasanika\Design;
 
 /**
- * Design token generator for frontend CSS custom properties.
+ * Design Token Generator.
  *
- * Converts design settings into CSS custom properties and generates
- * the inline style block in the document head. Also provides a
- * debug comment block visible only when WP_DEBUG is enabled.
+ * Converts design settings, registered token definitions, and preset
+ * overrides into CSS custom properties for frontend consumption.
  *
- * Responsibilities:
- * - Convert settings into CSS custom properties
- * - Generate frontend design token set
- * - Output debug information in development mode
+ * This is the central token generation engine for the Jasanika design system.
+ * It owns no token definitions — those belong to DesignTokenRegistry.
+ * It owns no preset logic — that belongs to ThemePresetManager.
+ * It orchestrates token generation from all sources.
  *
  * Flow:
- * ThemeRenderer → DesignTokenGenerator → <style> block in <head>
+ * DesignSettingsManager (dynamic values)
+ *   + DesignTokenRegistry (defaults & definitions)
+ *   + ThemePresetManager (overrides)
+ *   ↓
+ * DesignTokenGenerator::getAllTokens()
+ *   ↓
+ * renderInlineStyles() → <style id="jasanika-design-tokens"> in <head>
+ * renderDebugComment() → HTML comment in WP_DEBUG mode
  *
- * No settings lookups occur directly in templates.
+ * Generates:
+ * - Semantic color tokens  (--jas-color-*)
+ * - Typography scale       (--jas-font-size-*)
+ * - Spacing system         (--jas-space-*)
+ * - Layout tokens          (--jas-container-width, --jas-site-layout)
+ * - Border radius tokens   (--jas-radius-*)
+ * - Legacy tokens          (--jas-primary-color, --jas-primary-hover)
  */
 final class DesignTokenGenerator
 {
     private DesignSettingsManager $designSettingsManager;
+    private DesignTokenRegistry $tokenRegistry;
+    private ThemePresetManager $presetManager;
 
-    public function __construct(DesignSettingsManager $designSettingsManager)
-    {
+    public function __construct(
+        DesignSettingsManager $designSettingsManager,
+        DesignTokenRegistry $tokenRegistry,
+        ThemePresetManager $presetManager
+    ) {
         $this->designSettingsManager = $designSettingsManager;
+        $this->tokenRegistry = $tokenRegistry;
+        $this->presetManager = $presetManager;
+    }
+
+    /**
+     * Generate the complete token set.
+     *
+     * Resolution order (later overrides earlier):
+     * 1. DesignTokenRegistry defaults
+     * 2. Dynamic values from DesignSettingsManager
+     * 3. Legacy backward compatibility tokens
+     * 4. Preset overrides
+     *
+     * @return array<string, string> Token name → CSS value.
+     */
+    public function getAllTokens(): array
+    {
+        // 1. Start with registry defaults
+        $tokens = $this->tokenRegistry->getDefaults();
+
+        // 2. Override with dynamic design settings
+        $tokens['--jas-primary-color']   = $this->designSettingsManager->getPrimaryColor();
+        $tokens['--jas-color-primary']   = $this->designSettingsManager->getPrimaryColor();
+        $tokens['--jas-primary-hover']   = $this->designSettingsManager->getPrimaryColorHover();
+        $tokens['--jas-color-primary-hover'] = $this->designSettingsManager->getPrimaryColorHover();
+        $tokens['--jas-font-family']     = $this->designSettingsManager->getFontFamily();
+        $tokens['--jas-container-width'] = $this->designSettingsManager->getContainerWidth();
+        $tokens['--jas-site-layout']     = $this->designSettingsManager->getSiteLayout();
+
+        // 3. Compute semantic color --jas-color-text from --jas-color-primary contrast
+        // For now, design-system-fixed values are the defaults in the registry.
+        // Dynamic derived color logic will be expanded in future milestones.
+
+        // 4. Apply preset overrides
+        $overrides = $this->presetManager->getActiveTokenOverrides();
+
+        foreach ($overrides as $name => $value) {
+            $tokens[$name] = $value;
+        }
+
+        return $tokens;
     }
 
     /**
      * Generate and output the inline <style> block with CSS custom properties.
      *
      * Called via the wp_head action hook.
-     * Outputs :root-level CSS custom properties for frontend consumption.
+     * Outputs :root-level and .jas-theme-level CSS custom properties.
      */
     public function renderInlineStyles(): void
     {
-        $tokens = $this->designSettingsManager->getAllTokens();
+        $tokens = $this->getAllTokens();
 
         echo '<style id="jasanika-design-tokens">' . "\n";
+
+        // :root group — base token context
         echo ':root {' . "\n";
 
         foreach ($tokens as $name => $value) {
@@ -48,14 +108,26 @@ final class DesignTokenGenerator
         }
 
         echo '}' . "\n";
+
+        // .jas-theme group — prepared for future theme switching.
+        // When a theme class is applied to a container, these tokens
+        // override the :root-level values within that scope.
+        echo '.jas-theme {' . "\n";
+
+        foreach ($tokens as $name => $value) {
+            echo '  ' . $name . ': ' . esc_attr($value) . ';' . "\n";
+        }
+
+        echo '}' . "\n";
+
         echo '</style>' . "\n";
     }
 
     /**
      * Generate debug HTML comment when WP_DEBUG is enabled.
      *
-     * Outputs current design token values as an HTML comment.
-     * Never visible in production environments.
+     * Outputs current design token values, active preset, and token count
+     * as an HTML comment. Never visible in production environments.
      */
     public function renderDebugComment(): void
     {
@@ -63,15 +135,22 @@ final class DesignTokenGenerator
             return;
         }
 
-        $debugInfo = $this->designSettingsManager->getDebugInfo();
+        $color    = $this->designSettingsManager->getPrimaryColor();
+        $font     = $this->designSettingsManager->getTypographyKey();
+        $width    = $this->designSettingsManager->getContainerWidth();
+        $layout   = $this->designSettingsManager->getSiteLayout();
+        $preset   = $this->presetManager->getActivePreset();
+        $tokens   = $this->getAllTokens();
 
         echo '<!--' . "\n";
         echo 'Jasanika Design Tokens' . "\n";
-
-        foreach ($debugInfo as $label => $value) {
-            echo $label . ': ' . esc_attr((string) $value) . "\n";
-        }
-
+        echo 'Preset: ' . esc_attr($preset) . "\n";
+        echo 'Primary Color: ' . esc_attr($color) . "\n";
+        echo 'Font Family: ' . esc_attr(ucfirst($font)) . "\n";
+        echo 'Container Width: ' . esc_attr($width) . "\n";
+        echo 'Layout: ' . esc_attr($layout) . "\n";
+        echo '--' . "\n";
+        echo 'Token Count: ' . count($tokens) . "\n";
         echo '-->' . "\n";
     }
 

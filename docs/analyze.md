@@ -6,7 +6,7 @@ Jasanika_2
 
 Modular WordPress Framework
 
-Current Version: 0.23
+Current Version: 0.24
 
 Status: Active Development
 
@@ -14,7 +14,7 @@ Status: Active Development
 
 # Current Milestone
 
-M23 - Dynamic Layout System
+M24 - Design Token Engine & Theme Preset Foundation
 
 Status: Completed
 
@@ -47,12 +47,13 @@ Status: Completed
 - M21 - Widget Areas & Layout Regions Architecture
 - M22 - Theme Customizer & Design Settings Integration
 - M23 - Dynamic Layout System
+- M24 - Design Token Engine & Theme Preset Foundation
 
 ---
 
 # Current Architecture
 
-The project is currently in active development with design settings integration completed alongside the existing frontend rendering and registry-driven settings architecture.
+The project is currently in active development with the Design Token Engine and Theme Preset Foundation completed. The design system is now token-driven with semantic color tokens, typography scale, spacing system, border radius tokens, and a preset architecture ready for future expansion.
 
 Architecture documents:
 
@@ -135,6 +136,15 @@ Architecture documents:
 - Layout debug information (HTML comment) in WP_DEBUG mode
 - Layout CSS classes (jas-layout, jas-layout--sidebar, jas-layout--full-width, jas-layout--landing)
 - Landing page layout (no sidebar, no footer widgets)
+- DesignTokenRegistry with token definitions (Color, Typography, Spacing, Layout, Border Radius)
+- ThemePresetManager with preset registration (default, modern, minimal)
+- Semantic color tokens (--jas-color-primary, --jas-color-text, --jas-color-background, --jas-color-surface, --jas-color-border, --jas-color-heading)
+- Typography scale tokens (--jas-font-size-xs through --jas-font-size-2xl)
+- Spacing system tokens (--jas-space-xs through --jas-space-xl)
+- Border radius tokens (--jas-radius-sm, --jas-radius-md, --jas-radius-lg)
+- Extended design token debug output with preset and token count
+- Preset-aware token generation architecture
+- .jas-theme CSS context for future theme switching
 
 ---
 

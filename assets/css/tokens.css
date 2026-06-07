@@ -2,14 +2,33 @@
  * Jasanika 2 Design Tokens
  *
  * Modular WordPress Framework
- * Version 0.22
+ * Version 0.24
  *
  * Consumes generated design tokens (CSS custom properties) set by
  * DesignTokenGenerator in the document <head>.
  *
+ * Token architecture:
+ * - :root        — base token context (always active)
+ * - .jas-theme   — scoped token context for future theme switching
+ *
  * No duplicated values. All design-driven values reference
  * CSS custom properties with sensible fallbacks.
  */
+
+/* ========================================
+   Theme Context (Future Theme Switching)
+   ======================================== *
+ *
+ * The .jas-theme class is prepared for future theme switching.
+ * When a theme class is applied to a container, .jas-theme tokens
+ * override :root-level values within that scope.
+ *
+ * Present tokens are set dynamically by DesignTokenGenerator.
+ * This block exists as a CSS architecture placeholder.
+ */
+.jas-theme {
+    /* Tokens are generated inline by DesignTokenGenerator */
+}
 
 /* ========================================
    Site Layout

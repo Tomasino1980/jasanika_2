@@ -698,9 +698,43 @@ Date: 2026-06-07
 - ThemeRenderer constructor now accepts LayoutManager and LayoutRenderer dependencies
 - layout.php delegates to ThemeRenderer::renderLayout() instead of renderContentArea()
 - footer.php skips footer widget regions for landing-page layout
-- frontend.css extended with layout system CSS classes
-- Application creates LayoutManager and LayoutRenderer instances
-- Version updated to 0.23
+## Fixed
+
+- N/A
+
+---
+
+# M24 - Design Token Engine & Theme Preset Foundation
+
+Version: 0.24
+
+Date: 2026-06-07
+
+## Added
+
+- DesignTokenRegistry with token definitions (Color, Typography, Spacing, Layout, Border Radius)
+- ThemePresetManager with preset registration (default, modern, minimal)
+- Semantic color tokens (--jas-color-primary, --jas-color-primary-hover, --jas-color-text, --jas-color-heading, --jas-color-background, --jas-color-surface, --jas-color-border)
+- Typography scale tokens (--jas-font-size-xs through --jas-font-size-2xl)
+- Spacing system tokens (--jas-space-xs through --jas-space-xl)
+- Border radius tokens (--jas-radius-sm, --jas-radius-md, --jas-radius-lg)
+- Preset-aware token generation in DesignTokenGenerator
+- Extended debug output (preset name, token count) in WP_DEBUG mode
+- .jas-theme CSS context for future theme switching
+- DesignTokenRegistry registered in Container
+- ThemePresetManager registered in Container
+- getTokenRegistry() and getPresetManager() methods on Application
+- --jas-primary-hover CSS custom property generation
+- getPrimaryColorHover() and lightenColor() on DesignSettingsManager
+
+## Changed
+
+- DesignTokenGenerator now accepts DesignTokenRegistry and ThemePresetManager
+- DesignTokenGenerator::renderInlineStyles() outputs both :root and .jas-theme groups
+- DesignTokenGenerator::renderDebugComment() extended with preset and token count
+- DesignSettingsManager::getAllTokens() now includes --jas-primary-hover
+- tokens.css — .jas-theme CSS architecture placeholder added
+- Version updated to 0.24 in style.css, config/app.php, framework assets, docs/analyze.md
 
 ## Fixed
 

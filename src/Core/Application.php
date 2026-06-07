@@ -17,6 +17,8 @@ use Jasanika\Container\Container;
 use Jasanika\Core\ThemeRenderer;
 use Jasanika\Design\DesignSettingsManager;
 use Jasanika\Design\DesignTokenGenerator;
+use Jasanika\Design\DesignTokenRegistry;
+use Jasanika\Design\ThemePresetManager;
 use Jasanika\Hooks\HookManager;
 use Jasanika\Layout\LayoutManager;
 use Jasanika\Layout\LayoutRenderer;
@@ -50,6 +52,8 @@ final class Application
     private ThemeRenderer $themeRenderer;
     private DesignSettingsManager $designSettingsManager;
     private DesignTokenGenerator $designTokenGenerator;
+    private DesignTokenRegistry $tokenRegistry;
+    private ThemePresetManager $presetManager;
     private LayoutManager $layoutManager;
     private LayoutRenderer $layoutRenderer;
 
@@ -57,7 +61,7 @@ final class Application
     {
         $this->frameworkInfo = new FrameworkInfo(
             'Jasanika 2',
-            '0.23'
+            '0.24'
         );
 
         $this->container = new Container();
@@ -106,7 +110,21 @@ final class Application
 
         // Initialize design settings and token generation services
         $this->designSettingsManager = new DesignSettingsManager($this->settingsManager);
-        $this->designTokenGenerator = new DesignTokenGenerator($this->designSettingsManager);
+
+        // Initialize Design Token Registry — single source of truth for token definitions
+        $this->tokenRegistry = new DesignTokenRegistry();
+        $this->registerDesignTokens();
+
+        // Initialize Theme Preset Manager — preset registration and resolution
+        $this->presetManager = new ThemePresetManager();
+        $this->registerThemePresets();
+
+        // Initialize DesignTokenGenerator with expanded dependencies
+        $this->designTokenGenerator = new DesignTokenGenerator(
+            $this->designSettingsManager,
+            $this->tokenRegistry,
+            $this->presetManager
+        );
 
         // Initialize layout services
         $this->layoutManager = new LayoutManager($this->designSettingsManager);
@@ -266,6 +284,20 @@ final class Application
                 return $this->layoutRenderer;
             }
         );
+
+        $this->container->register(
+            DesignTokenRegistry::class,
+            function (Container $container): DesignTokenRegistry {
+                return $this->tokenRegistry;
+            }
+        );
+
+        $this->container->register(
+            ThemePresetManager::class,
+            function (Container $container): ThemePresetManager {
+                return $this->presetManager;
+            }
+        );
     }
 
     /**
@@ -300,7 +332,7 @@ final class Application
         $style = new Asset(
             'jasanika-frontend',
             get_template_directory_uri() . '/assets/css/frontend.css',
-            '0.23'
+            '0.24'
         );
 
         $this->assetManager->registerStyle($style);
@@ -308,7 +340,7 @@ final class Application
         $tokens = new Asset(
             'jasanika-tokens',
             get_template_directory_uri() . '/assets/css/tokens.css',
-            '0.23'
+            '0.24'
         );
 
         $this->assetManager->registerStyle($tokens);
@@ -316,7 +348,7 @@ final class Application
         $script = new Asset(
             'jasanika-frontend',
             get_template_directory_uri() . '/assets/js/frontend.js',
-            '0.23',
+            '0.24',
             [],
             'all',
             true
@@ -447,5 +479,115 @@ final class Application
     public function getLayoutRenderer(): LayoutRenderer
     {
         return $this->layoutRenderer;
+    }
+
+    public function getTokenRegistry(): DesignTokenRegistry
+    {
+        return $this->tokenRegistry;
+    }
+
+    public function getPresetManager(): ThemePresetManager
+    {
+        return $this->presetManager;
+    }
+
+    /**
+     * Register all design tokens in the DesignTokenRegistry.
+     *
+     * Tokens are organized by category:
+     * - Color          — Semantic color tokens
+     * - Typography     — Font family and size scale
+     * - Spacing        — Spacing rhythm scale
+     * - Layout         — Container width, site layout
+     * - Border Radius  — Border radius scale
+     *
+     * Dynamic values (primary color, font family, etc.) are set at
+     * generation time in DesignTokenGenerator. The registry holds
+     * the default/fallback values.
+     */
+    private function registerDesignTokens(): void
+    {
+        $r = $this->tokenRegistry;
+
+        // --- Color tokens ---
+        $r->registerToken('--jas-color-primary',       'Color', '#b78acb', 'Primary brand color');
+        $r->registerToken('--jas-color-primary-hover', 'Color', '#c79cda', 'Primary brand color hover state');
+        $r->registerToken('--jas-color-text',          'Color', '#f5f2f7', 'Body text color');
+        $r->registerToken('--jas-color-heading',       'Color', '#f5f2f7', 'Heading text color');
+        $r->registerToken('--jas-color-background',    'Color', '#1b1a1f', 'Main background color');
+        $r->registerToken('--jas-color-surface',       'Color', '#24212b', 'Surface / secondary background color');
+        $r->registerToken('--jas-color-border',        'Color', 'rgba(255,255,255,0.08)', 'Border and divider color');
+
+        // --- Legacy backward compatibility tokens ---
+        $r->registerToken('--jas-primary-color',       'Color', '#b78acb', 'Legacy primary color (use --jas-color-primary)');
+        $r->registerToken('--jas-primary-hover',       'Color', '#c79cda', 'Legacy primary hover (use --jas-color-primary-hover)');
+
+        // --- Typography tokens ---
+        $r->registerToken('--jas-font-family',  'Typography', "'Inter', sans-serif", 'Body font family');
+        $r->registerToken('--jas-font-size-xs', 'Typography', '0.75rem', 'Extra small font size');
+        $r->registerToken('--jas-font-size-sm', 'Typography', '0.875rem', 'Small font size');
+        $r->registerToken('--jas-font-size-md', 'Typography', '1rem', 'Medium / base font size');
+        $r->registerToken('--jas-font-size-lg', 'Typography', '1.125rem', 'Large font size');
+        $r->registerToken('--jas-font-size-xl', 'Typography', '1.25rem', 'Extra large font size');
+        $r->registerToken('--jas-font-size-2xl', 'Typography', '1.5rem', '2x large font size');
+
+        // --- Spacing tokens ---
+        $r->registerToken('--jas-space-xs', 'Spacing', '0.5rem', 'Extra small spacing');
+        $r->registerToken('--jas-space-sm', 'Spacing', '1rem', 'Small spacing');
+        $r->registerToken('--jas-space-md', 'Spacing', '1.5rem', 'Medium spacing');
+        $r->registerToken('--jas-space-lg', 'Spacing', '2rem', 'Large spacing');
+        $r->registerToken('--jas-space-xl', 'Spacing', '3rem', 'Extra large spacing');
+
+        // --- Layout tokens ---
+        $r->registerToken('--jas-container-width', 'Layout', '1200px', 'Maximum content container width');
+        $r->registerToken('--jas-site-layout',     'Layout', 'full-width', 'Site layout mode (boxed or full-width)');
+
+        // --- Border Radius tokens ---
+        $r->registerToken('--jas-radius-sm', 'Border Radius', '0.25rem', 'Small border radius');
+        $r->registerToken('--jas-radius-md', 'Border Radius', '0.5rem', 'Medium border radius');
+        $r->registerToken('--jas-radius-lg', 'Border Radius', '0.75rem', 'Large border radius');
+    }
+
+    /**
+     * Register theme presets in the ThemePresetManager.
+     *
+     * Each preset defines token overrides. Unspecified tokens fall
+     * through to DesignTokenRegistry defaults and DesignSettingsManager values.
+     *
+     * Initial presets (foundation only, no admin UI):
+     * - default  — Standard Jasanika design
+     * - modern   — Cleaner contemporary variant
+     * - minimal  — Reduced visual complexity
+     *
+     * @todo M26 - Theme Presets UI: Admin interface for preset selection.
+     */
+    private function registerThemePresets(): void
+    {
+        $this->presetManager->registerPreset(
+            'default',
+            'Default',
+            'Standardni Jasanika design',
+            [
+                // Default preset has no overrides — uses base token values.
+            ]
+        );
+
+        $this->presetManager->registerPreset(
+            'modern',
+            'Modern',
+            'Cistsi a soucasnejsi varianta',
+            [
+                // Modern token overrides will be defined in a future milestone.
+            ]
+        );
+
+        $this->presetManager->registerPreset(
+            'minimal',
+            'Minimal',
+            'Redukovana vizualni komplexita',
+            [
+                // Minimal token overrides will be defined in a future milestone.
+            ]
+        );
     }
 }
