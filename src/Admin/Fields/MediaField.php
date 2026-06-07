@@ -127,8 +127,6 @@ final class MediaField extends AbstractField
                 esc_html__('Remove', 'jasanika')
             );
         }
-
-        echo '<p class="description">' . esc_html($this->description) . '</p>';
     }
 
     /**

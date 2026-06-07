@@ -6,17 +6,17 @@ Jasanika_2 — Modular WordPress Framework
 
 ## Current Version
 
-0.33
+0.34
 
 ## Current Milestone
 
-M33 - Hero Builder V2
+M34 - Unified Form Layout System
 
 Status: Completed
 
 ## Completed Milestones
 
-M0 through M32 (all milestones completed)
+M0 through M34 (all milestones completed)
 
 ## Active Systems
 
@@ -46,6 +46,7 @@ M0 through M32 (all milestones completed)
 - Hero Layout Presets (HeroLayout — M33)
 - Color Picker Component (ColorPicker — M32)
 - Modern Color Picker UI (admin-color-picker.js — M32)
+- Unified Form Layout System (FormRow, FormSection — M34)
 
 ## Frontend Capabilities
 

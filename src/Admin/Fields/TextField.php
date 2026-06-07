@@ -21,6 +21,12 @@ final class TextField extends AbstractField
         return '';
     }
 
+    /**
+     * Render only the input HTML.
+     * Label and description are wrapped by FormRow in SettingsPage.
+     *
+     * M34: Unified input styling with jas-form-input class.
+     */
     public function render(): void
     {
         $current = $this->settingsManager->get($this->key);
@@ -30,13 +36,11 @@ final class TextField extends AbstractField
         }
 
         printf(
-            '<input type="text" id="%s" name="%s" value="%s" class="regular-text" />',
+            '<input type="text" id="%s" name="%s" value="%s" class="jas-form-input" />',
             esc_attr($this->key),
             esc_attr($this->key),
             esc_attr($current)
         );
-
-        echo '<p class="description">' . esc_html($this->description) . '</p>';
     }
 
     public function sanitize(mixed $value): string

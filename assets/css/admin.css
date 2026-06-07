@@ -2,20 +2,18 @@
  * Jasanika 2 Admin Styles
  *
  * Modular WordPress Framework
- * Version 0.30
- * M30 — Admin UI Dark Card Layout
+ * Version 0.34
+ * M34 — Unified Form Layout System
  *
- * Dark Card Layout system for the Settings UI:
- * - Dark surface cards (#24212b) standing out from WordPress admin background
- * - Subtle border system (rgba-based, token-driven)
- * - Standardized radius: cards/buttons 4px, inputs 2px
- * - Consistent padding: card 24px, fields 16px, labels 8px
- * - Card header with title, description, and subtle divider
- * - Clear visual hierarchy: Background → Card → Section → Field → Input
- * - Aligned form inputs with uniform row height
+ * Unified Form Layout for all Settings UI:
+ * - Form Section panels with dark background, subtle gradient, light border
+ * - Form Row grid (280px label | 1fr input) for every setting
+ * - Unified input sizing (same height, spacing, padding, 2px radius)
+ * - Clear visual hierarchy: Section → Row → Input
+ * - No frost glass, no blur — clean modern admin design
+ * - Responsive: grid stacks on mobile
  *
  * All values are token-driven via --jas-admin-* CSS custom properties.
- * No hardcoded colors, spacing, or visual values.
  */
 
 /* ========================================
@@ -197,7 +195,156 @@
 }
 
 /* ========================================
-   Settings Card System — Dark Layout (M30)
+   Form Section — M34 Unified Form Layout
+   ======================================== */
+
+.jas-form-section {
+    background: var(--jas-admin-color-surface, #24212b);
+    border: 1px solid var(--jas-admin-color-border, rgba(255,255,255,0.08));
+    border-radius: var(--jas-admin-radius-sm, 4px);
+    margin-bottom: var(--jas-admin-space-lg, 24px);
+    overflow: hidden;
+}
+
+/* Section header with subtle gradient overlay */
+.jas-form-section__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--jas-admin-space-md, 16px);
+    padding: var(--jas-admin-space-lg, 24px) var(--jas-admin-space-lg, 24px) var(--jas-admin-space-md, 16px);
+    background: linear-gradient(180deg, rgba(255,255,255,0.03) 0%, transparent 100%);
+}
+
+.jas-form-section__title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--jas-admin-color-text, #f5f2f7);
+    line-height: 1.4;
+}
+
+.jas-form-section__badge {
+    font-size: 0.6875rem;
+    font-weight: 400;
+    color: var(--jas-admin-color-text-muted, #b9b1c4);
+    background: rgba(255, 255, 255, 0.08);
+    padding: 0.0625rem 0.5rem;
+    border-radius: 0.75rem;
+    flex-shrink: 0;
+}
+
+/* Section description below header */
+.jas-form-section__description {
+    margin: 0;
+    padding: 0 var(--jas-admin-space-lg, 24px) var(--jas-admin-space-md, 16px);
+    font-size: 0.8125rem;
+    color: var(--jas-admin-color-text-muted, #b9b1c4);
+    line-height: 1.5;
+}
+
+/* Divider between header and content */
+.jas-form-section__divider {
+    height: 1px;
+    background: var(--jas-admin-color-divider, rgba(255,255,255,0.06));
+    margin: 0 var(--jas-admin-space-lg, 24px);
+}
+
+/* Section content body */
+.jas-form-section__content {
+    padding: var(--jas-admin-space-lg, 24px);
+}
+
+/* Empty state for placeholder sections */
+.jas-form-section--placeholder {
+    opacity: 0.7;
+}
+
+/* ========================================
+   Form Row — M34 Unified Form Layout
+   ======================================== */
+
+.jas-form-row {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: var(--jas-admin-space-lg, 24px);
+    padding: var(--jas-admin-space-md, 16px) 0;
+    border-bottom: 1px solid var(--jas-admin-color-divider, rgba(255,255,255,0.06));
+    align-items: start;
+}
+
+.jas-form-row:first-child {
+    padding-top: 0;
+}
+
+.jas-form-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+/* Label column */
+.jas-form-row__label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.jas-form-row__label-text {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--jas-admin-color-text, #f5f2f7);
+    line-height: 1.4;
+}
+
+.jas-form-row__desc {
+    font-size: 0.75rem;
+    color: var(--jas-admin-color-text-muted, #b9b1c4);
+    line-height: 1.4;
+}
+
+/* Input column */
+.jas-form-row__input {
+    min-width: 0;
+}
+
+/* ========================================
+   Form Input — Unified (M34)
+   ======================================== */
+
+.jas-form-input {
+    width: 100%;
+    max-width: 400px;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--jas-admin-color-input-text, #f5f2f7);
+    background: var(--jas-admin-color-input-bg, #1b1a1f);
+    border: 1px solid var(--jas-admin-color-border-strong, rgba(255,255,255,0.12));
+    border-radius: var(--jas-admin-radius-xs, 2px);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    box-sizing: border-box;
+    min-height: 2.5rem;
+}
+
+.jas-form-input:focus {
+    border-color: var(--jas-admin-color-accent, #b78acb);
+    box-shadow: 0 0 0 1px var(--jas-admin-color-accent, #b78acb);
+    outline: none;
+}
+
+/* Narrow input variant (for numbers, small values) */
+.jas-form-input--narrow {
+    max-width: 160px;
+}
+
+/* Select variant */
+select.jas-form-input {
+    appearance: auto;
+    padding-right: 2rem;
+}
+
+/* ========================================
+   Settings Card (legacy fallback)
    ======================================== */
 
 .jas-settings-card {
@@ -209,7 +356,6 @@
     overflow: hidden;
 }
 
-/* Card header with subtle divider */
 .jas-settings-card__header {
     display: flex;
     align-items: center;
@@ -228,13 +374,6 @@
     line-height: 1.4;
 }
 
-.jas-settings-card__actions {
-    display: flex;
-    gap: var(--jas-admin-space-sm);
-    flex-shrink: 0;
-}
-
-/* Card description between header and body */
 .jas-settings-card__description {
     margin: 0;
     padding: var(--jas-admin-space-sm) var(--jas-admin-space-lg);
@@ -244,13 +383,12 @@
     line-height: 1.5;
 }
 
-/* Card body — consistent padding */
 .jas-settings-card__body {
     padding: var(--jas-admin-space-lg);
 }
 
 /* ========================================
-   Form Table Layout — Dark Card Context
+   Form Table Layout (legacy, kept for compatibility)
    ======================================== */
 
 .jas-settings-card__body .form-table {
@@ -258,7 +396,6 @@
     border-collapse: collapse;
 }
 
-/* Uniform row height — consistent vertical alignment */
 .jas-settings-card__body .form-table tr {
     border-bottom: 1px solid var(--jas-admin-color-divider);
 }
@@ -267,7 +404,6 @@
     border-bottom: none;
 }
 
-/* Consistent label width (200px) */
 .jas-settings-card__body .form-table th {
     width: 200px;
     padding: var(--jas-admin-space-md) var(--jas-admin-space-md) var(--jas-admin-space-md) 0;
@@ -277,50 +413,9 @@
     vertical-align: middle;
 }
 
-/* Consistent input field spacing */
 .jas-settings-card__body .form-table td {
     padding: var(--jas-admin-space-sm) 0;
     vertical-align: middle;
-}
-
-/* Input field styling — dark inputs with 2px radius */
-.jas-settings-card__body .form-table input[type="text"],
-.jas-settings-card__body .form-table input[type="number"],
-.jas-settings-card__body .form-table select {
-    width: 100%;
-    max-width: 400px;
-    padding: 0.5rem 0.75rem;
-    font-size: 0.875rem;
-    color: var(--jas-admin-color-input-text);
-    background: var(--jas-admin-color-input-bg);
-    border: 1px solid var(--jas-admin-color-border-strong);
-    border-radius: var(--jas-admin-radius-xs);
-    line-height: 1.5;
-    transition: border-color 0.15s ease, box-shadow 0.15s ease;
-}
-
-.jas-settings-card__body .form-table input[type="text"]:focus,
-.jas-settings-card__body .form-table input[type="number"]:focus,
-.jas-settings-card__body .form-table select:focus {
-    border-color: var(--jas-admin-color-accent);
-    box-shadow: 0 0 0 1px var(--jas-admin-color-accent);
-    outline: none;
-}
-
-.jas-settings-card__body .form-table input[type="color"] {
-    width: 48px;
-    height: 36px;
-    padding: 2px;
-    cursor: pointer;
-    border: 1px solid var(--jas-admin-color-border-strong);
-    border-radius: var(--jas-admin-radius-xs);
-    background: var(--jas-admin-color-input-bg);
-}
-
-/* Select field styling */
-.jas-settings-card__body .form-table select {
-    appearance: auto;
-    min-height: 2.5rem;
 }
 
 /* ========================================
@@ -633,6 +728,10 @@
 
 /* Small laptop / tablet landscape (≤1366px) */
 @media (max-width: 1366px) {
+    .jas-form-row {
+        grid-template-columns: 200px 1fr;
+    }
+
     .jas-settings-card__body .form-table th {
         width: 160px;
     }
@@ -640,6 +739,11 @@
 
 /* Tablet (≤1024px) */
 @media (max-width: 1024px) {
+    .jas-form-row {
+        grid-template-columns: 160px 1fr;
+        gap: var(--jas-admin-space-md);
+    }
+
     .jas-settings-card__body .form-table th {
         width: 140px;
     }
@@ -676,6 +780,40 @@
         padding: 0.25rem 0.625rem;
         font-size: 0.75rem;
         white-space: nowrap;
+    }
+
+    /* Form row: stack on mobile */
+    .jas-form-row {
+        grid-template-columns: 1fr;
+        gap: var(--jas-admin-space-sm);
+        padding: var(--jas-admin-space-sm) 0;
+    }
+
+    .jas-form-section__header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--jas-admin-space-sm);
+        padding: var(--jas-admin-space-md);
+    }
+
+    .jas-form-section__description {
+        padding: 0 var(--jas-admin-space-md) var(--jas-admin-space-sm);
+    }
+
+    .jas-form-section__divider {
+        margin: 0 var(--jas-admin-space-md);
+    }
+
+    .jas-form-section__content {
+        padding: var(--jas-admin-space-md);
+    }
+
+    .jas-form-input {
+        max-width: 100%;
+    }
+
+    .jas-form-input--narrow {
+        max-width: 100%;
     }
 
     .jas-settings-card__header {

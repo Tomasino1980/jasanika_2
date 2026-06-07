@@ -95,6 +95,7 @@ use Jasanika\Widgets\WidgetAreaManager;
  * M31 — Dynamic Theme Settings Engine
  * M32 — Modern Color Picker & Theme Designer
  * M33 — Hero Builder V2
+ * M34 — Unified Form Layout System
  *
  * @see FrameworkInfo
  * @see ThemeRenderer
@@ -220,7 +221,7 @@ final class Application
 
         $this->frameworkInfo = new FrameworkInfo(
             'Jasanika 2',
-            '0.33'
+            '0.34'
         );
 
         $this->container = new Container();
@@ -1137,7 +1138,7 @@ final class Application
         $script = new Asset(
             'jasanika-media-field',
             get_template_directory_uri() . '/assets/admin/js/media-field.js',
-            '0.33',
+            '0.34',
             ['jquery'],
             'all',
             true
@@ -1183,7 +1184,7 @@ final class Application
         $colorPickerScript = new Asset(
             'jasanika-color-picker',
             get_template_directory_uri() . '/assets/js/admin-color-picker.js',
-            '0.33',
+            '0.34',
             [],
             'all',
             true
@@ -1275,7 +1276,7 @@ final class Application
         $headerScript = new Asset(
             'jasanika-header',
             get_template_directory_uri() . '/assets/js/header.js',
-            '0.33',
+            '0.34',
             [],
             'all',
             true
@@ -1286,7 +1287,7 @@ final class Application
         $script = new Asset(
             'jasanika-frontend',
             get_template_directory_uri() . '/assets/js/frontend.js',
-            '0.33',
+            '0.34',
             [],
             'all',
             true

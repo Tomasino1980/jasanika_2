@@ -7,15 +7,13 @@ namespace Jasanika\Admin\Fields;
 use Jasanika\Admin\Components\ColorPicker;
 
 /**
- * Color Field — M32.
+ * Color Field — M32/M34.
  *
  * Renders a modern color picker field using the ColorPicker component.
- * The user sees a swatch + HEX input combo that opens a floating
- * picker panel with saturation square, hue slider, and HEX/RGB inputs.
+ * Only the input HTML is rendered here; label and description are
+ * wrapped by FormRow in SettingsPage.
  *
- * No WordPress default color picker.
- * No jQuery.
- * Vanilla JavaScript only.
+ * M34: Removed inline description rendering (handled by FormRow).
  */
 final class ColorField extends AbstractField
 {
@@ -34,6 +32,10 @@ final class ColorField extends AbstractField
         return '#2c3e50';
     }
 
+    /**
+     * Render only the color picker input HTML.
+     * Label and description are wrapped by FormRow in SettingsPage.
+     */
     public function render(): void
     {
         $current = $this->settingsManager->get($this->key);
@@ -43,10 +45,6 @@ final class ColorField extends AbstractField
         }
 
         ColorPicker::render($this->key, $current, $this->label);
-
-        if ($this->description !== '') {
-            echo '<p class="description">' . esc_html($this->description) . '</p>';
-        }
     }
 
     public function sanitize(mixed $value): string

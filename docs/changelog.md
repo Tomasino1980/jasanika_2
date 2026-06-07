@@ -65,11 +65,39 @@ Date: 2026-06-07
 
 ---
 
-# M33 - Hero Builder V2
+# M34 - Unified Form Layout System
 
-Version: 0.33
+Version: 0.34
 
 Date: 2026-06-07
+
+## Added
+
+- FormRow component (FormRow.php) — renders each setting as a CSS grid row: 280px label+description | 1fr input
+- FormSection component (FormSection.php) — renders each settings section as a panel with header, divider, and content body
+- Unified Form Layout System in src/Admin/UI/Form/
+- All settings sections (General, Appearance, Content, Marketing, Advanced) now use the unified FormSection + FormRow layout
+- Unified input class `jas-form-input` — same height (2.5rem), padding (0.5rem 0.75rem), border-radius (2px) for all field types
+- Section panels with dark background, subtle gradient overlay on header, light border, clear divider
+
+## Changed
+
+- SettingsPage.php — all section rendering rewritten to use FormSection/FormRow; bypasses do_settings_fields() for direct field iteration; color scheme and presets sections also use FormSection
+- TextField.php — render() outputs only input HTML (no description); uses jas-form-input class
+- SelectField.php — render() outputs only select HTML; uses jas-form-input class
+- NumberField.php — render() outputs only input HTML; uses jas-form-input/jas-form-input--narrow
+- ColorField.php — render() outputs only color picker HTML (no description)
+- MediaField.php — render() outputs only media input HTML (no inline description)
+- admin.css — complete rewrite of form layout section: Form Section panels, Form Row grid, Form Input unified styling, responsive breakpoints; legacy SettingsCard and form-table styles kept for compatibility
+- config/app.php, style.css — version 0.34
+- docs/current-state.md — updated to 0.34
+
+## Fixed
+
+- All inputs now have consistent height, spacing, padding, border-radius
+- Labels are aligned in a fixed-width column (280px desktop, stacked on mobile)
+- Sections are visually separated with header/divider/content panels
+- No more inconsistent input sizing across field types
 
 ## Added
 

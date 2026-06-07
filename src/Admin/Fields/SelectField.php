@@ -43,6 +43,12 @@ final class SelectField extends AbstractField
         return $this->options[0] ?? '';
     }
 
+    /**
+     * Render only the input HTML.
+     * Label and description are wrapped by FormRow in SettingsPage.
+     *
+     * M34: Unified input styling with jas-form-input class.
+     */
     public function render(): void
     {
         $current = $this->settingsManager->get($this->key);
@@ -51,7 +57,7 @@ final class SelectField extends AbstractField
             $current = $this->getDefault();
         }
 
-        echo '<select id="' . esc_attr($this->key) . '" name="' . esc_attr($this->key) . '">';
+        echo '<select id="' . esc_attr($this->key) . '" name="' . esc_attr($this->key) . '" class="jas-form-input">';
 
         foreach ($this->options as $option) {
             printf(
@@ -63,7 +69,6 @@ final class SelectField extends AbstractField
         }
 
         echo '</select>';
-        echo '<p class="description">' . esc_html($this->description) . '</p>';
     }
 
     public function sanitize(mixed $value): string
