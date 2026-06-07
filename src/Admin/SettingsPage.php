@@ -171,6 +171,9 @@ final class SettingsPage
         echo '<span class="jas-settings__version">v' . esc_html($this->frameworkInfo->getVersion()) . '</span>';
         echo '</div>';
 
+        // M35: Dark main container wrapping all panels
+        echo '<div class="jas-settings-container">';
+
         // Top-level tab navigation
         $this->renderTabs($activeTab);
 
@@ -193,6 +196,7 @@ final class SettingsPage
         submit_button(__('Save Settings', 'jasanika'));
 
         echo '</form>';
+        echo '</div>'; // .jas-settings-container
         echo '</div>';
     }
 
