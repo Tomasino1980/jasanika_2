@@ -15,6 +15,14 @@
    Color Picker Field
    ======================================== */
 
+/*
+ * M37.1: Increased specificity to override WordPress core:
+ *   .form-table td input[type="text"]   (0,2,1) — WP core in color scheme grid
+ *   .jas-cp__hex                        (0,1,0) — our old rule
+ *   
+ *   Fix: .jas-color-scheme-grid .jas-cp .jas-cp__hex (0,3,0) > .form-table td input[type="text"] (0,2,1)
+ */
+
 .jas-cp {
     display: flex;
     align-items: center;
@@ -49,7 +57,8 @@
     box-shadow: 0 0 0 2px rgba(183, 138, 203, 0.5);
 }
 
-.jas-cp__hex {
+/* Higher specificity to beat .form-table td input[type="text"] */
+.jas-color-scheme-grid .jas-cp .jas-cp__hex {
     flex: 1;
     min-width: 0;
     max-width: 96px;

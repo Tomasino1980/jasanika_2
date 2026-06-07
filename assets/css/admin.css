@@ -349,10 +349,22 @@
 }
 
 /* ========================================
-   Form Input — Unified (M34)
+   Form Input — Unified (M37.1 specificity fix)
    ======================================== */
 
-.jas-form-input {
+/* 
+ * M37.1: Increased specificity to override WordPress core:
+ *   input[type="text"]   (0,1,1) — WP core
+ *   .jas-form-input      (0,1,0) — our old rule
+ *   
+ *   Fix: .jas-form-section .jas-form-input (0,2,0) > input[type="text"] (0,1,1)
+ *
+ *   Without this fix, WordPress sets:
+ *   - padding: 0 8px → line-height: 2 → min-height: 30px → border-radius: 3px
+ *   - All of these override our compact sizing.
+ */
+
+.jas-form-section .jas-form-input {
     width: 100%;
     max-width: 360px;
     padding: 0.3125rem 0.5rem;
@@ -367,19 +379,19 @@
     min-height: 1.875rem;
 }
 
-.jas-form-input:focus {
+.jas-form-section .jas-form-input:focus {
     border-color: var(--jas-admin-color-accent, #b78acb);
     box-shadow: 0 0 0 1px var(--jas-admin-color-accent, #b78acb);
     outline: none;
 }
 
 /* Narrow input variant (for numbers, small values) */
-.jas-form-input--narrow {
+.jas-form-section .jas-form-input--narrow {
     max-width: 120px;
 }
 
-/* Select variant */
-select.jas-form-input {
+/* Select variant: select.jas-form-input already has higher specificity via element */
+.jas-form-section select.jas-form-input {
     appearance: auto;
     padding-right: 1.5rem;
     min-height: 1.875rem;
