@@ -2,7 +2,7 @@
  * Jasanika 2 Frontend Styles
  *
  * Modular WordPress Framework
- * Version 0.21
+ * Version 0.23
  */
 
 /* ========================================
@@ -57,6 +57,31 @@ body {
     margin-right: auto;
     padding-left: 1.5rem;
     padding-right: 1.5rem;
+}
+
+/* ========================================
+   Layout Classes (LayoutSystem)
+   ======================================== */
+
+.jas-layout {
+    min-width: 0;
+}
+
+.jas-layout--sidebar {
+    /* Inherits grid behavior from .jas-content-with-sidebar */
+}
+
+.jas-layout--full-width {
+    max-width: 100%;
+}
+
+.jas-layout--landing {
+    max-width: 100%;
+}
+
+.jas-content-full--landing {
+    max-width: 100%;
+    padding: 0;
 }
 
 /* ========================================

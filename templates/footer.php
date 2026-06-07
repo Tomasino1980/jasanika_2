@@ -12,12 +12,15 @@
 <footer id="jas-footer" class="jas-footer">
     <div class="jas-container">
         <?php
-        // Render footer widget regions (footer-left, footer-center, footer-right)
+        // Render footer widget regions only for non-landing page layouts
         $renderer = \Jasanika\Core\ThemeRenderer::getInstance();
         if ($renderer) {
-            $layoutRenderer = $renderer->getLayoutRegionRenderer();
-            if ($layoutRenderer) {
-                $layoutRenderer->renderFooterRegions();
+            $layoutManager = $renderer->getLayoutManager();
+            if ($layoutManager && $layoutManager->getActiveLayout() !== 'landing-page') {
+                $layoutRenderer = $renderer->getLayoutRegionRenderer();
+                if ($layoutRenderer) {
+                    $layoutRenderer->renderFooterRegions();
+                }
             }
         }
         ?>

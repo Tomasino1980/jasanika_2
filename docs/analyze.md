@@ -6,7 +6,7 @@ Jasanika_2
 
 Modular WordPress Framework
 
-Current Version: 0.22
+Current Version: 0.23
 
 Status: Active Development
 
@@ -14,7 +14,7 @@ Status: Active Development
 
 # Current Milestone
 
-M22 - Theme Customizer & Design Settings Integration
+M23 - Dynamic Layout System
 
 Status: Completed
 
@@ -46,6 +46,7 @@ Status: Completed
 - M20 - Navigation & Site Identity Architecture
 - M21 - Widget Areas & Layout Regions Architecture
 - M22 - Theme Customizer & Design Settings Integration
+- M23 - Dynamic Layout System
 
 ---
 
@@ -128,6 +129,12 @@ Architecture documents:
 - Design debug panel (HTML comment) in WP_DEBUG mode
 - Site layout body class support (boxed/full-width)
 - tokens.css with primary color and layout token consumption
+- LayoutManager with layout resolution (content-sidebar, full-width, landing-page)
+- LayoutRenderer with centralized layout rendering
+- Layout templates (content-sidebar, full-width, landing-page)
+- Layout debug information (HTML comment) in WP_DEBUG mode
+- Layout CSS classes (jas-layout, jas-layout--sidebar, jas-layout--full-width, jas-layout--landing)
+- Landing page layout (no sidebar, no footer widgets)
 
 ---
 
@@ -163,7 +170,7 @@ None
 
 # Next Planned Milestone
 
-M22 - TBD
+M24 - Design Token Engine Expansion
 
 ---
 

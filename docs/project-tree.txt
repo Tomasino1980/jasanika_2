@@ -27,6 +27,10 @@ jasanika_2/
 │   │   ├── navigation.php
 │   │   ├── page-header.php
 │   │   └── site-branding.php
+│   ├── layouts/
+│   │   ├── content-sidebar.php
+│   │   ├── full-width.php
+│   │   └── landing-page.php
 │   ├── 404.php
 │   ├── archive.php
 │   ├── content.php
@@ -70,6 +74,9 @@ src/
 ├── Design/
 │   ├── DesignSettingsManager.php
 │   └── DesignTokenGenerator.php
+├── Layout/
+│   ├── LayoutManager.php
+│   └── LayoutRenderer.php
 ├── Assets/
 │   ├── Asset.php
 │   └── AssetManager.php

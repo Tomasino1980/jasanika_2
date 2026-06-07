@@ -672,3 +672,36 @@ Date: 2026-06-07
 ## Fixed
 
 - N/A
+
+---
+
+# M23 - Dynamic Layout System
+
+Version: 0.23
+
+Date: 2026-06-07
+
+## Added
+
+- LayoutManager with layout resolution (content-sidebar, full-width, landing-page)
+- LayoutRenderer with centralized layout rendering delegated to layout templates
+- Layout templates (templates/layouts/content-sidebar.php, full-width.php, landing-page.php)
+- Layout CSS classes (jas-layout, jas-layout--sidebar, jas-layout--full-width, jas-layout--landing)
+- Layout debug information (HTML comment) visible only in WP_DEBUG mode
+- Landing page layout with no sidebar and no footer widget regions
+- LayoutManager and LayoutRenderer registered in Container
+- getLayoutManager() and getLayoutRenderer() on Application and ThemeRenderer
+
+## Changed
+
+- ThemeRenderer refactored — renderContentArea() removed, delegates to LayoutRenderer
+- ThemeRenderer constructor now accepts LayoutManager and LayoutRenderer dependencies
+- layout.php delegates to ThemeRenderer::renderLayout() instead of renderContentArea()
+- footer.php skips footer widget regions for landing-page layout
+- frontend.css extended with layout system CSS classes
+- Application creates LayoutManager and LayoutRenderer instances
+- Version updated to 0.23
+
+## Fixed
+
+- N/A

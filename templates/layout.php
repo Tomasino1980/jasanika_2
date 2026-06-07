@@ -7,16 +7,16 @@ use Jasanika\Core\ThemeRenderer;
 /**
  * Main layout template.
  *
- * Assembles the complete page structure through ThemeRenderer.
- * Content area supports optional sidebar layout when widgets are active.
- * No direct template includes outside ThemeRenderer.
+ * Orchestrates the complete page structure through ThemeRenderer.
+ * Layout selection and rendering is delegated to LayoutManager and LayoutRenderer.
+ * No direct layout conditionals in this template.
  */
 
 ThemeRenderer::renderHeader();
 echo '<div class="jas-site-wrapper">' . "\n";
 echo '<div class="jas-content">' . "\n";
 echo '  <div class="jas-container">' . "\n";
-ThemeRenderer::renderContentArea();
+ThemeRenderer::renderLayout();
 echo '  </div>' . "\n";
 echo '</div>' . "\n";
 ThemeRenderer::renderFooter();
